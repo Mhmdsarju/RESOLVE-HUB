@@ -1,34 +1,52 @@
 import "dotenv/config";
+import { connectRedis } from "./config/redis";
+import { connectDatabase } from "./config/database";
 import { startServer } from "./app/server";
 
+async function bootstrap() {
+  try {
+    // Connect Redis
+    await connectRedis();
 
-const server = startServer();
+    // Connect Database
+    await connectDatabase();
 
-const gracefulShutdown = (signal: string) => {
-    console.log(`\n${signal} received.`)
-    console.log("Gracefully shutting down server...")
+    // Start HTTP Server
+    const server = startServer();
 
-    server.close(() => {
+    const gracefulShutdown = (signal: string) => {
+      console.log(`\n${signal} received.`);
+      console.log("Gracefully shutting down server...");
+
+      server.close(() => {
         console.log("HTTP Server closed");
         console.log("Application stopped successfully.");
         process.exit(0);
-    })
+      });
 
-    setTimeout(() => {
+      setTimeout(() => {
         console.error("Force shutting down...");
         process.exit(1);
-    }, 10000);
-};
+      }, 10000);
+    };
 
-process.on("SIGINT", () => gracefulShutdown("SIGINT"));
-process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+    process.on("SIGINT", () => gracefulShutdown("SIGINT"));
+    process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
 
-process.on("uncaughtException", (error) => {
-    console.error("Uncaught Exception:", error);
-    gracefulShutdown("uncaughtException");
-});
+    process.on("uncaughtException", (error) => {
+      console.error("Uncaught Exception:", error);
+      gracefulShutdown("uncaughtException");
+    });
 
-process.on("unhandledRejection", (reason) => {
-    console.error("Unhandled Rejection:", reason);
-    gracefulShutdown("unhandledRejection");
-});
+    process.on("unhandledRejection", (reason) => {
+      console.error("Unhandled Rejection:", reason);
+      gracefulShutdown("unhandledRejection");
+    });
+
+  } catch (error) {
+    console.error("Application startup failed:", error);
+    process.exit(1);
+  }
+}
+
+bootstrap();
