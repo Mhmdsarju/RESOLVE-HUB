@@ -1,20 +1,34 @@
-import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
+import "dotenv/config";
+import { startServer } from "./app/server";
 
-dotenv.config();
 
-const app = express();
+const server = startServer();
 
-app.use(cors());
-app.use(express.json());
+const gracefulShutdown = (signal: string) => {
+    console.log(`\n${signal} received.`)
+    console.log("Gracefully shutting down server...")
 
-app.get("/", (req, res) => {
-    res.send("Resolve hub backend Running");
-})
+    server.close(() => {
+        console.log("HTTP Server closed");
+        console.log("Application stopped successfully.");
+        process.exit(0);
+    })
 
-const PORT = 8009;
+    setTimeout(() => {
+        console.error("Force shutting down...");
+        process.exit(1);
+    }, 10000);
+};
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
-})
+process.on("SIGINT", () => gracefulShutdown("SIGINT"));
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+
+process.on("uncaughtException", (error) => {
+    console.error("Uncaught Exception:", error);
+    gracefulShutdown("uncaughtException");
+});
+
+process.on("unhandledRejection", (reason) => {
+    console.error("Unhandled Rejection:", reason);
+    gracefulShutdown("unhandledRejection");
+});
