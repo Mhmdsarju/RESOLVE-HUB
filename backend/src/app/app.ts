@@ -1,14 +1,15 @@
 import express from "express";
+import cookieParser from "cookie-parser";
 
+import { authRoutes } from "../modules/auth/auth.module"; 
+import { errorHandler } from "./middlewares/errorHandler"; 
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
 
-app.get("/", (req, res) => {
-    res.json({
-        success: true,
-        message: "ResolveHub Server Running 🚀",
-    });
-});
+app.use("/api/auth", authRoutes);
+
+app.use(errorHandler);
 
 export default app;
