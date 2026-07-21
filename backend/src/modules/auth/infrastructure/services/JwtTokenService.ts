@@ -40,4 +40,23 @@ export class JwtTokenService implements ITokenService {
     return payload;
   }
 
+  async generateResetToken(email: string): Promise<string> {
+    return jwt.sign(
+      { email },
+      process.env.JWT_RESET_SECRET!,
+      {
+        expiresIn: "10m",
+      }
+    );
+  }
+
+  async verifyResetToken(token: string): Promise<{ email: string }> {
+    const payload = jwt.verify(
+      token,
+      process.env.JWT_RESET_SECRET!
+    ) as { email: string };
+
+    return payload;
+  }
+
 }
