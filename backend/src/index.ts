@@ -1,20 +1,52 @@
-import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
+import "dotenv/config";
+import { connectRedis } from "./config/redis";
+import { connectDatabase } from "./config/database";
+import { startServer } from "./app/server";
 
-dotenv.config();
+async function bootstrap() {
+  try {
+    // Connect Redis
+    await connectRedis();
 
-const app = express();
+    // Connect Database
+    await connectDatabase();
 
-app.use(cors());
-app.use(express.json());
+    // Start HTTP Server
+    const server = startServer();
 
-app.get("/", (req, res) => {
-    res.send("Resolve hub backend Running");
-})
+    const gracefulShutdown = (signal: string) => {
+      console.log(`\n${signal} received.`);
+      console.log("Gracefully shutting down server...");
 
-const PORT = 8009;
+      server.close(() => {
+        console.log("HTTP Server closed");
+        console.log("Application stopped successfully.");
+        process.exit(0);
+      });
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
-})
+      setTimeout(() => {
+        console.error("Force shutting down...");
+        process.exit(1);
+      }, 10000);
+    };
+
+    process.on("SIGINT", () => gracefulShutdown("SIGINT"));
+    process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+
+    process.on("uncaughtException", (error) => {
+      console.error("Uncaught Exception:", error);
+      gracefulShutdown("uncaughtException");
+    });
+
+    process.on("unhandledRejection", (reason) => {
+      console.error("Unhandled Rejection:", reason);
+      gracefulShutdown("unhandledRejection");
+    });
+
+  } catch (error) {
+    console.error("Application startup failed:", error);
+    process.exit(1);
+  }
+}
+
+bootstrap();
