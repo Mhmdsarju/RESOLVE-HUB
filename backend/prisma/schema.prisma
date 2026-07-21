@@ -16,7 +16,7 @@ datasource db {
 
 model Organization {
   id          String   @id @default(uuid()) @db.Uuid
-  name        String
+  name        String   
   industry    String?
   companySize String?
   status      OrganizationStatus @default(ACTIVE)
