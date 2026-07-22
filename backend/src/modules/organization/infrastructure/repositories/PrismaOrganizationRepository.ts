@@ -5,9 +5,8 @@ import { OrganizationMapper } from "../../../auth/infrastructure/mappers/Organiz
 
 import { IOrganizationRepository } from "../../domain/repositories/IOrganizationRepository";
 
-export class PrismaOrganizationRepository
-  implements IOrganizationRepository
-{
+export class PrismaOrganizationRepository implements IOrganizationRepository {
+
   async findById(id: string): Promise<Organization | null> {
     const organization = await prisma.organization.findUnique({
       where: {
@@ -21,4 +20,16 @@ export class PrismaOrganizationRepository
 
     return OrganizationMapper.toDomain(organization);
   }
+
+  async update(organization: Organization): Promise<Organization> {
+    const updatedOrganization = await prisma.organization.update({
+      where: {
+        id: organization.id,
+      },
+      data: OrganizationMapper.toPersistence(organization),
+    });
+
+    return OrganizationMapper.toDomain(updatedOrganization);
+  }
+
 }

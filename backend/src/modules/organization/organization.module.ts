@@ -4,6 +4,7 @@ import { OrganizationController } from "./presentation/controllers/OrganizationC
 import { createOrganizationRoutes } from "./presentation/routes/organization.routes";
 
 import { GetOrganizationProfileUseCase } from "./application/use-cases/GetOrganizationProfileUseCase";
+import { UpdateOrganizationUseCase } from "./application/use-cases/UpdateOrganizationUseCase";
 
 import { PrismaOrganizationRepository } from "./infrastructure/repositories/PrismaOrganizationRepository";
 
@@ -11,14 +12,14 @@ import { PrismaOrganizationRepository } from "./infrastructure/repositories/Pris
 const organizationRepository = new PrismaOrganizationRepository();
 
 // Use Cases
-const getOrganizationProfileUseCase =
-  new GetOrganizationProfileUseCase(organizationRepository);
+const getOrganizationProfileUseCase = new GetOrganizationProfileUseCase(organizationRepository);
+const UpdateOrganizationProfileUseCase = new UpdateOrganizationUseCase(organizationRepository);
 
 // Controllers
 const organizationController = new OrganizationController(
-  getOrganizationProfileUseCase
+  getOrganizationProfileUseCase,
+  UpdateOrganizationProfileUseCase
 );
 
 // Routes
-export const organizationRoutes =
-  createOrganizationRoutes(organizationController);
+export const organizationRoutes = createOrganizationRoutes(organizationController);
