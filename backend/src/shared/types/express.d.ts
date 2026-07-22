@@ -1,10 +1,8 @@
-import { TokenPayload } from "../../modules/auth/domain/interfaces/ITokenService"; 
+import { TokenPayload } from "../../modules/auth/domain/interfaces/ITokenService";
 
-declare global {
-  namespace Express {
-    interface Request {
-      user?: TokenPayload;
-    }
+declare module "express-serve-static-core" {
+  interface Request {
+    user?: TokenPayload;
   }
 }
 
