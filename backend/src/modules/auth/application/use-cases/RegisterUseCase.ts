@@ -42,8 +42,8 @@ export class RegisterUseCase {
     // 4. Create organization entity
     const organization = new Organization({
       name: dto.organizationName,
-      industry: null,
-      companySize: null,
+      industry: dto.industry,
+      companySize: dto.companySize,
       status: OrganizationStatus.ACTIVE,
     });
 
