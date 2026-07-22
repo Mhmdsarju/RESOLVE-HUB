@@ -21,7 +21,7 @@ export class PrismaAuthRepository implements IAuthRepository {
     return UserMapper.toDomain(user);
   }
 
-  async findOrganizationByName(name: string ): Promise<Organization | null> {
+  async findOrganizationByName(name: string): Promise<Organization | null> {
     const organization = await prisma.organization.findFirst({
       where: { name },
     });
@@ -33,7 +33,7 @@ export class PrismaAuthRepository implements IAuthRepository {
     return OrganizationMapper.toDomain(organization);
   }
 
-  async createOrganization( organization: Organization ): Promise<Organization> {
+  async createOrganization(organization: Organization): Promise<Organization> {
     const createdOrganization = await prisma.organization.create({
       data: OrganizationMapper.toPersistence(organization),
     });
@@ -48,5 +48,16 @@ export class PrismaAuthRepository implements IAuthRepository {
 
     return UserMapper.toDomain(createdUser);
   }
-  
+
+  async updateUserPassword(email: string, password: string): Promise<void> {
+    await prisma.user.update({
+      where: {
+        email,
+      },
+      data: {
+        passwordHash: password,
+      },
+    });
+  }
+
 }

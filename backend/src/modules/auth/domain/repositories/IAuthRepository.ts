@@ -9,4 +9,7 @@ export interface IAuthRepository {
     findOrganizationByName(name: string): Promise<Organization | null>;
 
     createUser(user: User): Promise<User>;
+
+    updateUserPassword(email: string, password: string): Promise<void>;
+
 }
