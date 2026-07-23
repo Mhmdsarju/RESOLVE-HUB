@@ -1,10 +1,12 @@
 import { Request, Response, NextFunction } from "express";
+
 import { RegisterUseCase } from "../../application/use-cases/RegisterUseCase";
 import { LoginUseCase } from "../../application/use-cases/LoginUseCase";
 import { RefreshUseCase } from "../../application/use-cases/RefreshUseCase";
 import { LogoutUseCase } from "../../application/use-cases/LogoutUseCase";
 import { ForgotPasswordUseCase } from "../../application/use-cases/ForgotPasswordUseCase";
 import { VerifyOtpUseCase } from "../../application/use-cases/VerifyOtpUseCase";
+import { VerifySignupOtpUseCase } from "../../application/use-cases/VerifySignupOtpUseCase";
 import { ResetPasswordUseCase } from "../../application/use-cases/ResetPasswordUseCase";
 
 export class AuthController {
@@ -15,13 +17,30 @@ export class AuthController {
     private readonly logoutUseCase: LogoutUseCase,
     private readonly forgotPasswordUseCase: ForgotPasswordUseCase,
     private readonly verifyOtpUseCase: VerifyOtpUseCase,
+    private readonly verifySignupOtpUseCase: VerifySignupOtpUseCase,
     private readonly resetPasswordUseCase: ResetPasswordUseCase
-  ) { }
+  ) {}
 
   async register(req: Request, res: Response, next: NextFunction) {
     try {
-
       const result = await this.registerUseCase.execute(req.body);
+
+      return res.status(200).json({
+        success: true,
+        message: result.message,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async verifySignupOtp(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const result = await this.verifySignupOtpUseCase.execute(req.body);
 
       res.cookie("refreshToken", result.refreshToken, {
         httpOnly: true,
@@ -38,7 +57,6 @@ export class AuthController {
           accessToken: result.accessToken,
         },
       });
-
     } catch (error) {
       next(error);
     }
@@ -63,7 +81,6 @@ export class AuthController {
           accessToken: result.accessToken,
         },
       });
-
     } catch (error) {
       next(error);
     }
@@ -93,7 +110,6 @@ export class AuthController {
           accessToken: result.accessToken,
         },
       });
-
     } catch (error) {
       next(error);
     }
@@ -159,5 +175,4 @@ export class AuthController {
       next(error);
     }
   }
-
 }

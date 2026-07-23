@@ -1,20 +1,21 @@
+import crypto from "crypto";
+
 import { RegisterDto } from "../dto/RegisterDto";
-import { Organization } from "../../domain/entities/Organization";
-import { User } from "../../domain/entities/User";
+
 import { IAuthRepository } from "../../domain/repositories/IAuthRepository";
 import { IPasswordHasher } from "../../domain/interfaces/IPasswordHasher";
-import { OrganizationStatus } from "../../domain/enums/OrganizationStatus";
-import { ITokenService } from "../../domain/interfaces/ITokenService";
-import { ITokenStore } from "../../domain/interfaces/ITokenStore";
-import { UserRole } from "../../domain/enums/UserRole";
+import { ISignupStore } from "../../domain/interfaces/ISignupStore";
+import { IOtpStore } from "../../domain/interfaces/IOtpStore";
+import { IEmailService } from "../../domain/interfaces/IEmailService";
 
 export class RegisterUseCase {
   constructor(
     private readonly authRepository: IAuthRepository,
     private readonly passwordHasher: IPasswordHasher,
-    private readonly tokenService: ITokenService,
-    private readonly tokenStore: ITokenStore
-  ) { }
+    private readonly signupStore: ISignupStore,
+    private readonly otpStore: IOtpStore,
+    private readonly emailService: IEmailService
+  ) {}
 
   async execute(dto: RegisterDto) {
     // 1. Check if user already exists
@@ -39,52 +40,28 @@ export class RegisterUseCase {
     // 3. Hash password
     const hashedPassword = await this.passwordHasher.hash(dto.password);
 
-    // 4. Create organization entity
-    const organization = new Organization({
-      name: dto.organizationName,
+    // 4. Save signup data in Redis
+    await this.signupStore.save(dto.email, {
+      organizationName: dto.organizationName,
       industry: dto.industry,
       companySize: dto.companySize,
-      status: OrganizationStatus.ACTIVE,
-    });
-
-    // 5. Save organization
-    const savedOrganization = await this.authRepository.createOrganization(organization);
-
-    // 6. Create user entity
-    const user = new User({
       name: dto.name,
       email: dto.email,
       password: hashedPassword,
-      organizationId: savedOrganization.id!,
-      role: UserRole.ORG_ADMIN
     });
 
-    // 7. Save user
-    const savedUser = await this.authRepository.createUser(user);
+    // 5. Generate OTP
+    const otp = crypto.randomInt(100000, 999999).toString();
 
-    const payload = {
-      userId: savedUser.id!,
-      organizationId: savedUser.organizationId,
-      role: savedUser.role,
-    };
+    // 6. Save OTP
+    await this.otpStore.saveOtp(dto.email, otp);
 
-    const accessToken = await this.tokenService.generateAccessToken(payload);
-
-    const refreshToken = await this.tokenService.generateRefreshToken(payload);
-
-    await this.tokenStore.saveRefreshToken( savedUser.id!, refreshToken );
+    // 7. Send OTP
+    await this.emailService.sendOtp(dto.email, otp);
 
     // 8. Return response
     return {
-      user: {
-        id: savedUser.id,
-        name: savedUser.name,
-        email: savedUser.email,
-        organizationId: savedUser.organizationId,
-        role: savedUser.role,
-      },
-      accessToken,
-      refreshToken,
+      message: "OTP sent successfully",
     };
   }
 }

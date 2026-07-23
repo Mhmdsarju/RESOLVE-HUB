@@ -21,5 +21,7 @@ export function createAuthRoutes(authController: AuthController): Router {
 
   router.post("/reset-password", authController.resetPassword.bind(authController));
 
+  router.post("/verify-signup-otp", authController.verifySignupOtp.bind(authController));
+
   return router;
 }
