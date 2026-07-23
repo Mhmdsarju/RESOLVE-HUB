@@ -19,7 +19,7 @@ export class NodemailerEmailService implements IEmailService {
     otp: string
   ): Promise<void> {
     await this.transporter.sendMail({
-      from: process.env.EMAIL_USER,
+      from: `"ResolveHub" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: "ResolveHub - Verify Your Email",
       html: signupOtpTemplate(otp),
@@ -40,7 +40,7 @@ export class NodemailerEmailService implements IEmailService {
     otp: string
   ): Promise<void> {
     await this.transporter.sendMail({
-      from: process.env.EMAIL_USER,
+      from: `"ResolveHub" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: "ResolveHub - Password Reset OTP",
       html: forgotPasswordOtpTemplate(otp),
