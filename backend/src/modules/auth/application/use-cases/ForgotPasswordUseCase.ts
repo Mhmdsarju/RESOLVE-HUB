@@ -28,6 +28,6 @@ export class ForgotPasswordUseCase {
         await this.otpStore.saveOtp(dto.email, otp);
 
         // 4. Send OTP Email
-        await this.emailService.sendOtp(dto.email, otp);
+        await this.emailService.sendForgotPasswordOtp(dto.email, otp);
     }
 }

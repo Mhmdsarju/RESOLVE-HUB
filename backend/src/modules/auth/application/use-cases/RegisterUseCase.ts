@@ -57,7 +57,7 @@ export class RegisterUseCase {
     await this.otpStore.saveOtp(dto.email, otp);
 
     // 7. Send OTP
-    await this.emailService.sendOtp(dto.email, otp);
+   await this.emailService.sendSignupOtp(dto.email, otp);
 
     // 8. Return response
     return {

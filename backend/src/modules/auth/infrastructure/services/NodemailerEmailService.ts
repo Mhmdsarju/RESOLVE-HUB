@@ -1,5 +1,9 @@
 import nodemailer from "nodemailer";
+
 import { IEmailService } from "../../domain/interfaces/IEmailService";
+
+import { signupOtpTemplate } from "../templates/signupOtpTemplate";
+import { forgotPasswordOtpTemplate } from "../templates/forgotPasswordOtpTemplate";
 
 export class NodemailerEmailService implements IEmailService {
   private transporter = nodemailer.createTransport({
@@ -10,18 +14,45 @@ export class NodemailerEmailService implements IEmailService {
     },
   });
 
-  async sendOtp(email: string, otp: string): Promise<void> {
+  async sendSignupOtp(
+    email: string,
+    otp: string
+  ): Promise<void> {
+    await this.transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "ResolveHub - Verify Your Email",
+      html: signupOtpTemplate(otp),
+
+      attachments: [
+        {
+          filename: "resolvehub-logo.png",
+          path: "src/assets/resolvehub-logo.png",
+          cid: "resolvehub-logo",
+        },
+      ],
+
+    });
+  }
+
+  async sendForgotPasswordOtp(
+    email: string,
+    otp: string
+  ): Promise<void> {
     await this.transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: email,
       subject: "ResolveHub - Password Reset OTP",
-      html: `
-        <h2>ResolveHub</h2>
-        <p>Your password reset OTP is:</p>
-        <h1>${otp}</h1>
-        <p>This OTP is valid for 5 minutes.</p>
-        <p>If you didn't request this, please ignore this email.</p>
-      `,
+      html: forgotPasswordOtpTemplate(otp),
+
+      attachments: [
+        {
+          filename: "resolvehub-logo.png",
+          path: "src/assets/resolvehub-logo.png",
+          cid: "resolvehub-logo",
+        },
+      ],
+      
     });
   }
 }
