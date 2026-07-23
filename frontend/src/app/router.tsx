@@ -1,10 +1,13 @@
 import { createBrowserRouter } from "react-router-dom";
 
-import HomePage from "@/pages/HomePage";
+import { publicRoutes } from "./routes/public.routes";
+import { superAdminRoutes } from "./routes/super-admin.routes";
+import { orgAdminRoutes } from "./routes/org-admin.routes";
+import { engineerRoutes } from "./routes/engineer.routes";
 
 export const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <HomePage />,
-  },
+  ...publicRoutes,
+  ...superAdminRoutes,
+  ...orgAdminRoutes,
+  ...engineerRoutes,
 ]);
