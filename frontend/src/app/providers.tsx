@@ -1,11 +1,17 @@
 import type { ReactNode } from "react";
 
 import QueryProvider from "@/shared/providers/QueryProvider";
+import ToastProvider from "@/shared/providers/ToastProvider";
 
 interface AppProvidersProps {
   children: ReactNode;
 }
 
 export default function AppProviders({ children }: AppProvidersProps) {
-  return <QueryProvider>{children}</QueryProvider>;
+  return (
+    <QueryProvider>
+      <ToastProvider />
+      {children}
+    </QueryProvider>
+  );
 }
