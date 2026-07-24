@@ -1,4 +1,4 @@
-export type UserRole = "SUPER_ADMIN" | "ORG_ADMIN" | "ENGINEER";
+import type { UserRole } from "./user-role";
 
 export interface User {
   id: string;

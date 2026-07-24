@@ -1,4 +1,4 @@
 export interface ResetPasswordDto {
   resetToken: string;
-  newPassword: string;
+  password: string;
 }

@@ -7,6 +7,7 @@ import { ITokenStore } from "../../domain/interfaces/ITokenStore";
 
 import { LoginType } from "../../domain/enums/LoginType";
 import { UserRole } from "../../domain/enums/UserRole";
+import { AppError } from "../../../../shared/errors/AppError";
 
 export class LoginUseCase {
   constructor(
@@ -14,37 +15,45 @@ export class LoginUseCase {
     private readonly passwordHasher: IPasswordHasher,
     private readonly tokenService: ITokenService,
     private readonly tokenStore: ITokenStore
-  ) {}
+  ) { }
 
   async execute(dto: LoginDto) {
     // 1. Find user
     const user = await this.authRepository.findUserByEmail(dto.email);
 
     if (!user) {
-      throw new Error("Invalid email or password");
+      throw new AppError(
+        "Invalid email or password",
+        401,
+      );
     }
 
     // 2. Compare password
-    const isPasswordValid = await this.passwordHasher.compare( dto.password, user.password );
+    const isPasswordValid = await this.passwordHasher.compare(dto.password, user.password);
 
     if (!isPasswordValid) {
-      throw new Error("Invalid email or password");
+      throw new AppError(
+        "Invalid email or password",
+        401,
+      );
     }
 
     // 3. Check login type
     if (
       dto.loginType === LoginType.ORGANIZATION && user.role !== UserRole.ORG_ADMIN
     ) {
-      throw new Error(
-        "Please login through the User Login page."
+      throw new AppError(
+        "Please login through the User Login page.",
+        403,
       );
     }
 
     if (
       dto.loginType === LoginType.USER && user.role === UserRole.ORG_ADMIN
     ) {
-      throw new Error(
-        "Please login through the Organization Login page."
+      throw new AppError(
+        "Please login through the Organization Login page.",
+        403,
       );
     }
 
@@ -61,7 +70,7 @@ export class LoginUseCase {
     const refreshToken = await this.tokenService.generateRefreshToken(payload);
 
     // 6. Save Refresh Token
-    await this.tokenStore.saveRefreshToken( user.id!, refreshToken );
+    await this.tokenStore.saveRefreshToken(user.id!, refreshToken);
 
     // 7. Return
     return {

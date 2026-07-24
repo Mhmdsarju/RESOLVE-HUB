@@ -1,27 +1,29 @@
+import { AxiosError } from "axios";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 
 import { register } from "../api/authApi";
-import { useAuthStore } from "../store/authStore";
+
+import type { RegisterDto, RegisterResponse, } from "../types/register.types";
 
 export function useRegister() {
-  const setUser = useAuthStore((state) => state.setUser);
-  const setAccessToken = useAuthStore(
-    (state) => state.setAccessToken,
-  );
-
-  return useMutation({
+  return useMutation<
+    RegisterResponse,
+    AxiosError<{ message: string }>,
+    RegisterDto
+  >({
     mutationFn: register,
 
     onSuccess: (data) => {
-      setUser(data.user);
-      setAccessToken(data.accessToken);
-
-      toast.success("Registration successful");
+      toast.success(data.message);
     },
 
-    onError: () => {
-      toast.error("Registration failed");
+    onError: (error) => {
+      const message =
+        error.response?.data?.message ??
+        "Registration failed.";
+
+      toast.error(message);
     },
   });
 }
