@@ -8,6 +8,10 @@ import { ForgotPasswordUseCase } from "../../application/use-cases/ForgotPasswor
 import { VerifyOtpUseCase } from "../../application/use-cases/VerifyOtpUseCase";
 import { VerifySignupOtpUseCase } from "../../application/use-cases/VerifySignupOtpUseCase";
 import { ResetPasswordUseCase } from "../../application/use-cases/ResetPasswordUseCase";
+import { ResendSignupOtpUseCase } from "../../application/use-cases/ResendSignupOtpUseCase";
+import { ResendForgotPasswordOtpUseCase } from "../../application/use-cases/ResendForgotPasswordOtpUseCase";
+import { GetCurrentUserUseCase } from "../../application/use-cases/GetCurrentUserUseCase";
+import { ChangePasswordUseCase } from "../../application/use-cases/ChangePasswordUseCase";
 
 export class AuthController {
   constructor(
@@ -18,8 +22,12 @@ export class AuthController {
     private readonly forgotPasswordUseCase: ForgotPasswordUseCase,
     private readonly verifyOtpUseCase: VerifyOtpUseCase,
     private readonly verifySignupOtpUseCase: VerifySignupOtpUseCase,
-    private readonly resetPasswordUseCase: ResetPasswordUseCase
-  ) {}
+    private readonly resetPasswordUseCase: ResetPasswordUseCase,
+    private readonly resendSignupOtpUseCase: ResendSignupOtpUseCase,
+    private readonly resendForgotPasswordOtpUseCase: ResendForgotPasswordOtpUseCase,
+    private readonly getCurrentUserUseCase: GetCurrentUserUseCase,
+    private readonly changePasswordUseCase: ChangePasswordUseCase,
+  ) { }
 
   async register(req: Request, res: Response, next: NextFunction) {
     try {
@@ -175,4 +183,93 @@ export class AuthController {
       next(error);
     }
   }
+
+  async resendSignupOtp(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      await this.resendSignupOtpUseCase.execute(req.body);
+
+      return res.status(200).json({
+        success: true,
+        message: "OTP resent successfully",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async resendForgotPasswordOtp(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      await this.resendForgotPasswordOtpUseCase.execute(req.body);
+
+      return res.status(200).json({
+        success: true,
+        message: "OTP resent successfully",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async me(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const user = req.user;
+
+      if (!user) {
+        throw new Error("Unauthorized");
+      }
+
+      const result = await this.getCurrentUserUseCase.execute(
+        user.userId
+      );
+
+      return res.status(200).json({
+        success: true,
+        message: "User fetched successfully",
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async changePassword(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const user = req.user;
+
+      if (!user) {
+        throw new Error("Unauthorized");
+      }
+
+      await this.changePasswordUseCase.execute(
+        user.userId,
+        req.body
+      );
+
+      return res.status(200).json({
+        success: true,
+        message: "Password changed successfully",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+
 }
+
