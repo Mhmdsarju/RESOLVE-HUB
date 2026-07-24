@@ -21,6 +21,10 @@ import { RedisOtpStore } from "./infrastructure/otp-store/RedisOtpStore";
 import { RedisSignupStore } from "./infrastructure/signup-store/RedisSignupStore";
 import { RedisTokenStore } from "./infrastructure/token-store/RedisTokenStore";
 import { RedisResetTokenStore } from "./infrastructure/reset-token-store/RedisResetTokenStore";
+import { ResendSignupOtpUseCase } from "./application/use-cases/ResendSignupOtpUseCase";
+import { ResendForgotPasswordOtpUseCase } from "./application/use-cases/ResendForgotPasswordOtpUseCase";
+import { GetCurrentUserUseCase } from "./application/use-cases/GetCurrentUserUseCase";
+import { ChangePasswordUseCase } from "./application/use-cases/ChangePasswordUseCase";
 
 // Infrastructure
 const authRepository = new PrismaAuthRepository();
@@ -87,6 +91,28 @@ const resetPasswordUseCase = new ResetPasswordUseCase(
   resetTokenStore
 );
 
+const resendSignupOtpUseCase = new ResendSignupOtpUseCase(
+  signupStore,
+  otpStore,
+  emailService
+);
+
+const resendForgotPasswordOtpUseCase =new ResendForgotPasswordOtpUseCase(
+    authRepository,
+    otpStore,
+    emailService
+  );
+
+const getCurrentUserUseCase = new GetCurrentUserUseCase(
+  authRepository
+);
+
+const changePasswordUseCase = new ChangePasswordUseCase(
+  authRepository,
+  passwordHasher
+);
+
+
 // Controller
 const authController = new AuthController(
   registerUseCase,
@@ -96,7 +122,11 @@ const authController = new AuthController(
   forgotPasswordUseCase,
   verifyOtpUseCase,
   verifySignupOtpUseCase,
-  resetPasswordUseCase
+  resetPasswordUseCase,
+  resendSignupOtpUseCase,
+  resendForgotPasswordOtpUseCase,
+  getCurrentUserUseCase,
+  changePasswordUseCase
 );
 
 // Routes

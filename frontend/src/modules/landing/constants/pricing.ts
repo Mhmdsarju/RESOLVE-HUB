@@ -1,0 +1,37 @@
+export const pricingPlans = [
+  {
+    id: 1,
+    name: "Free",
+    price: "₹0",
+    duration: "Forever",
+    popular: false,
+    buttonText: "Get Started Free",
+    features: [
+      "Up to 5 Users",
+      "2 Teams",
+      "5 Active Incidents",
+      "2 War Rooms",
+      "Basic Analytics",
+      "Email Notifications",
+    ],
+  },
+  {
+    id: 2,
+    name: "Professional",
+    price: "₹999",
+    duration: "Month",
+    popular: true,
+    buttonText: "Upgrade Now",
+    features: [
+      "Unlimited Users",
+      "Unlimited Teams",
+      "Unlimited Incidents",
+      "Unlimited War Rooms",
+      "Prometheus Integration",
+      "Grafana Integration",
+      "Audit Logs",
+      "API Access",
+      "Priority Support",
+    ],
+  },
+];

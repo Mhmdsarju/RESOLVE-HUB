@@ -33,7 +33,7 @@ export class ResetPasswordUseCase {
 
     // 4. Hash New Password
     const hashedPassword =
-      await this.passwordHasher.hash(dto.newPassword);
+      await this.passwordHasher.hash(dto.password);
 
     // 5. Update Password
     await this.authRepository.updateUserPassword(

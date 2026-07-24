@@ -12,4 +12,6 @@ export interface IAuthRepository {
 
     updateUserPassword(email: string, password: string): Promise<void>;
 
+    findUserById(id: string): Promise<User | null>;
+
 }
