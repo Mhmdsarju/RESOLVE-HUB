@@ -11,17 +11,22 @@ import {
 } from "../validations/verifySignupOtp.schema";
 
 import { useVerifySignupOtp } from "../hooks/useVerifySignupOtp";
+import { useResendSignupOtp } from "../hooks/useResendSignupOtp";
 
 export default function VerifySignupOtpPage() {
   const navigate = useNavigate();
 
   const location = useLocation();
 
-  const verifySignupOtpMutation = useVerifySignupOtp();
-
   const email = location.state?.email ?? "";
 
   const [timer, setTimer] = useState(60);
+
+  const verifySignupOtpMutation =
+    useVerifySignupOtp();
+
+  const resendSignupOtpMutation =
+    useResendSignupOtp();
 
   const {
     control,
@@ -29,7 +34,9 @@ export default function VerifySignupOtpPage() {
     setValue,
     formState: { errors },
   } = useForm<VerifySignupOtpFormData>({
-    resolver: zodResolver(verifySignupOtpSchema),
+    resolver: zodResolver(
+      verifySignupOtpSchema,
+    ),
     defaultValues: {
       email,
       otp: "",
@@ -40,6 +47,16 @@ export default function VerifySignupOtpPage() {
     control,
     name: "otp",
   });
+
+  useEffect(() => {
+    if (!email) {
+      navigate("/organization/register", {
+        replace: true,
+      });
+
+      return;
+    }
+  }, [email, navigate]);
 
   useEffect(() => {
     if (timer <= 0) {
@@ -53,29 +70,55 @@ export default function VerifySignupOtpPage() {
     return () => clearInterval(interval);
   }, [timer]);
 
-  const onSubmit = async (data: VerifySignupOtpFormData) => {
-    await verifySignupOtpMutation.mutateAsync(data);
+  const handleResendOtp =
+    async () => {
+      await resendSignupOtpMutation.mutateAsync({
+        email,
+      });
+
+      setTimer(60);
+    };
+
+  const onSubmit = async (
+    data: VerifySignupOtpFormData,
+  ) => {
+    await verifySignupOtpMutation.mutateAsync(
+      data,
+    );
 
     navigate("/dashboard");
   };
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#FAF6F0] px-4 py-8">
-      <div className="mx-auto max-w-md">
+      <div className="mx-auto w-full max-w-md">
         <div className="rounded-3xl bg-white p-8 shadow-xl">
           {/* Header */}
 
           <div className="mb-8 text-center">
-            <h1 className="text-3xl font-bold text-[#4B3932]">Verify Your Email</h1>
+            <h1 className="text-3xl font-bold text-[#4B3932]">
+              Verify Your Email
+            </h1>
 
             <p className="mt-3 text-sm leading-6 text-stone-500">
-              We've sent a 6-digit verification code to
+              We've sent a 6-digit verification
+              code to
             </p>
 
-            <p className="mt-2 font-semibold text-[#4B3932]">{email}</p>
+            <p className="mt-2 font-semibold text-[#4B3932]">
+              {email}
+            </p>
           </div>
 
-          <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+          {/* Form */}
+
+          <form
+            noValidate
+            onSubmit={handleSubmit(
+              onSubmit,
+            )}
+            className="space-y-8"
+          >
             <OtpInput
               value={otp}
               onChange={(value) =>
@@ -85,40 +128,55 @@ export default function VerifySignupOtpPage() {
               }
             />
 
-            {errors.otp && <p className="text-center text-sm text-red-500">{errors.otp.message}</p>}
+            {errors.otp && (
+              <p className="text-center text-sm text-red-500">
+                {errors.otp.message}
+              </p>
+            )}
+
             {/* Resend OTP */}
 
             <div className="flex items-center justify-center gap-2 text-sm">
-              <span className="text-stone-500">Didn't receive the code?</span>
+              <span className="text-stone-500">
+                Didn't receive the code?
+              </span>
 
               {timer > 0 ? (
-                <button
-                  type="button"
-                  disabled
-                  className="cursor-not-allowed font-medium text-stone-400"
-                >
+                <span className="font-medium text-stone-400">
                   Resend in {timer}s
-                </button>
+                </span>
               ) : (
                 <button
                   type="button"
-                  onClick={() => {
-                    // TODO:
-                    // Call resend OTP API
-
-                    setTimer(60);
-                  }}
-                  className="font-semibold text-[#4B3932] hover:underline"
+                  disabled={
+                    resendSignupOtpMutation.isPending
+                  }
+                  onClick={
+                    handleResendOtp
+                  }
+                  className="
+                    font-semibold
+                    text-[#4B3932]
+                    transition
+                    hover:underline
+                    disabled:cursor-not-allowed
+                    disabled:text-stone-400
+                  "
                 >
-                  Resend OTP
+                  {resendSignupOtpMutation.isPending
+                    ? "Sending..."
+                    : "Resend OTP"}
                 </button>
               )}
             </div>
+
             {/* Verify Button */}
 
             <button
               type="submit"
-              disabled={verifySignupOtpMutation.isPending}
+              disabled={
+                verifySignupOtpMutation.isPending
+              }
               className="
                 w-full
                 rounded-xl
@@ -136,13 +194,16 @@ export default function VerifySignupOtpPage() {
                 disabled:opacity-70
               "
             >
-              {verifySignupOtpMutation.isPending ? "Verifying..." : "Verify Email"}
+              {verifySignupOtpMutation.isPending
+                ? "Verifying..."
+                : "Verify Email"}
             </button>
 
             {/* Footer */}
 
             <div className="text-center text-sm text-stone-500">
               Wrong email?
+
               <Link
                 to="/organization/register"
                 className="

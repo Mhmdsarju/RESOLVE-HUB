@@ -6,7 +6,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
   user: null,
   accessToken: null,
   isAuthenticated: false,
-  isLoading: false,
+  isLoading: true,
 
   setUser: (user) =>
     set({
@@ -14,9 +14,10 @@ export const useAuthStore = create<AuthStore>((set) => ({
       isAuthenticated: true,
     }),
 
-  setAccessToken: (token) =>
+  setAccessToken: (accessToken) =>
     set({
-      accessToken: token,
+      accessToken,
+      isAuthenticated: true,
     }),
 
   clearUser: () =>
@@ -24,10 +25,11 @@ export const useAuthStore = create<AuthStore>((set) => ({
       user: null,
       accessToken: null,
       isAuthenticated: false,
+      isLoading: false,
     }),
 
-  setLoading: (loading) =>
+  setLoading: (isLoading) =>
     set({
-      isLoading: loading,
+      isLoading,
     }),
 }));

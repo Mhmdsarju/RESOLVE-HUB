@@ -10,6 +10,10 @@ import type { LoginDto, LoginResponse, } from "../types/login.types";
 import type { RegisterDto, RegisterResponse, } from "../types/register.types";
 import type { RefreshResponse } from "../types/refresh.types";
 
+import type { User } from "../types/auth.types";
+import type {  ResendSignupOtpDto,  ResendSignupOtpResponse,} from "../types/resendSignupOtp.types";
+import type {  ResendForgotPasswordOtpDto,  ResendForgotPasswordOtpResponse,} from "../types/resendForgotPasswordOtp.types";
+
 export async function login(
   data: LoginDto,
 ): Promise<LoginResponse> {
@@ -96,4 +100,41 @@ export async function resetPassword(
     );
 
   return response.data.data;
+}
+
+export async function me(): Promise<User> {
+  const response =
+    await api.get<ApiResponse<User>>(
+      ENDPOINTS.AUTH.ME,
+    );
+
+  return response.data.data;
+}
+
+export async function resendSignupOtp(
+  data: ResendSignupOtpDto,
+): Promise<ResendSignupOtpResponse> {
+  const response =
+    await api.post<ApiResponse<null>>(
+      ENDPOINTS.AUTH.RESEND_SIGNUP_OTP,
+      data,
+    );
+
+  return {
+    message: response.data.message,
+  };
+}
+
+export async function resendForgotPasswordOtp(
+  data: ResendForgotPasswordOtpDto,
+): Promise<ResendForgotPasswordOtpResponse> {
+  const response =
+    await api.post<ApiResponse<null>>(
+      ENDPOINTS.AUTH.RESEND_FORGOT_PASSWORD_OTP,
+      data,
+    );
+
+  return {
+    message: response.data.message,
+  };
 }

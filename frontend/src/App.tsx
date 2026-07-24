@@ -1,7 +1,13 @@
 import { RouterProvider } from "react-router-dom";
 
-import { router } from "@/app/router";
+import { router } from "./app/router";
+
+import AuthInitializer from "@/modules/auth/components/AuthInitializer";
 
 export default function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <AuthInitializer>
+      <RouterProvider router={router} />
+    </AuthInitializer>
+  );
 }

@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   useLocation,
   useNavigate,
 } from "react-router-dom";
 
 import OtpInput from "../components/OtpInput";
+
 import { useVerifyOtp } from "../hooks/useVerifyOtp";
+import { useResendForgotPasswordOtp } from "../hooks/useResendForgotPasswordOtp";
 
 export default function VerifyOtpPage() {
   const navigate = useNavigate();
@@ -14,11 +16,29 @@ export default function VerifyOtpPage() {
   const email = location.state?.email ?? "";
 
   const [otp, setOtp] = useState("");
+  const [timer, setTimer] = useState(60);
 
   const verifyOtpMutation = useVerifyOtp();
 
+  const resendForgotPasswordOtpMutation =
+    useResendForgotPasswordOtp();
+
+  useEffect(() => {
+    if (timer <= 0) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setTimer((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [timer]);
+
   const handleVerify = async () => {
-    if (otp.length !== 6) return;
+    if (otp.length !== 6) {
+      return;
+    }
 
     const response =
       await verifyOtpMutation.mutateAsync({
@@ -94,22 +114,42 @@ export default function VerifyOtpPage() {
 
         {/* Resend */}
 
-        <div className="mt-8 text-center">
-          <button
-            type="button"
-            className="
-              text-sm
-              font-medium
-              text-[#4B3932]
-              hover:underline
-            "
-          >
-            Resend OTP
-          </button>
-
-          <p className="mt-2 text-sm text-stone-500">
+        <div className="mt-8 flex items-center justify-center gap-2 text-sm">
+          <span className="text-stone-500">
             Didn't receive the code?
-          </p>
+          </span>
+
+          {timer > 0 ? (
+            <span className="font-medium text-stone-400">
+              Resend in {timer}s
+            </span>
+          ) : (
+            <button
+              type="button"
+              disabled={
+                resendForgotPasswordOtpMutation.isPending
+              }
+              onClick={async () => {
+                await resendForgotPasswordOtpMutation.mutateAsync({
+                  email,
+                });
+
+                setTimer(60);
+              }}
+              className="
+                font-semibold
+                text-[#4B3932]
+                transition
+                hover:underline
+                disabled:cursor-not-allowed
+                disabled:text-stone-400
+              "
+            >
+              {resendForgotPasswordOtpMutation.isPending
+                ? "Sending..."
+                : "Resend OTP"}
+            </button>
+          )}
         </div>
 
         <div className="mt-8 border-t border-[#E7DDD3]" />

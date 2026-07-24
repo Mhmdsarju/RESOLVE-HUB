@@ -2,15 +2,25 @@ export const ENDPOINTS = {
   AUTH: {
     LOGIN: "/auth/login",
     REGISTER: "/auth/register",
+
     VERIFY_SIGNUP_OTP: "/auth/verify-signup-otp",
+    RESEND_SIGNUP_OTP: "/auth/resend-signup-otp",
+
     FORGOT_PASSWORD: "/auth/forgot-password",
     VERIFY_OTP: "/auth/verify-otp",
+    RESEND_FORGOT_PASSWORD_OTP:
+      "/auth/resend-forgot-password-otp",
     RESET_PASSWORD: "/auth/reset-password",
-    LOGOUT: "/auth/logout",
+
     REFRESH: "/auth/refresh",
+    LOGOUT: "/auth/logout",
+
+    ME: "/auth/me",
   },
 
-  ORGANIZATION: {},
+  ORGANIZATION: {
+    PROFILE: "/organizations/me",
+  },
 
   USER: {},
 
@@ -19,4 +29,4 @@ export const ENDPOINTS = {
   TASK: {},
 
   WAR_ROOM: {},
-};
+} as const;
