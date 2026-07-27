@@ -1,6 +1,8 @@
+import { injectable } from "inversify";
 import { redisClient } from "../../../../config/redis";
 import { ITokenStore } from "../../domain/interfaces/ITokenStore";
-
+import { config } from "../../../../config/env";
+@injectable()
 export class RedisTokenStore implements ITokenStore {
 
     async saveRefreshToken(userId: string, refreshToken: string): Promise<void> {
@@ -8,7 +10,7 @@ export class RedisTokenStore implements ITokenStore {
             `refresh:${userId}`,
             refreshToken,
             {
-                EX: 7 * 24 * 60 * 60,
+                EX: config.refreshTokenTtl,
             }
         );
     }

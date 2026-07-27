@@ -3,7 +3,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 
 // Importin Routes
-import { authRoutes } from "../modules/auth/auth.module";
+import  authRoutes  from "../modules/auth/presentation/routes/auth.routes";
 import { organizationRoutes } from "../modules/organization/organization.module";
 
 import { errorHandler } from "./middlewares/errorHandler";

@@ -1,31 +1,40 @@
-import { engineerSidebar, orgAdminSidebar, superAdminSidebar } from "../../constants";
+import { useNavigate } from "react-router-dom";
 
+import {  engineerSidebar,  orgAdminSidebar,  superAdminSidebar,} from "../../constants";
 import type { SidebarSection as SidebarSectionType } from "../../types/sidebar.types";
-
-import logo from "@/assets/resolvehub-logo.png";
 
 import SidebarProfile from "./SidebarProfile";
 import SidebarSection from "./SidebarSection";
 
+ import logo from "@/assets/resolvehub-logo.png" ;
+
+import { logout } from "@/modules/auth/api/authApi";
 import { useAuthStore } from "@/modules/auth/store/authStore";
 
-const sidebarMenus: Record<"ORG_ADMIN" | "ENGINEER" | "SUPER_ADMIN", SidebarSectionType[]> = {
+const sidebarMenus: Record<
+  "ORG_ADMIN" | "ENGINEER" | "SUPER_ADMIN",
+  SidebarSectionType[]
+> = {
   ORG_ADMIN: orgAdminSidebar,
   ENGINEER: engineerSidebar,
   SUPER_ADMIN: superAdminSidebar,
 };
 
 export default function Sidebar() {
-  const user = useAuthStore((state) => state.user);
+  const navigate = useNavigate();
 
+  const user = useAuthStore((state) => state.user);
   const clearUser = useAuthStore((state) => state.clearUser);
 
-  const handleLogout = () => {
-    clearUser();
-
-    // TODO:
-    // Call logout API
-    // navigate("/organization/login", { replace: true });
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      clearUser();
+      navigate("/organization/login", { replace: true });
+    }
   };
 
   const menu = user ? sidebarMenus[user.role] : [];
@@ -44,29 +53,28 @@ export default function Sidebar() {
       "
     >
       {/* Logo */}
-
-      {/* Logo */}
-
       <div className="border-b border-[#5A463E] px-6 py-6">
         <div className="flex items-center gap-4">
           <img
-            src={logo}
+             src={logo}
             alt="ResolveHub"
             className="
-    h-12
-    w-12
-    rounded-xl
-    border
-    border-[#CBB8A8]
-    bg-white
-    p-1.5
-    object-contain
-    shadow-sm
-  "
+              h-12
+              w-12
+              rounded-xl
+              border
+              border-[#CBB8A8]
+              bg-white
+              p-1.5
+              object-contain
+              shadow-sm
+            "
           />
 
           <div>
-            <h1 className="text-xl font-bold tracking-wide text-[#F5EFE7]">ResolveHub</h1>
+            <h1 className="text-xl font-bold tracking-wide text-[#F5EFE7]">
+              ResolveHub
+            </h1>
 
             <p className="mt-1 text-xs uppercase tracking-widest text-[#CBB8A8]">
               Enterprise Edition
@@ -76,24 +84,21 @@ export default function Sidebar() {
       </div>
 
       {/* Navigation */}
-
       <div
-  className="
-    sidebar-scroll
-    flex-1
-    space-y-8
-    overflow-y-auto
-    px-4
-    py-6
-  "
->
+        className="
+          flex-1
+          space-y-8
+          overflow-y-auto
+          px-4
+          py-6
+        "
+      >
         {menu.map((section) => (
           <SidebarSection key={section.title} section={section} />
         ))}
       </div>
 
       {/* Profile */}
-
       <div className="px-4 pb-5">
         <SidebarProfile onLogout={handleLogout} />
       </div>

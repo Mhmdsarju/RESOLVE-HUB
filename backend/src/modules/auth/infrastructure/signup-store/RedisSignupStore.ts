@@ -1,17 +1,16 @@
+import { injectable } from "inversify";
 import { redisClient } from "../../../../config/redis";
-
-import {
-    ISignupStore,
-    SignupData,
-} from "../../domain/interfaces/ISignupStore";
-
+import {ISignupStore,SignupData,} from "../../domain/interfaces/ISignupStore";
+import { config } from "../../../../config/env";
+@injectable()
 export class RedisSignupStore implements ISignupStore {
+
     async save(email: string, data: SignupData): Promise<void> {
         await redisClient.set(
             `signup:${email}`,
             JSON.stringify(data),
             {
-                EX: 300,
+                EX: config.signupExpiresIn,
             }
         );
     }

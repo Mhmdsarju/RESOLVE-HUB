@@ -1,10 +1,7 @@
-import {
-  Organization as PrismaOrganization,
-  OrganizationStatus as PrismaOrganizationStatus,
-} from "@prisma/client";
+import {  Organization as PrismaOrganization,  OrganizationStatus as PrismaOrganizationStatus,} from "@prisma/client";
 
-import { Organization } from "../../domain/entities/Organization";
-import { OrganizationStatus } from "../../domain/enums/OrganizationStatus";
+import { Organization } from "../../../organization/domain/entities/Organization";
+import { OrganizationStatus } from "../../../auth/domain/enums/OrganizationStatus"; 
 
 export class OrganizationMapper {
   static toDomain( organization: PrismaOrganization ): Organization {

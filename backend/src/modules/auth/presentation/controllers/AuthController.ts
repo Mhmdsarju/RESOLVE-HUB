@@ -1,39 +1,55 @@
 import { Request, Response, NextFunction } from "express";
+import { inject, injectable } from "inversify";
+import { IRegisterUseCase } from "../../domain/interfaces/use-cases/IRegisterUseCase";
+import { IChangePasswordUseCase } from "../../domain/interfaces/use-cases/IChangePasswordUsecase";
+import { ILoginUseCase } from "../../domain/interfaces/use-cases/ILoginUseCase";
+import { ILogoutUsecase } from "../../domain/interfaces/use-cases/ILogoutUseCase";
+import { IRefreshUseCase } from "../../domain/interfaces/use-cases/IRefreshUseCase";
+import { IForgotPasswordUseCase } from "../../domain/interfaces/use-cases/IForgotPasswordUseCase";
+import { IVerifyOtpUseCase } from "../../domain/interfaces/use-cases/IVerifyOtpUseCase";
+import { IVerifySignupOtpUseCase } from "../../domain/interfaces/use-cases/IVerifySignupOtpUseCase";
+import { IResetPasswordUseCase } from "../../domain/interfaces/use-cases/IResetPasswordUseCase";
+import { IResendForgotPasswordOtpUseCase } from "../../domain/interfaces/use-cases/IResendForgotPasswordOtpUseCase";
+import { IResendSignupOtpUseCase } from "../../domain/interfaces/use-cases/IResendSignupOtpUseCase";
+import { IGetCurrentUseCase } from "../../domain/interfaces/use-cases/IGetCurrentUseCase";
+import { TYPES } from "../../../../config/types";
+import { config } from "../../../../config/env";
+import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
 
-import { RegisterUseCase } from "../../application/use-cases/RegisterUseCase";
-import { LoginUseCase } from "../../application/use-cases/LoginUseCase";
-import { RefreshUseCase } from "../../application/use-cases/RefreshUseCase";
-import { LogoutUseCase } from "../../application/use-cases/LogoutUseCase";
-import { ForgotPasswordUseCase } from "../../application/use-cases/ForgotPasswordUseCase";
-import { VerifyOtpUseCase } from "../../application/use-cases/VerifyOtpUseCase";
-import { VerifySignupOtpUseCase } from "../../application/use-cases/VerifySignupOtpUseCase";
-import { ResetPasswordUseCase } from "../../application/use-cases/ResetPasswordUseCase";
-import { ResendSignupOtpUseCase } from "../../application/use-cases/ResendSignupOtpUseCase";
-import { ResendForgotPasswordOtpUseCase } from "../../application/use-cases/ResendForgotPasswordOtpUseCase";
-import { GetCurrentUserUseCase } from "../../application/use-cases/GetCurrentUserUseCase";
-import { ChangePasswordUseCase } from "../../application/use-cases/ChangePasswordUseCase";
-
+@injectable()
 export class AuthController {
   constructor(
-    private readonly registerUseCase: RegisterUseCase,
-    private readonly loginUseCase: LoginUseCase,
-    private readonly refreshUseCase: RefreshUseCase,
-    private readonly logoutUseCase: LogoutUseCase,
-    private readonly forgotPasswordUseCase: ForgotPasswordUseCase,
-    private readonly verifyOtpUseCase: VerifyOtpUseCase,
-    private readonly verifySignupOtpUseCase: VerifySignupOtpUseCase,
-    private readonly resetPasswordUseCase: ResetPasswordUseCase,
-    private readonly resendSignupOtpUseCase: ResendSignupOtpUseCase,
-    private readonly resendForgotPasswordOtpUseCase: ResendForgotPasswordOtpUseCase,
-    private readonly getCurrentUserUseCase: GetCurrentUserUseCase,
-    private readonly changePasswordUseCase: ChangePasswordUseCase,
+    @inject(TYPES.RegisterUseCase)
+    private readonly registerUseCase: IRegisterUseCase,
+    @inject(TYPES.LoginUseCase)
+    private readonly loginUseCase: ILoginUseCase,
+    @inject(TYPES.RefreshUseCase)
+    private readonly refreshUseCase: IRefreshUseCase,
+    @inject(TYPES.LogoutUseCase)
+    private readonly logoutUseCase: ILogoutUsecase,
+    @inject(TYPES.ForgotPasswordUseCase)
+    private readonly forgotPasswordUseCase: IForgotPasswordUseCase,
+    @inject(TYPES.VerifyOtpUseCase)
+    private readonly verifyOtpUseCase: IVerifyOtpUseCase,
+    @inject(TYPES.VerifySignUpOtpUseCase)
+    private readonly verifySignupOtpUseCase: IVerifySignupOtpUseCase,
+    @inject(TYPES.ResetPasswordUseCase)
+    private readonly resetPasswordUseCase: IResetPasswordUseCase,
+    @inject(TYPES.ResendSignUpOtpUseCase)
+    private readonly resendSignupOtpUseCase: IResendSignupOtpUseCase,
+    @inject(TYPES.ResendForgotPasswordOtpUseCase)
+    private readonly resendForgotPasswordOtpUseCase: IResendForgotPasswordOtpUseCase,
+    @inject(TYPES.GetCurrentUseUseCase)
+    private readonly getCurrentUserUseCase: IGetCurrentUseCase,
+    @inject(TYPES.ChangePasswordUseCase)
+    private readonly changePasswordUseCase: IChangePasswordUseCase,
   ) { }
 
   async register(req: Request, res: Response, next: NextFunction) {
     try {
       const result = await this.registerUseCase.execute(req.body);
 
-      return res.status(200).json({
+      return res.status(HttpStatusCode.OK).json({
         success: true,
         message: result.message,
       });
@@ -42,11 +58,7 @@ export class AuthController {
     }
   }
 
-  async verifySignupOtp(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
+  async verifySignupOtp(req: Request, res: Response, next: NextFunction) {
     try {
       const result = await this.verifySignupOtpUseCase.execute(req.body);
 
@@ -54,10 +66,10 @@ export class AuthController {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+        maxAge: config.refreshCookieMaxAge,
       });
 
-      return res.status(201).json({
+      return res.status(HttpStatusCode.CREATED).json({
         success: true,
         message: "User registered successfully",
         data: {
@@ -78,10 +90,10 @@ export class AuthController {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+        maxAge: config.refreshCookieMaxAge,
       });
 
-      return res.status(200).json({
+      return res.status(HttpStatusCode.OK).json({
         success: true,
         message: "Login successful",
         data: {
@@ -102,16 +114,16 @@ export class AuthController {
         throw new Error("Refresh token not found");
       }
 
-      const result = await this.refreshUseCase.execute(refreshToken);
+      const result = await this.refreshUseCase.execute({ refreshToken });
 
       res.cookie("refreshToken", result.refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+        maxAge: config.refreshCookieMaxAge,
       });
 
-      return res.status(200).json({
+      return res.status(HttpStatusCode.OK).json({
         success: true,
         message: "Token refreshed successfully",
         data: {
@@ -131,11 +143,11 @@ export class AuthController {
         throw new Error("Refresh token not found");
       }
 
-      await this.logoutUseCase.execute(refreshToken);
+      await this.logoutUseCase.execute({ refreshToken });
 
       res.clearCookie("refreshToken");
 
-      return res.status(200).json({
+      return res.status(HttpStatusCode.OK).json({
         success: true,
         message: "Logout successful",
       });
@@ -148,7 +160,7 @@ export class AuthController {
     try {
       await this.forgotPasswordUseCase.execute(req.body);
 
-      return res.status(200).json({
+      return res.status(HttpStatusCode.OK).json({
         success: true,
         message: "OTP sent successfully",
       });
@@ -161,7 +173,7 @@ export class AuthController {
     try {
       const result = await this.verifyOtpUseCase.execute(req.body);
 
-      return res.status(200).json({
+      return res.status(HttpStatusCode.OK).json({
         success: true,
         message: "OTP verified successfully",
         data: result,
@@ -175,7 +187,7 @@ export class AuthController {
     try {
       await this.resetPasswordUseCase.execute(req.body);
 
-      return res.status(200).json({
+      return res.status(HttpStatusCode.OK).json({
         success: true,
         message: "Password reset successfully",
       });
@@ -184,15 +196,12 @@ export class AuthController {
     }
   }
 
-  async resendSignupOtp(
-    req: Request,
-    res: Response,
-    next: NextFunction
+  async resendSignupOtp(req: Request, res: Response, next: NextFunction
   ) {
     try {
       await this.resendSignupOtpUseCase.execute(req.body);
 
-      return res.status(200).json({
+      return res.status(HttpStatusCode.OK).json({
         success: true,
         message: "OTP resent successfully",
       });
@@ -201,15 +210,11 @@ export class AuthController {
     }
   }
 
-  async resendForgotPasswordOtp(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
+  async resendForgotPasswordOtp(req: Request, res: Response, next: NextFunction) {
     try {
       await this.resendForgotPasswordOtpUseCase.execute(req.body);
 
-      return res.status(200).json({
+      return res.status(HttpStatusCode.OK).json({
         success: true,
         message: "OTP resent successfully",
       });
@@ -218,11 +223,7 @@ export class AuthController {
     }
   }
 
-  async me(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
+  async me(req: Request, res: Response, next: NextFunction) {
     try {
       const user = req.user;
 
@@ -230,11 +231,11 @@ export class AuthController {
         throw new Error("Unauthorized");
       }
 
-      const result = await this.getCurrentUserUseCase.execute(
-        user.userId
-      );
+      const result = await this.getCurrentUserUseCase.execute({
+        userId: user.userId,
+      });
 
-      return res.status(200).json({
+      return res.status(HttpStatusCode.OK).json({
         success: true,
         message: "User fetched successfully",
         data: result,
@@ -244,11 +245,7 @@ export class AuthController {
     }
   }
 
-  async changePassword(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
+  async changePassword(req: Request, res: Response, next: NextFunction) {
     try {
       const user = req.user;
 
@@ -261,7 +258,7 @@ export class AuthController {
         req.body
       );
 
-      return res.status(200).json({
+      return res.status(HttpStatusCode.OK).json({
         success: true,
         message: "Password changed successfully",
       });

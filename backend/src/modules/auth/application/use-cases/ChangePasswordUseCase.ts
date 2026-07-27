@@ -1,51 +1,52 @@
 import { ChangePasswordDto } from "../dto/ChangePasswordDto";
-
-import { IAuthRepository } from "../../domain/repositories/IAuthRepository";
+import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { IPasswordHasher } from "../../domain/interfaces/IPasswordHasher";
+import { injectable, inject } from "inversify";
+import { TYPES } from "../../../../config/types";
+import { IChangePasswordUseCase } from "../../domain/interfaces/use-cases/IChangePasswordUsecase";
+import { AppError } from "../../../../shared/errors/AppError";
+import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
 
-export class ChangePasswordUseCase {
+@injectable()
+export class ChangePasswordUseCase implements IChangePasswordUseCase {
   constructor(
-    private readonly authRepository: IAuthRepository,
+    @inject(TYPES.UserRepository)
+    private readonly userRepository: IUserRepository,
+    @inject(TYPES.PasswordHasher)
     private readonly passwordHasher: IPasswordHasher
-  ) {}
+  ) { }
 
   async execute(userId: string, dto: ChangePasswordDto): Promise<void> {
-    // 1. Get user
-    const user = await this.authRepository.findUserById(userId);
+    
+    const user = await this.userRepository.findById(userId);
 
     if (!user) {
-      throw new Error("User not found");
+      throw new AppError("User not found",HttpStatusCode.NOT_FOUND);
     }
 
-    // 2. Verify current password
     const isPasswordValid = await this.passwordHasher.compare(
       dto.currentPassword,
       user.password
     );
 
     if (!isPasswordValid) {
-      throw new Error("Current password is incorrect");
+      throw new AppError("Current password is incorrect",HttpStatusCode.BAD_REQUEST);
     }
 
-    // 3. Prevent same password
     const isSamePassword = await this.passwordHasher.compare(
       dto.newPassword,
       user.password
     );
 
     if (isSamePassword) {
-      throw new Error(
-        "New password must be different from current password"
-      );
+      throw new AppError("New password must be different from current password",HttpStatusCode.BAD_REQUEST);
     }
 
-    // 4. Hash new password
     const hashedPassword = await this.passwordHasher.hash(
       dto.newPassword
     );
 
-    // 5. Update password
-    await this.authRepository.updateUserPassword(
+    await this.userRepository.updatePassword(
       user.email,
       hashedPassword
     );

@@ -1,20 +1,33 @@
 import { LogOut } from "lucide-react";
+import { useState } from "react";
 
 import { useAuthStore } from "@/modules/auth/store/authStore";
 
 interface SidebarProfileProps {
-  onLogout: () => void;
+  onLogout: () => Promise<void>;
 }
 
 export default function SidebarProfile({
   onLogout,
 }: SidebarProfileProps) {
   const user = useAuthStore((state) => state.user);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    if (isLoggingOut) return;
+
+    setIsLoggingOut(true);
+
+    try {
+      await onLogout();
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   return (
     <div className="border-t border-[#5A463E] pt-5">
       {/* User Info */}
-
       <div className="mb-5 flex items-center gap-3">
         <div
           className="
@@ -45,10 +58,10 @@ export default function SidebarProfile({
       </div>
 
       {/* Logout */}
-
       <button
         type="button"
-        onClick={onLogout}
+        onClick={handleLogout}
+        disabled={isLoggingOut}
         className="
           flex
           w-full
@@ -64,11 +77,13 @@ export default function SidebarProfile({
           duration-200
           hover:bg-[#5A463E]
           hover:text-white
+          disabled:cursor-not-allowed
+          disabled:opacity-60
         "
       >
         <LogOut size={18} />
 
-        <span>Logout</span>
+        <span>{isLoggingOut ? "Logging out..." : "Logout"}</span>
       </button>
     </div>
   );

@@ -87,14 +87,14 @@ export default function OrganizationRegisterPage() {
               <div className="grid gap-5 md:grid-cols-2">
                 <AuthInput
                   label="Organization Name"
-                  placeholder="Acme Corporation"
+                  placeholder="ex: Trens"
                   error={errors.organizationName?.message}
                   {...register("organizationName")}
                 />
 
                 <AuthInput
                   label="Company Domain"
-                  placeholder="acme.com"
+                  placeholder="Trens.com"
                   error={errors.companyDomain?.message}
                   {...register("companyDomain")}
                 />
@@ -125,7 +125,7 @@ export default function OrganizationRegisterPage() {
               <div className="grid gap-6 md:grid-cols-2">
                 <AuthInput
                   label="Admin Name"
-                  placeholder="John Doe"
+                  placeholder="ex: Luca"
                   error={errors.name?.message}
                   {...register("name")}
                 />
@@ -133,7 +133,7 @@ export default function OrganizationRegisterPage() {
                 <AuthInput
                   type="email"
                   label="Work Email"
-                  placeholder="john@acme.com"
+                  placeholder="admin@company.com"
                   error={errors.email?.message}
                   {...register("email")}
                 />
@@ -202,13 +202,13 @@ export default function OrganizationRegisterPage() {
                 disabled:opacity-70
               "
             >
-              {registerMutation.isPending ? "Creating Workspace..." : "Create Workspace"}
+              {registerMutation.isPending ? "Creating Organization..." : "Create Organization"}
             </button>
 
             {/* Footer */}
 
             <div className="text-center text-sm text-stone-500">
-              Already have an organization workspace?
+              Already have an organization ?
               <Link
                 to="/organization/login"
                 className="ml-2 font-semibold text-[#4B3932] hover:underline"

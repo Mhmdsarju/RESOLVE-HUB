@@ -1,19 +1,26 @@
-import { IAuthRepository } from "../../domain/repositories/IAuthRepository";
-
-export class GetCurrentUserUseCase {
+import { TYPES } from "../../../../config/types";
+import { IUserRepository } from "../../domain/repositories/IUserRepository";
+import { injectable,inject } from "inversify";
+import { GetUserDto } from "../dto/GetCurrentUserDto";
+import { IGetCurrentUseCase } from "../../domain/interfaces/use-cases/IGetCurrentUseCase";
+import { AppError } from "../../../../shared/errors/AppError";
+import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
+@injectable()
+export class GetCurrentUserUseCase implements IGetCurrentUseCase{
   constructor(
-    private readonly authRepository: IAuthRepository
+    @inject(TYPES.UserRepository)
+private readonly userRepository: IUserRepository
   ) {}
 
-  async execute(userId: string) {
-    const user = await this.authRepository.findUserById(userId);
+  async execute(dto:GetUserDto) {
+    const user = await this.userRepository.findById(dto.userId);
 
     if (!user) {
-      throw new Error("User not found");
+      throw new AppError("User not found",HttpStatusCode.NOT_FOUND);
     }
 
     return {
-      id: user.id,
+      id: user.id!,
       organizationId: user.organizationId,
       name: user.name,
       email: user.email,

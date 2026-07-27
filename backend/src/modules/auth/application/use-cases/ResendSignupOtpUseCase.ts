@@ -1,36 +1,40 @@
-import crypto from "crypto";
-
 import { ResendSignupOtpDto } from "../dto/ResendSignupOtpDto";
 
 import { ISignupStore } from "../../domain/interfaces/ISignupStore";
 import { IOtpStore } from "../../domain/interfaces/IOtpStore";
 import { IEmailService } from "../../domain/interfaces/IEmailService";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../../../../config/types";
+import { IResendSignupOtpUseCase } from "../../domain/interfaces/use-cases/IResendSignupOtpUseCase";
+import { AppError } from "../../../../shared/errors/AppError";
+import { generateotp } from "../../../../shared/utils/generateOtp";
+import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
 
-export class ResendSignupOtpUseCase {
+@injectable()
+export class ResendSignupOtpUseCase implements IResendSignupOtpUseCase {
   constructor(
+    @inject(TYPES.SignupStore)
     private readonly signupStore: ISignupStore,
+    @inject(TYPES.OtpStore)
     private readonly otpStore: IOtpStore,
+    @inject(TYPES.EmailService)
     private readonly emailService: IEmailService
   ) {}
 
   async execute(dto: ResendSignupOtpDto): Promise<void> {
-    // 1. Check signup session
+   
     const signupData = await this.signupStore.get(dto.email);
 
     if (!signupData) {
-      throw new Error("Signup session expired. Please register again.");
+      throw new AppError("Signup session expired. Please register again.",HttpStatusCode.BAD_REQUEST);
     }
 
-    // 2. Delete old OTP
     await this.otpStore.deleteOtp(dto.email);
 
-    // 3. Generate new OTP
-    const otp = crypto.randomInt(100000, 999999).toString();
+    const otp = generateotp();
 
-    // 4. Save new OTP
     await this.otpStore.saveOtp(dto.email, otp);
 
-    // 5. Send email
     await this.emailService.sendSignupOtp(dto.email, otp);
   }
 }

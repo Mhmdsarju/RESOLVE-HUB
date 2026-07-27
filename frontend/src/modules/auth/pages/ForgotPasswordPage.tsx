@@ -53,7 +53,7 @@ export default function ForgotPasswordPage() {
           <AuthInput
             type="email"
             label="Work Email"
-            placeholder="john@company.com"
+            placeholder="you@example.com"
             error={errors.email?.message}
             {...register("email")}
           />

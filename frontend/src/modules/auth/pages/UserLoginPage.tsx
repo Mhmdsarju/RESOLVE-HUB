@@ -5,10 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import AuthInput from "../components/AuthInput";
 import PasswordInput from "../components/PasswordInput";
 
-import {
-  loginSchema,
-  type LoginFormData,
-} from "../validations/login.schema";
+import {  loginSchema,  type LoginFormData,} from "../validations/login.schema";
 
 import { useLogin } from "../hooks/useLogin";
 
@@ -17,13 +14,9 @@ export default function UserLoginPage() {
 
   const loginMutation = useLogin();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginFormData>({
+  const {    register,    handleSubmit,    formState: { errors },  } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
-
+    
     defaultValues: {
       email: "",
       password: "",

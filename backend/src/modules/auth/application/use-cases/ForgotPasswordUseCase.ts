@@ -1,33 +1,37 @@
-import crypto from "crypto";
-
 import { ForgotPasswordDto } from "../dto/ForgotPasswordDto";
-
-import { IAuthRepository } from "../../domain/repositories/IAuthRepository";
+import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { IOtpStore } from "../../domain/interfaces/IOtpStore";
 import { IEmailService } from "../../domain/interfaces/IEmailService";
 
-export class ForgotPasswordUseCase {
+import { injectable, inject } from "inversify";
+import { TYPES } from "../../../../config/types";
+import { IForgotPasswordUseCase } from "../../domain/interfaces/use-cases/IForgotPasswordUseCase";
+import { generateotp } from "../../../../shared/utils/generateOtp";
+import { AppError } from "../../../../shared/errors/AppError";
+import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
+@injectable()
+export class ForgotPasswordUseCase implements IForgotPasswordUseCase {
     constructor(
-        private readonly authRepository: IAuthRepository,
+        @inject(TYPES.UserRepository)
+        private readonly userRepository: IUserRepository,
+        @inject(TYPES.OtpStore)
         private readonly otpStore: IOtpStore,
+        @inject(TYPES.EmailService)
         private readonly emailService: IEmailService
     ) { }
 
     async execute(dto: ForgotPasswordDto): Promise<void> {
-        // 1. Check user exists
-        const user = await this.authRepository.findUserByEmail(dto.email);
+
+       const user = await this.userRepository.findByEmail(dto.email);
 
         if (!user) {
-            throw new Error("User not found");
+            throw new AppError("User not found",HttpStatusCode.NOT_FOUND);
         }
 
-        // 2. Generate 6-digit OTP
-        const otp = crypto.randomInt(100000, 999999).toString();;
+        const otp = generateotp();
 
-        // 3. Save OTP in Redis
         await this.otpStore.saveOtp(dto.email, otp);
 
-        // 4. Send OTP Email
         await this.emailService.sendForgotPasswordOtp(dto.email, otp);
     }
 }

@@ -7,7 +7,7 @@ interface FullScreenLoaderProps {
 
 export default function FullScreenLoader({
   title = "Loading...",
-  description = "Please wait while we prepare your workspace.",
+  description = "Please wait...",
 }: FullScreenLoaderProps) {
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#FAF6F0] px-6">

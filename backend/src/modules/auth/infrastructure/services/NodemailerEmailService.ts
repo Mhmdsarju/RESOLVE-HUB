@@ -4,8 +4,11 @@ import { IEmailService } from "../../domain/interfaces/IEmailService";
 
 import { signupOtpTemplate } from "../templates/signupOtpTemplate";
 import { forgotPasswordOtpTemplate } from "../templates/forgotPasswordOtpTemplate";
+import { injectable } from "inversify";
 
+@injectable()
 export class NodemailerEmailService implements IEmailService {
+
   private transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -14,10 +17,7 @@ export class NodemailerEmailService implements IEmailService {
     },
   });
 
-  async sendSignupOtp(
-    email: string,
-    otp: string
-  ): Promise<void> {
+  async sendSignupOtp(email: string, otp: string): Promise<void> {
     await this.transporter.sendMail({
       from: `"ResolveHub" <${process.env.EMAIL_USER}>`,
       to: email,
@@ -35,10 +35,7 @@ export class NodemailerEmailService implements IEmailService {
     });
   }
 
-  async sendForgotPasswordOtp(
-    email: string,
-    otp: string
-  ): Promise<void> {
+  async sendForgotPasswordOtp(email: string, otp: string): Promise<void> {
     await this.transporter.sendMail({
       from: `"ResolveHub" <${process.env.EMAIL_USER}>`,
       to: email,
@@ -52,7 +49,7 @@ export class NodemailerEmailService implements IEmailService {
           cid: "resolvehub-logo",
         },
       ],
-      
+
     });
   }
 }

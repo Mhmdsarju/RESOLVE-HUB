@@ -1,17 +1,24 @@
+import { injectable } from "inversify";
 import { prisma } from "../../../../config/database";
 
-import { Organization } from "../../../auth/domain/entities/Organization";
-import { OrganizationMapper } from "../../../auth/infrastructure/mappers/OrganizationMapper";
-
+import { Organization } from "../../domain/entities/Organization";
 import { IOrganizationRepository } from "../../domain/repositories/IOrganizationRepository";
+import { OrganizationMapper } from "../mappers/OrganizationMapper";
 
-export class PrismaOrganizationRepository implements IOrganizationRepository {
+@injectable()
+export class PrismaOrganizationRepository  implements IOrganizationRepository {
+  
+  async create(organization: Organization): Promise<Organization> {
+    const createdOrganization = await prisma.organization.create({
+      data: OrganizationMapper.toPersistence(organization),
+    });
+
+    return OrganizationMapper.toDomain(createdOrganization);
+  }
 
   async findById(id: string): Promise<Organization | null> {
     const organization = await prisma.organization.findUnique({
-      where: {
-        id,
-      },
+      where: { id },
     });
 
     if (!organization) {
@@ -21,15 +28,35 @@ export class PrismaOrganizationRepository implements IOrganizationRepository {
     return OrganizationMapper.toDomain(organization);
   }
 
-  async update(organization: Organization): Promise<Organization> {
+  async findAll(): Promise<Organization[]> {
+    throw new Error("Method not implemented.");
+  }
+
+  async update(id: string, data: Partial<Organization>): Promise<Organization> {
     const updatedOrganization = await prisma.organization.update({
       where: {
-        id: organization.id,
+        id,
       },
-      data: OrganizationMapper.toPersistence(organization),
+      data,
     });
 
     return OrganizationMapper.toDomain(updatedOrganization);
   }
 
+  async delete(id: string): Promise<void> {
+    console.log(id);
+    throw new Error("Method not implemented.");
+  }
+
+  async findByName(name: string): Promise<Organization | null> {
+    const organization = await prisma.organization.findFirst({
+      where: { name },
+    });
+
+    if (!organization) {
+      return null;
+    }
+
+    return OrganizationMapper.toDomain(organization);
+  }
 }

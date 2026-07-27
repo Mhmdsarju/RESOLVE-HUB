@@ -1,36 +1,39 @@
-import crypto from "crypto";
-
 import { ResendForgotPasswordOtpDto } from "../dto/ResendForgotPasswordOtpDto";
-
-import { IAuthRepository } from "../../domain/repositories/IAuthRepository";
+import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { IOtpStore } from "../../domain/interfaces/IOtpStore";
 import { IEmailService } from "../../domain/interfaces/IEmailService";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../../../../config/types";
+import { IResendForgotPasswordOtpUseCase } from "../../domain/interfaces/use-cases/IResendForgotPasswordOtpUseCase";
+import { AppError } from "../../../../shared/errors/AppError";
+import { generateotp } from "../../../../shared/utils/generateOtp";
+import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
 
-export class ResendForgotPasswordOtpUseCase {
+@injectable()
+export class ResendForgotPasswordOtpUseCase implements IResendForgotPasswordOtpUseCase {
   constructor(
-    private readonly authRepository: IAuthRepository,
+    @inject(TYPES.UserRepository)
+private readonly userRepository: IUserRepository,
+    @inject(TYPES.OtpStore)
     private readonly otpStore: IOtpStore,
+    @inject(TYPES.EmailService)
     private readonly emailService: IEmailService
   ) {}
 
   async execute(dto: ResendForgotPasswordOtpDto): Promise<void> {
-    // 1. Check user exists
-    const user = await this.authRepository.findUserByEmail(dto.email);
+
+    const user = await this.userRepository.findByEmail(dto.email);
 
     if (!user) {
-      throw new Error("User not found");
+      throw new AppError("User not found",HttpStatusCode.NOT_FOUND);
     }
 
-    // 2. Delete old OTP
     await this.otpStore.deleteOtp(dto.email);
 
-    // 3. Generate new OTP
-    const otp = crypto.randomInt(100000, 999999).toString();
+    const otp = generateotp();
 
-    // 4. Save OTP
     await this.otpStore.saveOtp(dto.email, otp);
 
-    // 5. Send Email
     await this.emailService.sendForgotPasswordOtp(dto.email, otp);
   }
 }

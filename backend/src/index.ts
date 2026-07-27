@@ -1,4 +1,5 @@
 import "dotenv/config";
+import "reflect-metadata";
 import { connectRedis } from "./config/redis";
 import { connectDatabase } from "./config/database";
 import { startServer } from "./app/server";

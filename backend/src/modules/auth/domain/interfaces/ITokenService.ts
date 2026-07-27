@@ -7,12 +7,9 @@ export interface TokenPayload {
 }
 
 export interface ITokenService {
-  // Generate
   generateAccessToken(payload: TokenPayload): Promise<string>;
   generateRefreshToken(payload: TokenPayload): Promise<string>;
   generateResetToken(email: string): Promise<string>;
-
-  // Verify
   verifyAccessToken(token: string): Promise<TokenPayload>;
   verifyRefreshToken(token: string): Promise<TokenPayload>;
   verifyResetToken(token: string): Promise<{ email: string }>;

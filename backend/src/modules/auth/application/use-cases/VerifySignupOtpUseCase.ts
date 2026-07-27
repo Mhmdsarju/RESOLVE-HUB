@@ -1,47 +1,57 @@
-import { Organization } from "../../domain/entities/Organization";
+import { Organization } from "../../../organization/domain/entities/Organization";
 import { User } from "../../domain/entities/User";
 
 import { OrganizationStatus } from "../../domain/enums/OrganizationStatus";
 import { UserRole } from "../../domain/enums/UserRole";
-
+import { AppError } from "../../../../shared/errors/AppError";
 import { VerifySignupOtpDto } from "../dto/VerifySignupOtpDto";
-
-import { IAuthRepository } from "../../domain/repositories/IAuthRepository";
+import { IUserRepository } from "../../domain/repositories/IUserRepository";
+import { IOrganizationRepository } from "../../../organization/domain/repositories/IOrganizationRepository";
 import { IOtpStore } from "../../domain/interfaces/IOtpStore";
 import { ISignupStore } from "../../domain/interfaces/ISignupStore";
 import { ITokenService } from "../../domain/interfaces/ITokenService";
 import { ITokenStore } from "../../domain/interfaces/ITokenStore";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../../../../config/types";
+import { IVerifySignupOtpUseCase } from "../../domain/interfaces/use-cases/IVerifySignupOtpUseCase";
+import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
 
-export class VerifySignupOtpUseCase {
+@injectable()
+export class VerifySignupOtpUseCase implements IVerifySignupOtpUseCase {
   constructor(
-    private readonly authRepository: IAuthRepository,
+    @inject(TYPES.UserRepository)
+    private readonly userRepository: IUserRepository,
+    @inject(TYPES.OrganizationRepository)
+    private readonly organizationRepository: IOrganizationRepository,
+    @inject(TYPES.OtpStore)
     private readonly otpStore: IOtpStore,
+    @inject(TYPES.SignupStore)
     private readonly signupStore: ISignupStore,
+    @inject(TYPES.TokenService)
     private readonly tokenService: ITokenService,
+    @inject(TYPES.TokenStore)
     private readonly tokenStore: ITokenStore
-  ) {}
+  ) { }
 
   async execute(dto: VerifySignupOtpDto) {
-    // 1. Get OTP
+   
     const storedOtp = await this.otpStore.getOtp(dto.email);
 
     if (!storedOtp) {
-      throw new Error("OTP expired or not found");
+      throw new AppError("OTP expired or not found",HttpStatusCode.BAD_REQUEST);
     }
 
-    // 2. Compare OTP
+  
     if (storedOtp !== dto.otp) {
-      throw new Error("Invalid OTP");
+      throw new AppError("Invalid OTP",HttpStatusCode.BAD_REQUEST);
     }
 
-    // 3. Get signup data
     const signupData = await this.signupStore.get(dto.email);
 
     if (!signupData) {
-      throw new Error("Signup session expired");
+      throw new AppError("Signup session expired",HttpStatusCode.BAD_REQUEST);
     }
 
-    // 4. Create organization
     const organization = new Organization({
       name: signupData.organizationName,
       industry: signupData.industry,
@@ -49,10 +59,8 @@ export class VerifySignupOtpUseCase {
       status: OrganizationStatus.ACTIVE,
     });
 
-    const savedOrganization =
-      await this.authRepository.createOrganization(organization);
+    const savedOrganization = await this.organizationRepository.create(organization);
 
-    // 5. Create user
     const user = new User({
       name: signupData.name,
       email: signupData.email,
@@ -61,35 +69,26 @@ export class VerifySignupOtpUseCase {
       role: UserRole.ORG_ADMIN,
     });
 
-    const savedUser =
-      await this.authRepository.createUser(user);
+    const savedUser = await this.userRepository.create(user);
 
-    // 6. Generate Tokens
     const payload = {
       userId: savedUser.id!,
       organizationId: savedUser.organizationId,
       role: savedUser.role,
     };
 
-    const accessToken =
-      await this.tokenService.generateAccessToken(payload);
+    const accessToken = await this.tokenService.generateAccessToken(payload);
 
-    const refreshToken =
-      await this.tokenService.generateRefreshToken(payload);
+    const refreshToken = await this.tokenService.generateRefreshToken(payload);
 
-    await this.tokenStore.saveRefreshToken(
-      savedUser.id!,
-      refreshToken
-    );
+    await this.tokenStore.saveRefreshToken(savedUser.id!, refreshToken);
 
-    // 7. Cleanup Redis
     await this.otpStore.deleteOtp(dto.email);
     await this.signupStore.delete(dto.email);
 
-    // 8. Return response
     return {
       user: {
-        id: savedUser.id,
+        id: savedUser.id!,
         name: savedUser.name,
         email: savedUser.email,
         organizationId: savedUser.organizationId,

@@ -1,4 +1,4 @@
-import { OrganizationStatus } from "../enums/OrganizationStatus";
+import { OrganizationStatus } from "../../../auth/domain/enums/OrganizationStatus";
 
 interface OrganizationProps {
   id?: string;

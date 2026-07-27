@@ -1,58 +1,43 @@
+import { inject, injectable } from "inversify";
 import { ITokenService } from "../../domain/interfaces/ITokenService";
 import { ITokenStore } from "../../domain/interfaces/ITokenStore";
-
-export class RefreshUseCase {
+import { TYPES } from "../../../../config/types";
+import { IRefreshUseCase } from "../../domain/interfaces/use-cases/IRefreshUseCase";
+import { RefreshDto } from "../dto/RefreshDto";
+import { AppError } from "../../../../shared/errors/AppError";
+import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
+@injectable()
+export class RefreshUseCase implements IRefreshUseCase {
   constructor(
+    @inject(TYPES.TokenService)
     private readonly tokenService: ITokenService,
-    private readonly tokenStore: ITokenStore
-  ) {}
+    @inject(TYPES.TokenStore)
+    private readonly tokenStore: ITokenStore,
+  ) { }
 
-  async execute(refreshToken: string) {
-    // 1. Verify Refresh Token
-    const payload =
-      await this.tokenService.verifyRefreshToken(
-        refreshToken
-      );
+  async execute(dto: RefreshDto) {
 
-    // 2. Get Token from Redis
-    const storedRefreshToken =
-      await this.tokenStore.getRefreshToken(
-        payload.userId
-      );
+    const payload = await this.tokenService.verifyRefreshToken(dto.refreshToken);
 
-    // 3. Validate Token
-    if (
-      !storedRefreshToken ||
-      storedRefreshToken !== refreshToken
-    ) {
-      throw new Error("Invalid refresh token");
+    const storedRefreshToken = await this.tokenStore.getRefreshToken(payload.userId);
+
+    if (!storedRefreshToken || storedRefreshToken !== dto.refreshToken) {
+      throw new AppError("Invalid refresh token",HttpStatusCode.UNAUTHORIZED);
     }
 
-    // 4. Create Fresh Payload
     const tokenPayload = {
       userId: payload.userId,
       organizationId: payload.organizationId,
       role: payload.role,
     };
 
-    // 5. Generate New Tokens
-    const newAccessToken =
-      await this.tokenService.generateAccessToken(
-        tokenPayload
-      );
+    const newAccessToken = await this.tokenService.generateAccessToken(tokenPayload);
 
-    const newRefreshToken =
-      await this.tokenService.generateRefreshToken(
-        tokenPayload
-      );
+    const newRefreshToken = await this.tokenService.generateRefreshToken(tokenPayload);
 
-    // 6. Update Redis
-    await this.tokenStore.saveRefreshToken(
-      payload.userId,
-      newRefreshToken
-    );
+    await this.tokenStore.saveRefreshToken(payload.userId, newRefreshToken);
 
-    // 7. Return
+
     return {
       accessToken: newAccessToken,
       refreshToken: newRefreshToken,

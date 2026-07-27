@@ -3,41 +3,41 @@ import { VerifyOtpDto } from "../dto/VerifyOtpDto";
 import { IOtpStore } from "../../domain/interfaces/IOtpStore";
 import { IResetTokenStore } from "../../domain/interfaces/IResetTokenStore";
 import { ITokenService } from "../../domain/interfaces/ITokenService";
-
-export class VerifyOtpUseCase {
+import { inject, injectable } from "inversify";
+import { TYPES } from "../../../../config/types";
+import { IVerifyOtpUseCase } from "../../domain/interfaces/use-cases/IVerifyOtpUseCase";
+import { AppError } from "../../../../shared/errors/AppError";
+import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
+@injectable()
+export class VerifyOtpUseCase implements IVerifyOtpUseCase {
   constructor(
+    @inject(TYPES.OtpStore)
     private readonly otpStore: IOtpStore,
+    @inject(TYPES.ResetTokenStore)
     private readonly resetTokenStore: IResetTokenStore,
+    @inject(TYPES.TokenService)
     private readonly tokenService: ITokenService
   ) { }
 
   async execute(dto: VerifyOtpDto) {
-    // 1. Get OTP
+
     const storedOtp = await this.otpStore.getOtp(dto.email);
 
     if (!storedOtp) {
-      throw new Error("OTP expired or not found");
+      throw new AppError("OTP expired or not found", HttpStatusCode.NOT_FOUND);
     }
 
-    // 2. Compare OTP
+
     if (storedOtp !== dto.otp) {
-      throw new Error("Invalid OTP");
+      throw new AppError("Invalid OTP", HttpStatusCode.BAD_REQUEST);
     }
 
-    // 3. Delete OTP
     await this.otpStore.deleteOtp(dto.email);
 
-    // 4. Generate Reset Token
-    const resetToken =
-      await this.tokenService.generateResetToken(dto.email);
+    const resetToken = await this.tokenService.generateResetToken(dto.email);
 
-    // 5. Save Reset Token
-    await this.resetTokenStore.saveResetToken(
-      dto.email,
-      resetToken
-    );
+    await this.resetTokenStore.saveResetToken(dto.email, resetToken);
 
-    // 6. Return Reset Token
     return {
       resetToken,
     };

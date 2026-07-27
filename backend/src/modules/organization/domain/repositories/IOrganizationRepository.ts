@@ -1,9 +1,8 @@
-import { Organization } from "../../../auth/domain/entities/Organization";
+import { IBaseRepository } from "../../../../shared/base/repositories/IBaseRepository";
+import { Organization } from "../entities/Organization";
 
-export interface IOrganizationRepository {
+export interface IOrganizationRepository extends IBaseRepository<Organization>{
 
-  findById(id: string): Promise<Organization | null>;
-
-  update(organization: Organization): Promise<Organization>;
+  findByName(name: string): Promise<Organization | null>;
 
 }

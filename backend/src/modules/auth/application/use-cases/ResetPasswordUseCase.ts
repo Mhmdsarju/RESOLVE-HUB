@@ -1,49 +1,43 @@
 import { ResetPasswordDto } from "../dto/ResetPasswordDto";
-
-import { IAuthRepository } from "../../domain/repositories/IAuthRepository";
+import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { IPasswordHasher } from "../../domain/interfaces/IPasswordHasher";
 import { ITokenService } from "../../domain/interfaces/ITokenService";
 import { IResetTokenStore } from "../../domain/interfaces/IResetTokenStore";
-
-export class ResetPasswordUseCase {
+import { injectable, inject } from "inversify";
+import { TYPES } from "../../../../config/types";
+import { IResetPasswordUseCase } from "../../domain/interfaces/use-cases/IResetPasswordUseCase";
+import { AppError } from "../../../../shared/errors/AppError";
+import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
+@injectable()
+export class ResetPasswordUseCase implements IResetPasswordUseCase {
   constructor(
-    private readonly authRepository: IAuthRepository,
+    @inject(TYPES.UserRepository)
+    private readonly userRepository: IUserRepository,
+    @inject(TYPES.PasswordHasher)
     private readonly passwordHasher: IPasswordHasher,
+    @inject(TYPES.TokenService)
     private readonly tokenService: ITokenService,
+    @inject(TYPES.ResetTokenStore)
     private readonly resetTokenStore: IResetTokenStore
-  ) {}
+  ) { }
 
   async execute(dto: ResetPasswordDto): Promise<void> {
-    // 1. Verify Reset Token
-    const payload = await this.tokenService.verifyResetToken(
-      dto.resetToken
-    );
 
-    // 2. Get Stored Reset Token
-    const storedResetToken =
-      await this.resetTokenStore.getResetToken(payload.email);
+    const payload = await this.tokenService.verifyResetToken(dto.resetToken);
 
-    // 3. Validate Reset Token
-    if (
-      !storedResetToken ||
-      storedResetToken !== dto.resetToken
-    ) {
-      throw new Error("Invalid reset token");
+    const storedResetToken = await this.resetTokenStore.getResetToken(payload.email);
+
+    if (!storedResetToken || storedResetToken !== dto.resetToken) {
+      throw new AppError("Invalid reset token", HttpStatusCode.UNAUTHORIZED);
     }
 
-    // 4. Hash New Password
-    const hashedPassword =
-      await this.passwordHasher.hash(dto.password);
+    const hashedPassword = await this.passwordHasher.hash(dto.password);
 
-    // 5. Update Password
-    await this.authRepository.updateUserPassword(
+    await this.userRepository.updatePassword(
       payload.email,
       hashedPassword
     );
 
-    // 6. Delete Reset Token
-    await this.resetTokenStore.deleteResetToken(
-      payload.email
-    );
+    await this.resetTokenStore.deleteResetToken(payload.email);
   }
 }

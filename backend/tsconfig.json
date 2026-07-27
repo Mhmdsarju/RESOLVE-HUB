@@ -2,8 +2,8 @@
   "compilerOptions": {
     "target": "ES2022",
 
-    "module": "Node16",
-    "moduleResolution": "Node16",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
 
     "rootDir": "./src",
     "outDir": "./dist",
@@ -16,6 +16,8 @@
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
 
     "types": ["node","jest"]
   },
