@@ -1,90 +1,71 @@
 import { RegisterDto } from "../dto/RegisterDto";
-import { Organization } from "../../domain/entities/Organization";
-import { User } from "../../domain/entities/User";
-import { IAuthRepository } from "../../domain/repositories/IAuthRepository";
+import { IUserRepository } from "../../domain/repositories/IUserRepository";
+import { IOrganizationRepository } from "../../../organization/domain/repositories/IOrganizationRepository";
 import { IPasswordHasher } from "../../domain/interfaces/IPasswordHasher";
-import { OrganizationStatus } from "../../domain/enums/OrganizationStatus";
-import { ITokenService } from "../../domain/interfaces/ITokenService";
-import { ITokenStore } from "../../domain/interfaces/ITokenStore";
-import { UserRole } from "../../domain/enums/UserRole";
+import { ISignupStore } from "../../domain/interfaces/ISignupStore";
+import { IOtpStore } from "../../domain/interfaces/IOtpStore";
+import { IEmailService } from "../../domain/interfaces/IEmailService";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../../../../config/types";
+import { IRegisterUseCase } from "../../domain/interfaces/use-cases/IRegisterUseCase";
+import { AppError } from "../../../../shared/errors/AppError";
+import { generateotp } from "../../../../shared/utils/generateOtp";
+import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
+import { SuccessMessages } from "../../../../shared/constant/SuccessMessages";
 
-export class RegisterUseCase {
+@injectable()
+export class RegisterUseCase implements IRegisterUseCase {
   constructor(
-    private readonly authRepository: IAuthRepository,
+    @inject(TYPES.UserRepository)
+    private readonly userRepository: IUserRepository,
+
+    @inject(TYPES.OrganizationRepository)
+    private readonly organizationRepository: IOrganizationRepository,
+
+    @inject(TYPES.PasswordHasher)
     private readonly passwordHasher: IPasswordHasher,
-    private readonly tokenService: ITokenService,
-    private readonly tokenStore: ITokenStore
+
+    @inject(TYPES.SignupStore)
+    private readonly signupStore: ISignupStore,
+
+    @inject(TYPES.OtpStore)
+    private readonly otpStore: IOtpStore,
+
+    @inject(TYPES.EmailService)
+    private readonly emailService: IEmailService
   ) { }
 
   async execute(dto: RegisterDto) {
-    // 1. Check if user already exists
-    const existingUser = await this.authRepository.findUserByEmail(
-      dto.email
-    );
 
-    if (existingUser) {
-      throw new Error("User already exists");
-    }
+    const existingUser = await this.userRepository.findByEmail(dto.email);
 
-    // 2. Check if organization already exists
-    const existingOrganization =
-      await this.authRepository.findOrganizationByName(
-        dto.organizationName
-      );
+    if (existingUser) { throw new AppError("User already exists", HttpStatusCode.CONFLICT); }
+
+
+    const existingOrganization = await this.organizationRepository.findByName(dto.organizationName);
 
     if (existingOrganization) {
-      throw new Error("Organization already exists");
+      throw new AppError("Organization already exists",HttpStatusCode.CONFLICT);
     }
 
-    // 3. Hash password
     const hashedPassword = await this.passwordHasher.hash(dto.password);
-
-    // 4. Create organization entity
-    const organization = new Organization({
-      name: dto.organizationName,
-      industry: null,
-      companySize: null,
-      status: OrganizationStatus.ACTIVE,
-    });
-
-    // 5. Save organization
-    const savedOrganization = await this.authRepository.createOrganization(organization);
-
-    // 6. Create user entity
-    const user = new User({
+    await this.signupStore.save(dto.email, {
+      organizationName: dto.organizationName,
+      industry: dto.industry,
+      companySize: dto.companySize,
       name: dto.name,
       email: dto.email,
       password: hashedPassword,
-      organizationId: savedOrganization.id!,
-      role: UserRole.ORG_ADMIN
     });
 
-    // 7. Save user
-    const savedUser = await this.authRepository.createUser(user);
+    const otp = generateotp()
 
-    const payload = {
-      userId: savedUser.id!,
-      organizationId: savedUser.organizationId,
-      role: savedUser.role,
-    };
+    await this.otpStore.saveOtp(dto.email, otp);
 
-    const accessToken = await this.tokenService.generateAccessToken(payload);
+    await this.emailService.sendSignupOtp(dto.email, otp);
 
-    const refreshToken = await this.tokenService.generateRefreshToken(payload);
-
-    await this.tokenStore.saveRefreshToken( savedUser.id!, refreshToken );
-
-    // 8. Return response
     return {
-      user: {
-        id: savedUser.id,
-        name: savedUser.name,
-        email: savedUser.email,
-        organizationId: savedUser.organizationId,
-        role: savedUser.role,
-      },
-      accessToken,
-      refreshToken,
+      message: SuccessMessages.OTP_SENT,
     };
   }
 }

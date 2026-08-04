@@ -4,7 +4,8 @@ import { UserRole } from "../../domain/enums/UserRole";
 import { UserRole as PrismaUserRole } from "@prisma/client";
 
 export class UserMapper {
-  static toDomain(user: PrismaUser): User {
+  //Converts a database object into a domain entity
+  static fromDb(user: PrismaUser): User {
     return new User({
       id: user.id,
       name: user.fullName,
@@ -22,7 +23,8 @@ export class UserMapper {
     });
   }
 
-  static toPersistence(user: User) {
+  //Converts a domain entity into a database object
+  static toDb(user: User) {
     return {
       fullName: user.name,
       email: user.email,
