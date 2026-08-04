@@ -32,8 +32,21 @@ export default function OtpInput({ value, onChange }: OtpInputProps) {
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>, index: number) => {
-    if (event.key === "Backspace" && !otp[index] && index > 0) {
-      inputsRef.current[index - 1]?.focus();
+    if (event.key === "Backspace") {
+      event.preventDefault();
+
+      const updatedOtp = [...otp];
+
+      if (otp[index]) {
+        updatedOtp[index] = "";
+        onChange(updatedOtp.join("").trim());
+      } else if (index > 0) {
+        updatedOtp[index - 1] = "";
+        onChange(updatedOtp.join("").trim());
+        inputsRef.current[index - 1]?.focus();
+      }
+
+      return;
     }
 
     if (event.key === "ArrowLeft" && index > 0) {

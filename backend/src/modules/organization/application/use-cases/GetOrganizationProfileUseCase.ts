@@ -6,6 +6,7 @@ import { AppError } from "../../../../shared/errors/AppError";
 import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
 import { injectable,inject } from "inversify";
 import { TYPES } from "../../../../config/types";
+import { ErrorMessages } from "../../../../shared/constant/ErrorMessages";
 
 @injectable()
 export class GetOrganizationProfileUseCase implements IGetOrganizationProfileUseCase {
@@ -20,7 +21,7 @@ export class GetOrganizationProfileUseCase implements IGetOrganizationProfileUse
     );
 
     if (!organization) {
-      throw new AppError("Organization not found",HttpStatusCode.NOT_FOUND);
+      throw new AppError(ErrorMessages.ORGANIZATION_NOT_FOUND,HttpStatusCode.NOT_FOUND);
     }
 
     return organization;

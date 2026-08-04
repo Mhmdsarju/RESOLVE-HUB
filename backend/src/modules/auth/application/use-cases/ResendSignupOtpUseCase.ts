@@ -9,6 +9,7 @@ import { IResendSignupOtpUseCase } from "../../domain/interfaces/use-cases/IRese
 import { AppError } from "../../../../shared/errors/AppError";
 import { generateotp } from "../../../../shared/utils/generateOtp";
 import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
+import { ErrorMessages } from "../../../../shared/constant/ErrorMessages";
 
 @injectable()
 export class ResendSignupOtpUseCase implements IResendSignupOtpUseCase {
@@ -26,7 +27,7 @@ export class ResendSignupOtpUseCase implements IResendSignupOtpUseCase {
     const signupData = await this.signupStore.get(dto.email);
 
     if (!signupData) {
-      throw new AppError("Signup session expired. Please register again.",HttpStatusCode.BAD_REQUEST);
+      throw new AppError(ErrorMessages.SIGNUP_SESSION_EXPIRED,HttpStatusCode.BAD_REQUEST);
     }
 
     await this.otpStore.deleteOtp(dto.email);

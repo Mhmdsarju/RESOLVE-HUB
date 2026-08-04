@@ -6,6 +6,7 @@ import { TYPES } from "../../../../config/types";
 import { IChangePasswordUseCase } from "../../domain/interfaces/use-cases/IChangePasswordUsecase";
 import { AppError } from "../../../../shared/errors/AppError";
 import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
+import { ErrorMessages } from "../../../../shared/constant/ErrorMessages";
 
 @injectable()
 export class ChangePasswordUseCase implements IChangePasswordUseCase {
@@ -21,7 +22,7 @@ export class ChangePasswordUseCase implements IChangePasswordUseCase {
     const user = await this.userRepository.findById(userId);
 
     if (!user) {
-      throw new AppError("User not found",HttpStatusCode.NOT_FOUND);
+      throw new AppError(ErrorMessages.USER_NOT_FOUND,HttpStatusCode.NOT_FOUND);
     }
 
     const isPasswordValid = await this.passwordHasher.compare(

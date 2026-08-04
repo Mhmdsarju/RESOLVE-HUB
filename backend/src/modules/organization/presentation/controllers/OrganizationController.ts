@@ -1,12 +1,15 @@
 import { NextFunction, Request, Response } from "express";
 import { AppError } from "../../../../shared/errors/AppError";
 import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
-import { injectable,inject } from "inversify";
+import { injectable, inject } from "inversify";
 import { TYPES } from "../../../../config/types";
 import { IGetOrganizationProfileUseCase } from "../../domain/interfaces/IGetOrganizationProfileUseCase";
 import { IUpdateOrganizationUseCase } from "../../domain/interfaces/IUpdateOrganizationUseCase";
+import { ErrorMessages } from "../../../../shared/constant/ErrorMessages";
+import { ResponseHandler } from "../../../../shared/response/response-handler";
 
-injectable()
+
+@injectable()
 export class OrganizationController {
   constructor(
     @inject(TYPES.GetOrganizationProfileUseCase)
@@ -20,18 +23,17 @@ export class OrganizationController {
       const user = req.user;
 
       if (!user) {
-        throw new AppError("Unauthorized", HttpStatusCode.UNAUTHORIZED);
+        throw new AppError(ErrorMessages.UNAUTHORIZED, HttpStatusCode.UNAUTHORIZED);
       }
 
-      const organization =
-        await this.getOrganizationProfileUseCase.execute(
-          user.organizationId
-        );
+      const organization = await this.getOrganizationProfileUseCase.execute(user.organizationId);
 
-      return res.status(HttpStatusCode.OK).json({
-        success: true,
-        data: organization,
-      });
+      return ResponseHandler.success(
+        res,
+        "Organization fetched successfully",
+        organization
+      )
+
     } catch (error) {
       next(error);
     }
@@ -42,7 +44,7 @@ export class OrganizationController {
       const user = req.user;
 
       if (!user) {
-        throw new AppError("Unauthorized",HttpStatusCode.UNAUTHORIZED);
+        throw new AppError(ErrorMessages.UNAUTHORIZED, HttpStatusCode.UNAUTHORIZED);
       }
 
       const result = await this.updateOrganizationUseCase.execute(
@@ -50,11 +52,11 @@ export class OrganizationController {
         req.body
       );
 
-      return res.status(HttpStatusCode.OK).json({
-        success: true,
-        message: "Organization updated successfully",
-        data: result,
-      });
+      return ResponseHandler.success(
+        res,
+        "Organization Updated Successfully",
+        result
+      )
     } catch (error) {
       next(error);
     }

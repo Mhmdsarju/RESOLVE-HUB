@@ -6,15 +6,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import type { Organization } from "../types/organization.types";
 
-import {
-  organizationSchema,
-  type OrganizationFormData,
-} from "../validations/organization.schema";
+import {  organizationSchema,  type OrganizationFormData,} from "../validations/organization.schema";
 
-import {
-  companySizes,
-  industries,
-} from "@/modules/auth/constants/register";
+import {  companySizes,  industries,} from "@/modules/auth/constants/register";
 
 interface EditOrganizationModalProps {
   organization: Organization;
@@ -75,7 +69,6 @@ export default function EditOrganizationModal({
           shadow-2xl
         "
       >
-        {/* Header */}
 
         <div className="mb-8 flex items-center justify-between">
           <div>
@@ -108,7 +101,6 @@ export default function EditOrganizationModal({
           onSubmit={handleSubmit(onSubmit)}
           className="space-y-6"
         >
-          {/* Organization Name */}
 
           <div>
             <label
@@ -145,7 +137,6 @@ export default function EditOrganizationModal({
             )}
           </div>
 
-          {/* Industry */}
 
           <div>
             <label
@@ -192,7 +183,6 @@ export default function EditOrganizationModal({
             )}
           </div>
 
-          {/* Company Size */}
 
           <div>
             <label
@@ -238,8 +228,6 @@ export default function EditOrganizationModal({
               </p>
             )}
           </div>
-
-          {/* Footer */}
 
           <div className="flex justify-end gap-3 pt-4">
             <button

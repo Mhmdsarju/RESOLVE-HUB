@@ -4,7 +4,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import PasswordInput from "../components/PasswordInput";
 
-import { resetPasswordSchema,type ResetPasswordFormData,} from "../validations/resetPassword.schema";
+import {
+  resetPasswordSchema,
+  type ResetPasswordFormData,
+} from "../validations/resetPassword.schema";
 
 import { useResetPassword } from "../hooks/useResetPassword";
 
@@ -45,8 +48,6 @@ export default function ResetPasswordPage() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#FAF6F0] px-4 py-8">
       <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-xl">
-        {/* Header */}
-
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold text-[#4B3932]">Reset Password</h1>
 

@@ -9,6 +9,7 @@ import { IForgotPasswordUseCase } from "../../domain/interfaces/use-cases/IForgo
 import { generateotp } from "../../../../shared/utils/generateOtp";
 import { AppError } from "../../../../shared/errors/AppError";
 import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
+import { ErrorMessages } from "../../../../shared/constant/ErrorMessages";
 @injectable()
 export class ForgotPasswordUseCase implements IForgotPasswordUseCase {
     constructor(
@@ -25,7 +26,7 @@ export class ForgotPasswordUseCase implements IForgotPasswordUseCase {
        const user = await this.userRepository.findByEmail(dto.email);
 
         if (!user) {
-            throw new AppError("User not found",HttpStatusCode.NOT_FOUND);
+            throw new AppError(ErrorMessages.USER_NOT_FOUND,HttpStatusCode.NOT_FOUND);
         }
 
         const otp = generateotp();

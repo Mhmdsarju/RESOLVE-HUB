@@ -8,6 +8,7 @@ import { TYPES } from "../../../../config/types";
 import { IResetPasswordUseCase } from "../../domain/interfaces/use-cases/IResetPasswordUseCase";
 import { AppError } from "../../../../shared/errors/AppError";
 import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
+import { ErrorMessages } from "../../../../shared/constant/ErrorMessages";
 @injectable()
 export class ResetPasswordUseCase implements IResetPasswordUseCase {
   constructor(
@@ -28,7 +29,7 @@ export class ResetPasswordUseCase implements IResetPasswordUseCase {
     const storedResetToken = await this.resetTokenStore.getResetToken(payload.email);
 
     if (!storedResetToken || storedResetToken !== dto.resetToken) {
-      throw new AppError("Invalid reset token", HttpStatusCode.UNAUTHORIZED);
+      throw new AppError(ErrorMessages.INVALID_RESET_TOKEN, HttpStatusCode.UNAUTHORIZED);
     }
 
     const hashedPassword = await this.passwordHasher.hash(dto.password);

@@ -64,8 +64,6 @@ export default function OrganizationRegisterPage() {
     <main className="min-h-screen bg-[#FAF6F0] px-4 py-8">
       <div className="mx-auto max-w-3xl">
         <div className="rounded-3xl bg-white p-6 shadow-xl md:p-8">
-          {/* Header */}
-
           <div className="mb-10 text-center">
             <h1 className="text-3xl font-bold text-[#4B3932] md:text-4xl">
               Register Your Organization
@@ -77,8 +75,6 @@ export default function OrganizationRegisterPage() {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-            {/* Organization Information */}
-
             <section>
               <h2 className="mb-6 text-xl font-semibold text-[#4B3932]">
                 Organization Information
@@ -117,8 +113,6 @@ export default function OrganizationRegisterPage() {
 
             <div className="border-t border-[#E7DDD3]" />
 
-            {/* Administrator */}
-
             <section>
               <h2 className="mb-6 text-xl font-semibold text-[#4B3932]">Administrator Account</h2>
 
@@ -153,7 +147,6 @@ export default function OrganizationRegisterPage() {
                 />
               </div>
             </section>
-            {/* Terms & Conditions */}
 
             <div>
               <label className="flex items-start gap-3">
@@ -180,8 +173,6 @@ export default function OrganizationRegisterPage() {
               )}
             </div>
 
-            {/* Submit Button */}
-
             <button
               type="submit"
               disabled={registerMutation.isPending}
@@ -204,8 +195,6 @@ export default function OrganizationRegisterPage() {
             >
               {registerMutation.isPending ? "Creating Organization..." : "Create Organization"}
             </button>
-
-            {/* Footer */}
 
             <div className="text-center text-sm text-stone-500">
               Already have an organization ?

@@ -5,10 +5,7 @@ import { toast } from "react-hot-toast";
 import { login } from "../api/authApi";
 import { useAuthStore } from "../store/authStore";
 
-import type {
-  LoginDto,
-  LoginResponse,
-} from "../types/login.types";
+import type { LoginDto, LoginResponse, } from "../types/login.types";
 
 interface ErrorResponse {
   success: boolean;
@@ -22,11 +19,7 @@ export function useLogin() {
     (state) => state.setAccessToken,
   );
 
-  return useMutation<
-    LoginResponse,
-    AxiosError<ErrorResponse>,
-    LoginDto
-  >({
+  return useMutation<LoginResponse, AxiosError<ErrorResponse>, LoginDto>({
     mutationFn: login,
 
     onSuccess: (data) => {

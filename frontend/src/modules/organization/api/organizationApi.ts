@@ -1,9 +1,6 @@
 import { api } from "@/core/api/axios";
 
-import type {
-  Organization,
-  UpdateOrganizationDto,
-} from "../types/organization.types";
+import type {  Organization,  UpdateOrganizationDto,} from "../types/organization.types";
 
 interface ApiResponse<T> {
   success: boolean;

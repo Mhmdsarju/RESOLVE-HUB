@@ -1,8 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import OtpInput from "../components/OtpInput";
 
@@ -20,8 +17,7 @@ export default function VerifyOtpPage() {
 
   const verifyOtpMutation = useVerifyOtp();
 
-  const resendForgotPasswordOtpMutation =
-    useResendForgotPasswordOtp();
+  const resendForgotPasswordOtpMutation = useResendForgotPasswordOtp();
 
   useEffect(() => {
     if (timer <= 0) {
@@ -40,11 +36,10 @@ export default function VerifyOtpPage() {
       return;
     }
 
-    const response =
-      await verifyOtpMutation.mutateAsync({
-        email,
-        otp,
-      });
+    const response = await verifyOtpMutation.mutateAsync({
+      email,
+      otp,
+    });
 
     navigate("/forgot-password/reset-password", {
       state: {
@@ -57,38 +52,20 @@ export default function VerifyOtpPage() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#FAF6F0] px-4 py-8">
       <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-xl">
-        {/* Header */}
-
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-[#4B3932]">
-            Verify OTP
-          </h1>
+          <h1 className="text-3xl font-bold text-[#4B3932]">Verify OTP</h1>
 
-          <p className="mt-3 text-stone-500">
-            Enter the 6-digit code sent to
-          </p>
+          <p className="mt-3 text-stone-500">Enter the 6-digit code sent to</p>
 
-          <p className="font-medium text-[#4B3932]">
-            {email}
-          </p>
+          <p className="font-medium text-[#4B3932]">{email}</p>
         </div>
 
-        {/* OTP */}
-
-        <OtpInput
-          value={otp}
-          onChange={setOtp}
-        />
-
-        {/* Verify Button */}
+        <OtpInput value={otp} onChange={setOtp} />
 
         <button
           type="button"
           onClick={handleVerify}
-          disabled={
-            otp.length !== 6 ||
-            verifyOtpMutation.isPending
-          }
+          disabled={otp.length !== 6 || verifyOtpMutation.isPending}
           className="
             mt-8
             w-full
@@ -107,28 +84,18 @@ export default function VerifyOtpPage() {
             disabled:opacity-70
           "
         >
-          {verifyOtpMutation.isPending
-            ? "Verifying..."
-            : "Verify OTP"}
+          {verifyOtpMutation.isPending ? "Verifying..." : "Verify OTP"}
         </button>
 
-        {/* Resend */}
-
         <div className="mt-8 flex items-center justify-center gap-2 text-sm">
-          <span className="text-stone-500">
-            Didn't receive the code?
-          </span>
+          <span className="text-stone-500">Didn't receive the code?</span>
 
           {timer > 0 ? (
-            <span className="font-medium text-stone-400">
-              Resend in {timer}s
-            </span>
+            <span className="font-medium text-stone-400">Resend in {timer}s</span>
           ) : (
             <button
               type="button"
-              disabled={
-                resendForgotPasswordOtpMutation.isPending
-              }
+              disabled={resendForgotPasswordOtpMutation.isPending}
               onClick={async () => {
                 await resendForgotPasswordOtpMutation.mutateAsync({
                   email,
@@ -145,23 +112,17 @@ export default function VerifyOtpPage() {
                 disabled:text-stone-400
               "
             >
-              {resendForgotPasswordOtpMutation.isPending
-                ? "Sending..."
-                : "Resend OTP"}
+              {resendForgotPasswordOtpMutation.isPending ? "Sending..." : "Resend OTP"}
             </button>
           )}
         </div>
 
         <div className="mt-8 border-t border-[#E7DDD3]" />
 
-        {/* Back */}
-
         <div className="mt-6 text-center">
           <button
             type="button"
-            onClick={() =>
-              navigate("/forgot-password")
-            }
+            onClick={() => navigate("/forgot-password")}
             className="
               text-sm
               font-medium

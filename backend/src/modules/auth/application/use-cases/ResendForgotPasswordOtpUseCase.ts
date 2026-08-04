@@ -8,6 +8,7 @@ import { IResendForgotPasswordOtpUseCase } from "../../domain/interfaces/use-cas
 import { AppError } from "../../../../shared/errors/AppError";
 import { generateotp } from "../../../../shared/utils/generateOtp";
 import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
+import { ErrorMessages } from "../../../../shared/constant/ErrorMessages";
 
 @injectable()
 export class ResendForgotPasswordOtpUseCase implements IResendForgotPasswordOtpUseCase {
@@ -25,7 +26,7 @@ private readonly userRepository: IUserRepository,
     const user = await this.userRepository.findByEmail(dto.email);
 
     if (!user) {
-      throw new AppError("User not found",HttpStatusCode.NOT_FOUND);
+      throw new AppError(ErrorMessages.USER_NOT_FOUND,HttpStatusCode.NOT_FOUND);
     }
 
     await this.otpStore.deleteOtp(dto.email);

@@ -1,14 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
 import AuthInput from "../components/AuthInput";
-
-import {
-  forgotPasswordSchema,
-  type ForgotPasswordFormData,
-} from "../validations/forgotPassword.schema";
-
+import {  forgotPasswordSchema,  type ForgotPasswordFormData,} from "../validations/forgotPassword.schema";
 import { useForgotPassword } from "../hooks/useForgotPassword";
 
 export default function ForgotPasswordPage() {

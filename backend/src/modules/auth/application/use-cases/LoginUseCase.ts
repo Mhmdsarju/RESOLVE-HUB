@@ -12,6 +12,7 @@ import { injectable, inject } from "inversify";
 import { TYPES } from "../../../../config/types";
 import { ILoginUseCase } from "../../domain/interfaces/use-cases/ILoginUseCase";
 import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
+import { ErrorMessages } from "../../../../shared/constant/ErrorMessages";
 
 @injectable()
 export class LoginUseCase implements ILoginUseCase {
@@ -31,13 +32,13 @@ export class LoginUseCase implements ILoginUseCase {
     const user = await this.userRepository.findByEmail(dto.email);
 
     if (!user) {
-      throw new AppError("Invalid email or password", HttpStatusCode.UNAUTHORIZED);
+      throw new AppError(ErrorMessages.UNAUTHORIZED, HttpStatusCode.UNAUTHORIZED);
     }
 
     const isPasswordValid = await this.passwordHasher.compare(dto.password, user.password);
 
     if (!isPasswordValid) {
-      throw new AppError("Invalid email or password", HttpStatusCode.UNAUTHORIZED);
+      throw new AppError(ErrorMessages.INVALID_EMAIL_OR_PASSWORD, HttpStatusCode.UNAUTHORIZED);
     }
 
     if (

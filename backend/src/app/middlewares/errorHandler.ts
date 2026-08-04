@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from "express";
 import { AppError } from "../../shared/errors/AppError";
 
 export function errorHandler(  error: Error,  req: Request,  res: Response,  next: NextFunction): void {
-  // If response already sent, pass the error to Express
   if (res.headersSent) {
     return next(error);
   }

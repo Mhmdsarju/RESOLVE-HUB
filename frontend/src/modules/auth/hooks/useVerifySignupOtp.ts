@@ -5,7 +5,7 @@ import { toast } from "react-hot-toast";
 import { verifySignupOtp } from "../api/authApi";
 import { useAuthStore } from "../store/authStore";
 
-import type { VerifySignupOtpDto,VerifySignupOtpResponse, } from "../types/verifySignupOtp.types";
+import type { VerifySignupOtpDto, VerifySignupOtpResponse, } from "../types/verifySignupOtp.types";
 
 export function useVerifySignupOtp() {
   const setUser = useAuthStore((state) => state.setUser);
@@ -14,11 +14,7 @@ export function useVerifySignupOtp() {
     (state) => state.setAccessToken,
   );
 
-  return useMutation<
-    VerifySignupOtpResponse,
-    AxiosError<{ message: string }>,
-    VerifySignupOtpDto
-  >({
+  return useMutation<VerifySignupOtpResponse, AxiosError<{ message: string }>, VerifySignupOtpDto>({
     mutationFn: verifySignupOtp,
 
     onSuccess: (data) => {

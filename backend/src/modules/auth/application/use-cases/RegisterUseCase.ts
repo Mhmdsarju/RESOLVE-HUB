@@ -11,6 +11,7 @@ import { IRegisterUseCase } from "../../domain/interfaces/use-cases/IRegisterUse
 import { AppError } from "../../../../shared/errors/AppError";
 import { generateotp } from "../../../../shared/utils/generateOtp";
 import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
+import { SuccessMessages } from "../../../../shared/constant/SuccessMessages";
 
 @injectable()
 export class RegisterUseCase implements IRegisterUseCase {
@@ -64,7 +65,7 @@ export class RegisterUseCase implements IRegisterUseCase {
     await this.emailService.sendSignupOtp(dto.email, otp);
 
     return {
-      message: "OTP sent successfully",
+      message: SuccessMessages.OTP_SENT,
     };
   }
 }

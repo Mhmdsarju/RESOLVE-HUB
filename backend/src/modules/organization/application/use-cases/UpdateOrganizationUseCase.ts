@@ -7,6 +7,7 @@ import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
 import { IUpdateOrganizationUseCase } from "../../domain/interfaces/IUpdateOrganizationUseCase";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../../../config/types";
+import { ErrorMessages } from "../../../../shared/constant/ErrorMessages";
 
 @injectable()
 export class UpdateOrganizationUseCase implements IUpdateOrganizationUseCase {
@@ -21,7 +22,7 @@ export class UpdateOrganizationUseCase implements IUpdateOrganizationUseCase {
     );
 
     if (!organization) {
-      throw new AppError("Organization not found", HttpStatusCode.NOT_FOUND);
+      throw new AppError(ErrorMessages.ORGANIZATION_NOT_FOUND, HttpStatusCode.NOT_FOUND);
     }
 
     organization.name = dto.name;

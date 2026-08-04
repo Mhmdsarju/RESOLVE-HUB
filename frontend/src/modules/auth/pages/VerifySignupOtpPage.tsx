@@ -22,11 +22,9 @@ export default function VerifySignupOtpPage() {
 
   const [timer, setTimer] = useState(60);
 
-  const verifySignupOtpMutation =
-    useVerifySignupOtp();
+  const verifySignupOtpMutation = useVerifySignupOtp();
 
-  const resendSignupOtpMutation =
-    useResendSignupOtp();
+  const resendSignupOtpMutation = useResendSignupOtp();
 
   const {
     control,
@@ -34,9 +32,7 @@ export default function VerifySignupOtpPage() {
     setValue,
     formState: { errors },
   } = useForm<VerifySignupOtpFormData>({
-    resolver: zodResolver(
-      verifySignupOtpSchema,
-    ),
+    resolver: zodResolver(verifySignupOtpSchema),
     defaultValues: {
       email,
       otp: "",
@@ -70,21 +66,16 @@ export default function VerifySignupOtpPage() {
     return () => clearInterval(interval);
   }, [timer]);
 
-  const handleResendOtp =
-    async () => {
-      await resendSignupOtpMutation.mutateAsync({
-        email,
-      });
+  const handleResendOtp = async () => {
+    await resendSignupOtpMutation.mutateAsync({
+      email,
+    });
 
-      setTimer(60);
-    };
+    setTimer(60);
+  };
 
-  const onSubmit = async (
-    data: VerifySignupOtpFormData,
-  ) => {
-    await verifySignupOtpMutation.mutateAsync(
-      data,
-    );
+  const onSubmit = async (data: VerifySignupOtpFormData) => {
+    await verifySignupOtpMutation.mutateAsync(data);
 
     navigate("/dashboard");
   };
@@ -96,29 +87,16 @@ export default function VerifySignupOtpPage() {
           {/* Header */}
 
           <div className="mb-8 text-center">
-            <h1 className="text-3xl font-bold text-[#4B3932]">
-              Verify Your Email
-            </h1>
+            <h1 className="text-3xl font-bold text-[#4B3932]">Verify Your Email</h1>
 
             <p className="mt-3 text-sm leading-6 text-stone-500">
-              We've sent a 6-digit verification
-              code to
+              We've sent a 6-digit verification code to
             </p>
 
-            <p className="mt-2 font-semibold text-[#4B3932]">
-              {email}
-            </p>
+            <p className="mt-2 font-semibold text-[#4B3932]">{email}</p>
           </div>
 
-          {/* Form */}
-
-          <form
-            noValidate
-            onSubmit={handleSubmit(
-              onSubmit,
-            )}
-            className="space-y-8"
-          >
+          <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-8">
             <OtpInput
               value={otp}
               onChange={(value) =>
@@ -128,32 +106,18 @@ export default function VerifySignupOtpPage() {
               }
             />
 
-            {errors.otp && (
-              <p className="text-center text-sm text-red-500">
-                {errors.otp.message}
-              </p>
-            )}
-
-            {/* Resend OTP */}
+            {errors.otp && <p className="text-center text-sm text-red-500">{errors.otp.message}</p>}
 
             <div className="flex items-center justify-center gap-2 text-sm">
-              <span className="text-stone-500">
-                Didn't receive the code?
-              </span>
+              <span className="text-stone-500">Didn't receive the code?</span>
 
               {timer > 0 ? (
-                <span className="font-medium text-stone-400">
-                  Resend in {timer}s
-                </span>
+                <span className="font-medium text-stone-400">Resend in {timer}s</span>
               ) : (
                 <button
                   type="button"
-                  disabled={
-                    resendSignupOtpMutation.isPending
-                  }
-                  onClick={
-                    handleResendOtp
-                  }
+                  disabled={resendSignupOtpMutation.isPending}
+                  onClick={handleResendOtp}
                   className="
                     font-semibold
                     text-[#4B3932]
@@ -163,20 +127,14 @@ export default function VerifySignupOtpPage() {
                     disabled:text-stone-400
                   "
                 >
-                  {resendSignupOtpMutation.isPending
-                    ? "Sending..."
-                    : "Resend OTP"}
+                  {resendSignupOtpMutation.isPending ? "Sending..." : "Resend OTP"}
                 </button>
               )}
             </div>
 
-            {/* Verify Button */}
-
             <button
               type="submit"
-              disabled={
-                verifySignupOtpMutation.isPending
-              }
+              disabled={verifySignupOtpMutation.isPending}
               className="
                 w-full
                 rounded-xl
@@ -194,16 +152,11 @@ export default function VerifySignupOtpPage() {
                 disabled:opacity-70
               "
             >
-              {verifySignupOtpMutation.isPending
-                ? "Verifying..."
-                : "Verify Email"}
+              {verifySignupOtpMutation.isPending ? "Verifying..." : "Verify Email"}
             </button>
-
-            {/* Footer */}
 
             <div className="text-center text-sm text-stone-500">
               Wrong email?
-
               <Link
                 to="/organization/register"
                 className="

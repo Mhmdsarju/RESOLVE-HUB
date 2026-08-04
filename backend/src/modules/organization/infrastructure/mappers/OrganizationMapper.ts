@@ -4,7 +4,7 @@ import { Organization } from "../../../organization/domain/entities/Organization
 import { OrganizationStatus } from "../../../auth/domain/enums/OrganizationStatus"; 
 
 export class OrganizationMapper {
-  static toDomain( organization: PrismaOrganization ): Organization {
+  static fromDb( organization: PrismaOrganization ): Organization {
     return new Organization({
       id: organization.id,
       name: organization.name,
@@ -19,7 +19,7 @@ export class OrganizationMapper {
     });
   }
 
-  static toPersistence( organization: Organization ) {
+  static toDb( organization: Organization ) {
     return {
       name: organization.name,
       industry: organization.industry,

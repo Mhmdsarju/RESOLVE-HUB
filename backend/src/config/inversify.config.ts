@@ -81,9 +81,6 @@ container.bind<IVerifyOtpUseCase>(TYPES.VerifyOtpUseCase).to(VerifyOtpUseCase).i
 container.bind<IVerifySignupOtpUseCase>(TYPES.VerifySignUpOtpUseCase).to(VerifySignupOtpUseCase).inSingletonScope();
 container.bind<IResendSignupOtpUseCase>(TYPES.ResendSignUpOtpUseCase).to(ResendSignupOtpUseCase).inSingletonScope();
 
-
-
-container.bind<IOrganizationRepository>(TYPES.OrganizationRepository).to(PrismaOrganizationRepository).inSingletonScope();
 container.bind<IGetOrganizationProfileUseCase>(TYPES.GetOrganizationProfileUseCase).to(GetOrganizationProfileUseCase).inSingletonScope();
 container.bind<IUpdateOrganizationUseCase>(TYPES.UpdateOrganizationUseCase).to(UpdateOrganizationUseCase).inSingletonScope();
 

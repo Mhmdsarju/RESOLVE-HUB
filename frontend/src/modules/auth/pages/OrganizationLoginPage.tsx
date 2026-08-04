@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import AuthInput from "../components/AuthInput";
 import PasswordInput from "../components/PasswordInput";
 
-import {  loginSchema,  type LoginFormData,} from "../validations/login.schema";
+import { loginSchema, type LoginFormData } from "../validations/login.schema";
 
 import { useLogin } from "../hooks/useLogin";
 
@@ -14,7 +14,11 @@ export default function OrganizationLoginPage() {
 
   const loginMutation = useLogin();
 
-  const {    register,    handleSubmit,    formState: { errors },  } = useForm<LoginFormData>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
 
     defaultValues: {
@@ -35,29 +39,14 @@ export default function OrganizationLoginPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#FAF6F0] px-4 py-8">
-
       <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-xl">
-
-        {/* Header */}
-
         <div className="mb-8 text-center">
+          <h1 className="text-3xl font-bold text-[#4B3932]">Welcome Back</h1>
 
-          <h1 className="text-3xl font-bold text-[#4B3932]">
-            Welcome Back
-          </h1>
-
-          <p className="mt-3 text-stone-500">
-            Sign in to your organization account
-          </p>
-
+          <p className="mt-3 text-stone-500">Sign in to your organization account</p>
         </div>
 
-        <form
-          noValidate
-          onSubmit={handleSubmit(onSubmit)}
-          className="space-y-6"
-        >
-
+        <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <AuthInput
             type="email"
             label="Organization Email"
@@ -74,16 +63,9 @@ export default function OrganizationLoginPage() {
           />
 
           <div className="flex items-center justify-between">
-
             <label className="flex items-center gap-2 text-sm text-stone-600">
-
-              <input
-                type="checkbox"
-                className="h-4 w-4 accent-[#4B3932]"
-              />
-
+              <input type="checkbox" className="h-4 w-4 accent-[#4B3932]" />
               Remember this organization
-
             </label>
 
             <Link
@@ -92,9 +74,7 @@ export default function OrganizationLoginPage() {
             >
               Forgot Password?
             </Link>
-
           </div>
-                    {/* Login Button */}
 
           <button
             type="submit"
@@ -116,21 +96,13 @@ export default function OrganizationLoginPage() {
               disabled:opacity-70
             "
           >
-            {loginMutation.isPending
-              ? "Signing In..."
-              : "Sign In"}
+            {loginMutation.isPending ? "Signing In..." : "Sign In"}
           </button>
-
-          {/* Divider */}
 
           <div className="border-t border-[#E7DDD3]" />
 
-          {/* User Login */}
-
           <div className="text-center text-sm text-stone-500">
-
             Not an organization admin?
-
             <Link
               to="/user/login"
               className="
@@ -142,15 +114,10 @@ export default function OrganizationLoginPage() {
             >
               User Login
             </Link>
-
           </div>
 
-          {/* Register */}
-
           <div className="text-center text-sm text-stone-500">
-
             Don't have an organization?
-
             <Link
               to="/organization/register"
               className="
@@ -162,13 +129,9 @@ export default function OrganizationLoginPage() {
             >
               Register Organization
             </Link>
-
           </div>
-
         </form>
-
       </div>
-
     </main>
   );
 }

@@ -8,11 +8,12 @@ import { UserMapper } from "../mappers/UserMapper";
 export class PrismaUserRepository implements IUserRepository {
 
   async create(user: User): Promise<User> {
+
     const createdUser = await prisma.user.create({
-      data: UserMapper.toPersistence(user),
+      data: UserMapper.toDb(user),
     });
 
-    return UserMapper.toDomain(createdUser);
+    return UserMapper.fromDb(createdUser);
   }
 
   async findById(id: string): Promise<User | null> {
@@ -24,25 +25,25 @@ export class PrismaUserRepository implements IUserRepository {
       return null;
     }
 
-    return UserMapper.toDomain(user);
+    return UserMapper.fromDb(user);
   }
 
   async findAll(): Promise<User[]> {
     const users = await prisma.user.findMany();
 
-    return users.map(UserMapper.toDomain);
+    return users.map(UserMapper.fromDb);
   }
 
   async update(id: string, data: Partial<User>): Promise<User> {
     const updatedUser = await prisma.user.update({
       where: { id },
-      data: UserMapper.toPersistence({
+      data: UserMapper.toDb({
         ...data,
         id,
       } as User),
     });
 
-    return UserMapper.toDomain(updatedUser);
+    return UserMapper.fromDb(updatedUser);
   }
 
   async delete(id: string): Promise<void> {
@@ -60,7 +61,7 @@ export class PrismaUserRepository implements IUserRepository {
       return null;
     }
 
-    return UserMapper.toDomain(user);
+    return UserMapper.fromDb(user);
   }
 
   async updatePassword(email: string, password: string): Promise<void> {

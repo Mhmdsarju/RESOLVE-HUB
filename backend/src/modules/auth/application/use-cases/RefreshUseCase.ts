@@ -6,6 +6,8 @@ import { IRefreshUseCase } from "../../domain/interfaces/use-cases/IRefreshUseCa
 import { RefreshDto } from "../dto/RefreshDto";
 import { AppError } from "../../../../shared/errors/AppError";
 import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
+import { ErrorMessages } from "../../../../shared/constant/ErrorMessages";
+
 @injectable()
 export class RefreshUseCase implements IRefreshUseCase {
   constructor(
@@ -22,7 +24,7 @@ export class RefreshUseCase implements IRefreshUseCase {
     const storedRefreshToken = await this.tokenStore.getRefreshToken(payload.userId);
 
     if (!storedRefreshToken || storedRefreshToken !== dto.refreshToken) {
-      throw new AppError("Invalid refresh token",HttpStatusCode.UNAUTHORIZED);
+      throw new AppError(ErrorMessages.INVALID_REFRESH_TOKEN,HttpStatusCode.UNAUTHORIZED);
     }
 
     const tokenPayload = {

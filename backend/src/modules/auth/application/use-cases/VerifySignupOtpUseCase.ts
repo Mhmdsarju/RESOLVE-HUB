@@ -15,6 +15,7 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../../../../config/types";
 import { IVerifySignupOtpUseCase } from "../../domain/interfaces/use-cases/IVerifySignupOtpUseCase";
 import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
+import { ErrorMessages } from "../../../../shared/constant/ErrorMessages";
 
 @injectable()
 export class VerifySignupOtpUseCase implements IVerifySignupOtpUseCase {
@@ -38,18 +39,18 @@ export class VerifySignupOtpUseCase implements IVerifySignupOtpUseCase {
     const storedOtp = await this.otpStore.getOtp(dto.email);
 
     if (!storedOtp) {
-      throw new AppError("OTP expired or not found",HttpStatusCode.BAD_REQUEST);
+      throw new AppError(ErrorMessages.OTP_EXPIRED,HttpStatusCode.BAD_REQUEST);
     }
 
   
     if (storedOtp !== dto.otp) {
-      throw new AppError("Invalid OTP",HttpStatusCode.BAD_REQUEST);
+      throw new AppError(ErrorMessages.INVALID_OTP,HttpStatusCode.BAD_REQUEST);
     }
 
     const signupData = await this.signupStore.get(dto.email);
 
     if (!signupData) {
-      throw new AppError("Signup session expired",HttpStatusCode.BAD_REQUEST);
+      throw new AppError(ErrorMessages.SIGNUP_SESSION_EXPIRED,HttpStatusCode.BAD_REQUEST);
     }
 
     const organization = new Organization({

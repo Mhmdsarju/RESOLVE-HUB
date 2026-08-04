@@ -8,6 +8,11 @@
     "rootDir": "./src",
     "outDir": "./dist",
 
+    
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+
     "strict": true,
 
     "esModuleInterop": true,

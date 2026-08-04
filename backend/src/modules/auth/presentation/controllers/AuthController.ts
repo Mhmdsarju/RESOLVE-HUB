@@ -13,8 +13,12 @@ import { IResendForgotPasswordOtpUseCase } from "../../domain/interfaces/use-cas
 import { IResendSignupOtpUseCase } from "../../domain/interfaces/use-cases/IResendSignupOtpUseCase";
 import { IGetCurrentUseCase } from "../../domain/interfaces/use-cases/IGetCurrentUseCase";
 import { TYPES } from "../../../../config/types";
-import { config } from "../../../../config/env";
 import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
+import { AppError } from "../../../../shared/errors/AppError";
+import { SuccessMessages } from "../../../../shared/constant/SuccessMessages";
+import { ErrorMessages } from "../../../../shared/constant/ErrorMessages";
+import { ResponseHandler } from "../../../../shared/response/response-handler";
+import { setRefereshTokenCookie,clearRefreshTokenCookie } from "@/shared/utils/cookie.util";
 
 @injectable()
 export class AuthController {
@@ -49,10 +53,8 @@ export class AuthController {
     try {
       const result = await this.registerUseCase.execute(req.body);
 
-      return res.status(HttpStatusCode.OK).json({
-        success: true,
-        message: result.message,
-      });
+      return ResponseHandler.success(res, result.message, null, HttpStatusCode.OK)
+
     } catch (error) {
       next(error);
     }
@@ -62,21 +64,18 @@ export class AuthController {
     try {
       const result = await this.verifySignupOtpUseCase.execute(req.body);
 
-      res.cookie("refreshToken", result.refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: config.refreshCookieMaxAge,
-      });
+      setRefereshTokenCookie(res,result.refreshToken);
 
-      return res.status(HttpStatusCode.CREATED).json({
-        success: true,
-        message: "User registered successfully",
-        data: {
+      return ResponseHandler.success(
+        res,
+        SuccessMessages.USER_REGISTERED,
+        {
           user: result.user,
-          accessToken: result.accessToken,
+          accessToken: result.accessToken
         },
-      });
+        HttpStatusCode.CREATED
+      )
+
     } catch (error) {
       next(error);
     }
@@ -86,21 +85,17 @@ export class AuthController {
     try {
       const result = await this.loginUseCase.execute(req.body);
 
-      res.cookie("refreshToken", result.refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: config.refreshCookieMaxAge,
-      });
+      setRefereshTokenCookie(res,result.refreshToken);
 
-      return res.status(HttpStatusCode.OK).json({
-        success: true,
-        message: "Login successful",
-        data: {
+      return ResponseHandler.success(
+        res,
+        SuccessMessages.LOGIN_SUCCESSFUL,
+        {
           user: result.user,
           accessToken: result.accessToken,
         },
-      });
+        HttpStatusCode.OK
+      );
     } catch (error) {
       next(error);
     }
@@ -111,25 +106,20 @@ export class AuthController {
       const refreshToken = req.cookies.refreshToken;
 
       if (!refreshToken) {
-        throw new Error("Refresh token not found");
+        throw new AppError(ErrorMessages.REFRESH_TOKEN_NOT_FOUND, HttpStatusCode.NOT_FOUND);
       }
 
       const result = await this.refreshUseCase.execute({ refreshToken });
 
-      res.cookie("refreshToken", result.refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: config.refreshCookieMaxAge,
-      });
+      setRefereshTokenCookie(res,result.refreshToken);
 
-      return res.status(HttpStatusCode.OK).json({
-        success: true,
-        message: "Token refreshed successfully",
-        data: {
+      return ResponseHandler.success(
+        res,
+        "Token refreshed successfully",
+        {
           accessToken: result.accessToken,
-        },
-      });
+        }
+      );
     } catch (error) {
       next(error);
     }
@@ -140,17 +130,17 @@ export class AuthController {
       const refreshToken = req.cookies.refreshToken;
 
       if (!refreshToken) {
-        throw new Error("Refresh token not found");
+        throw new AppError("Refresh token not found", HttpStatusCode.NOT_FOUND);
       }
 
       await this.logoutUseCase.execute({ refreshToken });
 
-      res.clearCookie("refreshToken");
+      clearRefreshTokenCookie(res);
 
-      return res.status(HttpStatusCode.OK).json({
-        success: true,
-        message: "Logout successful",
-      });
+      return ResponseHandler.success(
+        res,
+        SuccessMessages.LOGOUT_SUCCESSFUL
+      );
     } catch (error) {
       next(error);
     }
@@ -160,10 +150,11 @@ export class AuthController {
     try {
       await this.forgotPasswordUseCase.execute(req.body);
 
-      return res.status(HttpStatusCode.OK).json({
-        success: true,
-        message: "OTP sent successfully",
-      });
+      return ResponseHandler.success(
+        res,
+        SuccessMessages.OTP_SENT
+      );
+
     } catch (error) {
       next(error);
     }
@@ -173,11 +164,12 @@ export class AuthController {
     try {
       const result = await this.verifyOtpUseCase.execute(req.body);
 
-      return res.status(HttpStatusCode.OK).json({
-        success: true,
-        message: "OTP verified successfully",
-        data: result,
-      });
+      return ResponseHandler.success(
+        res,
+        SuccessMessages.OTP_VERIFIED,
+        result
+      );
+
     } catch (error) {
       next(error);
     }
@@ -187,10 +179,11 @@ export class AuthController {
     try {
       await this.resetPasswordUseCase.execute(req.body);
 
-      return res.status(HttpStatusCode.OK).json({
-        success: true,
-        message: "Password reset successfully",
-      });
+      return ResponseHandler.success(
+        res,
+        "Password reset successfully"
+      );
+
     } catch (error) {
       next(error);
     }
@@ -201,10 +194,11 @@ export class AuthController {
     try {
       await this.resendSignupOtpUseCase.execute(req.body);
 
-      return res.status(HttpStatusCode.OK).json({
-        success: true,
-        message: "OTP resent successfully",
-      });
+      return ResponseHandler.success(
+        res,
+        SuccessMessages.OTP_RESENT
+      );
+
     } catch (error) {
       next(error);
     }
@@ -214,10 +208,11 @@ export class AuthController {
     try {
       await this.resendForgotPasswordOtpUseCase.execute(req.body);
 
-      return res.status(HttpStatusCode.OK).json({
-        success: true,
-        message: "OTP resent successfully",
-      });
+      return ResponseHandler.success(
+        res,
+        SuccessMessages.OTP_RESENT
+      );
+
     } catch (error) {
       next(error);
     }
@@ -228,18 +223,19 @@ export class AuthController {
       const user = req.user;
 
       if (!user) {
-        throw new Error("Unauthorized");
+        throw new AppError(ErrorMessages.UNAUTHORIZED, HttpStatusCode.UNAUTHORIZED);
       }
 
       const result = await this.getCurrentUserUseCase.execute({
         userId: user.userId,
       });
 
-      return res.status(HttpStatusCode.OK).json({
-        success: true,
-        message: "User fetched successfully",
-        data: result,
-      });
+      return ResponseHandler.success(
+        res,
+        "User fetched successfully",
+        result
+      );
+
     } catch (error) {
       next(error);
     }
@@ -250,7 +246,7 @@ export class AuthController {
       const user = req.user;
 
       if (!user) {
-        throw new Error("Unauthorized");
+        throw new AppError("Unauthorized", HttpStatusCode.UNAUTHORIZED);
       }
 
       await this.changePasswordUseCase.execute(
@@ -258,10 +254,10 @@ export class AuthController {
         req.body
       );
 
-      return res.status(HttpStatusCode.OK).json({
-        success: true,
-        message: "Password changed successfully",
-      });
+      return ResponseHandler.success(
+        res,
+        "Password changed successfully"
+      );
     } catch (error) {
       next(error);
     }

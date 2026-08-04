@@ -8,6 +8,7 @@ import { TYPES } from "../../../../config/types";
 import { IVerifyOtpUseCase } from "../../domain/interfaces/use-cases/IVerifyOtpUseCase";
 import { AppError } from "../../../../shared/errors/AppError";
 import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
+import { ErrorMessages } from "../../../../shared/constant/ErrorMessages";
 @injectable()
 export class VerifyOtpUseCase implements IVerifyOtpUseCase {
   constructor(
@@ -24,12 +25,12 @@ export class VerifyOtpUseCase implements IVerifyOtpUseCase {
     const storedOtp = await this.otpStore.getOtp(dto.email);
 
     if (!storedOtp) {
-      throw new AppError("OTP expired or not found", HttpStatusCode.NOT_FOUND);
+      throw new AppError(ErrorMessages.OTP_EXPIRED, HttpStatusCode.NOT_FOUND);
     }
 
 
     if (storedOtp !== dto.otp) {
-      throw new AppError("Invalid OTP", HttpStatusCode.BAD_REQUEST);
+      throw new AppError(ErrorMessages.INVALID_OTP, HttpStatusCode.BAD_REQUEST);
     }
 
     await this.otpStore.deleteOtp(dto.email);

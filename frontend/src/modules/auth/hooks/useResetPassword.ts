@@ -12,11 +12,7 @@ interface ErrorResponse {
 }
 
 export function useResetPassword() {
-    return useMutation<
-        ResetPasswordResponse,
-        AxiosError<ErrorResponse>,
-        ResetPasswordDto
-    >({
+    return useMutation<ResetPasswordResponse, AxiosError<ErrorResponse>, ResetPasswordDto>({
         mutationFn: resetPassword,
 
         onSuccess: () => {

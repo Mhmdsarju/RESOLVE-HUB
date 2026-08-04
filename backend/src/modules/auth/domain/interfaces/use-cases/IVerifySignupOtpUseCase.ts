@@ -2,7 +2,6 @@ import { VerifySignupOtpDto } from "../../../application/dto/VerifySignupOtpDto"
 import { UserRole } from "../../enums/UserRole";
 
 export interface VerifySignupOtpResponse {
-
     user: {
         id: string;
         name: string;
@@ -12,7 +11,6 @@ export interface VerifySignupOtpResponse {
     };
     accessToken: string;
     refreshToken: string;
-
 }
 
 export interface IVerifySignupOtpUseCase {

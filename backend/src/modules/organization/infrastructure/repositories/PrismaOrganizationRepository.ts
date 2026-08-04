@@ -10,10 +10,10 @@ export class PrismaOrganizationRepository  implements IOrganizationRepository {
   
   async create(organization: Organization): Promise<Organization> {
     const createdOrganization = await prisma.organization.create({
-      data: OrganizationMapper.toPersistence(organization),
+      data: OrganizationMapper.toDb(organization),
     });
 
-    return OrganizationMapper.toDomain(createdOrganization);
+    return OrganizationMapper.fromDb(createdOrganization);
   }
 
   async findById(id: string): Promise<Organization | null> {
@@ -25,7 +25,7 @@ export class PrismaOrganizationRepository  implements IOrganizationRepository {
       return null;
     }
 
-    return OrganizationMapper.toDomain(organization);
+    return OrganizationMapper.fromDb(organization);
   }
 
   async findAll(): Promise<Organization[]> {
@@ -40,7 +40,7 @@ export class PrismaOrganizationRepository  implements IOrganizationRepository {
       data,
     });
 
-    return OrganizationMapper.toDomain(updatedOrganization);
+    return OrganizationMapper.fromDb(updatedOrganization);
   }
 
   async delete(id: string): Promise<void> {
@@ -57,6 +57,6 @@ export class PrismaOrganizationRepository  implements IOrganizationRepository {
       return null;
     }
 
-    return OrganizationMapper.toDomain(organization);
+    return OrganizationMapper.fromDb(organization);
   }
 }
