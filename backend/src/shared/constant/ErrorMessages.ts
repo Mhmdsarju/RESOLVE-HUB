@@ -9,5 +9,6 @@ export const ErrorMessages = {
   SIGNUP_SESSION_EXPIRED: "Signup session expired. Please register again.",
   REFRESH_TOKEN_NOT_FOUND: "Refresh token not found",
   INVALID_EMAIL_OR_PASSWORD: "Invalid email or password",
+  TEAM_NOT_FOUND:"team not found",
 } as const;
 
