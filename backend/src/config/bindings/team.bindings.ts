@@ -13,14 +13,35 @@ import { IUpdateTeamUseCase } from "@/modules/team-management/domain/interfaces/
 import { UpdateTeamUseCase } from "@/modules/team-management/application/use-cases/UpdateTeamUseCase";
 import { IDeleteTeamUseCase } from "@/modules/team-management/domain/interfaces/use-case/IDeleteTeamUseCase";
 import { DeleteTeamUseCase } from "@/modules/team-management/application/use-cases/DeleteTeamUseCase";
+import { ITeamMemberRepository } from "@/modules/team-management/domain/interfaces/ITeamMemberRepository";
+import { PrismaTeamMemberRepository } from "@/modules/team-management/infrastructure/repositories/PrismaTeamMemberRepository";
+import { IAddTeamMemberUseCase } from "@/modules/team-management/domain/interfaces/use-case/IAddTeamMemberUseCase";
+import { AddTeamMemberUseCase } from "@/modules/team-management/application/use-cases/AddTeamMemberUseCase";
+import { TeamMemberController } from "@/modules/team-management/presentation/controllers/TeamMemberController";
+import { IGetTeamMembersUseCase } from "@/modules/team-management/domain/interfaces/use-case/IGetTeamMembersUseCase";
+import { GetTeamMembersUseCase } from "@/modules/team-management/application/use-cases/GetTeamMembersUseCase";
+import { IUpdateTeamMemberRoleUseCase } from "@/modules/team-management/domain/interfaces/use-case/IUpdateTeamMemberRoleUseCase";
+import { UpdateTeamMemberRoleUseCase } from "@/modules/team-management/application/use-cases/UpdateTeamMemberRoleUseCase";
+import { IRemoveTeamMemberUseCase } from "@/modules/team-management/domain/interfaces/use-case/IRemoveTeamMemberUseCase";
+import { RemoveTeamMemberUseCase } from "@/modules/team-management/application/use-cases/RemoveTeamMemberUseCase";
 
 export function bindTeam(container:Container){
 
     container.bind<TeamController>(TYPES.TeamController).to(TeamController).inSingletonScope();
+    container.bind<TeamMemberController>(TYPES.TeamMemberController).to(TeamMemberController);
+    
     container.bind<ITeamRepository>(TYPES.TeamRepository).to(PrismaTeamRepository).inSingletonScope();
+    container.bind<ITeamMemberRepository>(TYPES.TeamMemberRepository).to(PrismaTeamMemberRepository).inSingletonScope();
     container.bind<ICreateTeamUseCase>(TYPES.CreateTeamUseCase).to(CreateTeamUseCase).inSingletonScope();
     container.bind<IGetTeamsUseCase>(TYPES.GetTeamsUseCase).to(GetTeamsUseCase).inSingletonScope();
     container.bind<IGetTeamUseCase>(TYPES.GetTeamUseCase).to(GetTeamUseCase).inSingletonScope();
     container.bind<IUpdateTeamUseCase>(TYPES.UpdateTeamUseCase).to(UpdateTeamUseCase).inSingletonScope();
     container.bind<IDeleteTeamUseCase>(TYPES.DeleteTeamUseCase).to(DeleteTeamUseCase).inSingletonScope()
+
+    //teamMember
+
+    container.bind<IAddTeamMemberUseCase>(TYPES.AddTeamMemberUseCase).to(AddTeamMemberUseCase).inSingletonScope();
+    container.bind<IGetTeamMembersUseCase>(TYPES.GetTeamMembersUseCase).to(GetTeamMembersUseCase).inSingletonScope();
+    container.bind<IUpdateTeamMemberRoleUseCase>(TYPES.UpdateTeamMemberRoleUseCase).to(UpdateTeamMemberRoleUseCase).inSingletonScope();
+    container.bind<IRemoveTeamMemberUseCase>(TYPES.RemoveTeamMemberUseCase).to(RemoveTeamMemberUseCase).inSingletonScope();
 }

@@ -10,5 +10,6 @@ export const ErrorMessages = {
   REFRESH_TOKEN_NOT_FOUND: "Refresh token not found",
   INVALID_EMAIL_OR_PASSWORD: "Invalid email or password",
   TEAM_NOT_FOUND:"team not found",
+  USER_NOT_IN_ORGANIZATION: "User does not belong to this organization",
 } as const;
 
