@@ -2,8 +2,11 @@ export const TEAM_TYPES={
 
     TeamRepository: Symbol.for("TeamRepository"),
     TeamMemberRepository:Symbol.for("TeamMemberRepository"),
+    TeamInvitationRepository:Symbol.for("TeamInvitationRepository"),
 
     TeamController:Symbol.for("TeamController"),
+    TeamMemberController:Symbol.for("TeamMemberController"),
+    TeamInvitationController:Symbol.for("TeamInvitationController"),
     //usecases
     CreateTeamUseCase:Symbol.for("CreateTeamUseCase"),
     GetTeamUseCase:Symbol.for("GetTeamUseCase"),
@@ -15,6 +18,11 @@ export const TEAM_TYPES={
     GetTeamMembersUseCase:Symbol.for("GetTeamMembersUseCase"),
     UpdateTeamMemberRoleUseCase:Symbol.for("UpdateTeamMemberRoleUseCase"),
     RemoveTeamMemberUseCase:Symbol.for("RemoveTeamMemberUseCase"),
-    TeamMemberController:Symbol.for("TeamMemberController")
 
-}   
+    CreateTeamInvitationUseCase:Symbol.for("CreateTeamInvitationUseCase"),
+    AcceptTeamInvitationUseCase:Symbol.for("AcceptTeamInvitationUseCase"),
+    GetTeamInvitationsUseCase:Symbol.for("GetTeamInvitationsUseCase"),
+    CancelTeamInvitationUseCase:Symbol.for("CancelTeamInvitationUseCase"),
+    GetMyTeamsUseCase:Symbol.for("GetMyTeamsUseCase")
+
+    }   

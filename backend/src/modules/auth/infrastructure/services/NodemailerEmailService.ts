@@ -5,6 +5,7 @@ import { IEmailService } from "../../domain/interfaces/IEmailService";
 import { signupOtpTemplate } from "../templates/signupOtpTemplate";
 import { forgotPasswordOtpTemplate } from "../templates/forgotPasswordOtpTemplate";
 import { injectable } from "inversify";
+import { teamInvitationTemplate } from "../templates/teamInvitationTemplate";
 
 @injectable()
 export class NodemailerEmailService implements IEmailService {
@@ -52,4 +53,22 @@ export class NodemailerEmailService implements IEmailService {
 
     });
   }
+
+  async sendTeamInvitationEmail(email: string, inviteLink: string): Promise<void> {
+    await this.transporter.sendMail({
+      from: `"ResolveHub" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "ResolveHub - Team Invitation",
+      html: teamInvitationTemplate(inviteLink),
+
+      attachments: [
+        {
+          filename: "resolvehub-logo.png",
+          path: "src/assets/resolvehub-logo.png",
+          cid: "resolvehub-logo",
+        },
+      ],
+    });
+  }
+
 }

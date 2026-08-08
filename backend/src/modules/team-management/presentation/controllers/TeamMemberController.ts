@@ -10,6 +10,7 @@ import { IUpdateTeamMemberRoleUseCase } from "../../domain/interfaces/use-case/I
 import { UpdateTeamMembersRoleDto } from "../../application/dto/updateTeamMemberRoleDto";
 import { IRemoveTeamMemberUseCase } from "../../domain/interfaces/use-case/IRemoveTeamMemberUseCase";
 import { BaseController } from "@/shared/base/controllers/BaseController";
+import { IGetMyTeamsUseCase } from "../../domain/interfaces/use-case/IGetMyTeamsUseCase";
 
 
 @injectable()
@@ -22,13 +23,15 @@ export class TeamMemberController extends BaseController {
         @inject(TYPES.UpdateTeamMemberRoleUseCase)
         private readonly updateTeamMemberRoleUseCase: IUpdateTeamMemberRoleUseCase,
         @inject(TYPES.RemoveTeamMemberUseCase)
-        private readonly removeTeamMemberUseCase: IRemoveTeamMemberUseCase
+        private readonly removeTeamMemberUseCase: IRemoveTeamMemberUseCase,
+        @inject(TYPES.GetMyTeamsUseCase)
+        private readonly getMyTeamsUseCase:IGetMyTeamsUseCase,
     ) { super() }
 
     async addMember(req: Request, res: Response, next: NextFunction) {
         try {
             this.getCurrentUser(req);
-        
+
             const dto: CreateTeamMemberDto = {
                 teamId: req.params.teamId,
                 userId: req.body.userId,
@@ -99,6 +102,22 @@ export class TeamMemberController extends BaseController {
                 null
             );
 
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getMyTeams(req: Request, res: Response, next: NextFunction) {
+        try {
+            const user = this.getCurrentUser(req);
+
+            const teams = await this.getMyTeamsUseCase.execute(user.userId);
+
+            return ResponseHandler.success(
+                res,
+                "Teams fetched successfully",
+                teams
+            );
         } catch (error) {
             next(error);
         }

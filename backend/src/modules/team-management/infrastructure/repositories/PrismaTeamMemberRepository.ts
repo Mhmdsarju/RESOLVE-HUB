@@ -3,7 +3,7 @@ import { injectable } from "inversify";
 import { prisma } from "@/config/database";
 
 import { TeamMember } from "../../domain/entities/teamMember.entity";
-import { ITeamMemberRepository } from "../../domain/interfaces/ITeamMemberRepository";
+import { ITeamMemberRepository, TeamWithRole } from "../../domain/interfaces/ITeamMemberRepository";
 import { TeamMemberMapper } from "../mappers/TeamMemberMapper";
 
 @injectable()
@@ -77,4 +77,29 @@ export class PrismaTeamMemberRepository implements ITeamMemberRepository {
 
         return members.map(TeamMemberMapper.fromDb);
     }
+
+    async findTeamsByUserId(userId: string): Promise<TeamWithRole[]> {
+        const members = await prisma.teamMember.findMany({
+            where: {
+                userId,
+            },
+            include: {
+                team: {
+                    select: {
+                        id: true,
+                        name: true,
+                    },
+                },
+            },
+        });
+
+        return members.map((m) => ({
+            role: m.role,
+            team: {
+                id: m.team.id,
+                name: m.team.name,
+            },
+        }));
+    }
+
 }
