@@ -1,0 +1,122 @@
+import { Request, Response, NextFunction } from "express";
+import { inject, injectable } from "inversify";
+
+import { TYPES } from "@/config/types";
+import { BaseController } from "@/shared/base/controllers/BaseController";
+import { ResponseHandler } from "@/shared/response/response-handler";
+
+import { ICreateIncidentUseCase } from "../../domain/interfaces/use-cases/ICreateIncidentUseCase";
+import { CreateIncidentDto } from "../../application/dto/createIncidentDto";
+import { IUpdateIncidentStatusUseCase } from "../../domain/interfaces/use-cases/IUpdateIncidentStatusUseCase";
+import { IAssignTeamUseCase } from "../../domain/interfaces/use-cases/IAssignTeamUseCase";
+import { IGetIncidentByIdUseCase } from "../../domain/interfaces/use-cases/IGetIncidentByIdUseCase";
+
+@injectable()
+export class IncidentController extends BaseController {
+    constructor(
+        @inject(TYPES.CreateIncidentUseCase)
+        private readonly createIncidentUseCase: ICreateIncidentUseCase,
+        @inject(TYPES.UpdateIncidentStatusUseCase)
+        private readonly updateIncidentStatusUseCase: IUpdateIncidentStatusUseCase,
+        @inject(TYPES.AssignTeamUseCase)
+        private readonly assignTeamUseCase: IAssignTeamUseCase,
+        @inject(TYPES.GetIncidentByIdUseCase)
+        private readonly getIncidentByIdUseCase: IGetIncidentByIdUseCase
+    ) {
+        super();
+    }
+
+    async createIncident(req: Request, res: Response, next: NextFunction) {
+        try {
+            const currentUser = this.getCurrentUser(req);
+
+            const dto: CreateIncidentDto = {
+                title: req.body.title,
+                description: req.body.description,
+                severity: req.body.severity,
+                priority: req.body.priority,
+                type: req.body.type,
+                assignedTeamId: req.body.assignedTeamId,
+            };
+
+            const incident = await this.createIncidentUseCase.execute(
+                dto,
+                currentUser.userId,
+                currentUser.organizationId
+            );
+
+            return ResponseHandler.success(
+                res,
+                "Incident created successfully",
+                incident
+            );
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async updateStatus(req: Request, res: Response, next: NextFunction) {
+
+        try {
+
+            this.getCurrentUser(req);
+
+            const dto = {
+                status: req.body.status
+            }
+
+            const incident = await this.updateIncidentStatusUseCase.execute(req.params.id, dto)
+
+            return ResponseHandler.success(
+                res, "Incident status updated Successfully", incident
+            )
+
+        } catch (error) {
+            next(error);
+        }
+
+    }
+
+    async assignTeam(req: Request, res: Response, next: NextFunction) {
+        try {
+            this.getCurrentUser(req);
+
+            const dto = {
+                teamId: req.body.teamId,
+            };
+
+            const incident = await this.assignTeamUseCase.execute(
+                req.params.id,
+                dto
+            );
+
+            return ResponseHandler.success(
+                res,
+                "Team assigned successfully",
+                incident
+            );
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getById(req: Request, res: Response, next: NextFunction) {
+        try {
+            this.getCurrentUser(req);
+
+            const incident = await this.getIncidentByIdUseCase.execute(
+                req.params.id
+            );
+
+            return ResponseHandler.success(
+                res,
+                "Incident fetched successfully",
+                incident
+            );
+        } catch (error) {
+            next(error);
+        }
+    }
+
+
+}
