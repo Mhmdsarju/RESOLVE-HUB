@@ -13,6 +13,5 @@ export interface ITeamMemberRepository extends IBaseRepository<TeamMember> {
   findMember(teamId: string, userId: string): Promise<TeamMember | null>;
   findMembers(teamId: string): Promise<TeamMember[]>;
 
-  // ✅ FIXED (no any)
   findTeamsByUserId(userId: string): Promise<TeamWithRole[]>;
 }

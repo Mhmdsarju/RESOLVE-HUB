@@ -38,7 +38,6 @@ export class PrismaIncidentRepository implements IIncidentRepository {
     return data.map(IncidentMapper.fromDb);
   }
 
-  // 🔥 MAIN METHOD (Pagination + Filters)
   async findAllWithPagination(params: {
     organizationId: string;
     skip: number;
@@ -91,4 +90,61 @@ export class PrismaIncidentRepository implements IIncidentRepository {
       where: { id },
     });
   }
+
+  async getStats(organizationId: string) {
+    const where = { organizationId };
+
+    const [total, statusGroup, severityGroup, priorityGroup] =
+      await Promise.all([
+        prisma.incident.count({ where }),
+
+        prisma.incident.groupBy({
+          by: ["status"],
+          where,
+          _count: { status: true },
+        }),
+
+        prisma.incident.groupBy({
+          by: ["severity"],
+          where,
+          _count: { severity: true },
+        }),
+
+        prisma.incident.groupBy({
+          by: ["priority"],
+          where,
+          _count: { priority: true },
+        }),
+      ]);
+
+    type GroupItem<K extends string> = {
+      [key in K]: string;
+    } & {
+      _count: Record<K, number>;
+    };
+
+    const mapGroup = <K extends string>(
+      group: GroupItem<K>[],
+      key: K
+    ): Record<string, number> => {
+      const result: Record<string, number> = {};
+
+      for (const item of group) {
+        const value = item[key];
+        const count = item._count[key];
+
+        result[value] = count;
+      }
+
+      return result;
+    };
+
+    return {
+      total,
+      status: mapGroup(statusGroup, "status"),
+      severity: mapGroup(severityGroup, "severity"),
+      priority: mapGroup(priorityGroup, "priority"),
+    };
+  }
+
 }

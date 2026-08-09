@@ -7,6 +7,7 @@ import  organizationRoutes from "../modules/organization/presentation/routes/org
 import teamRoutes from "@/modules/team-management/presentation/routes/team.routes";
 import teamInvitationRoutes from "@/modules/team-management/presentation/routes/teamInvitation.routes";
 import incidentRoutes from "@/modules/incident/presentation/routes/incident.routes";
+import taskRoutes from "@/modules/task-management/presentation/routes/task.routes";
 
 import { errorHandler } from "./middlewares/errorHandler";
 const app = express();
@@ -26,6 +27,7 @@ app.use("/api/organizations", organizationRoutes);
 app.use("/api/teams",teamRoutes);
 app.use("/api", teamInvitationRoutes);
 app.use("/api/incidents", incidentRoutes);
+app.use("/tasks", taskRoutes);
 
 app.use(errorHandler);
 

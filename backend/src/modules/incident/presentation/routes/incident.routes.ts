@@ -16,5 +16,7 @@ router.post("/", authMiddleware, incidentController.createIncident.bind(incident
 router.patch("/:id/status", authMiddleware, incidentController.updateStatus.bind(incidentController));
 router.patch("/:id/assign", authMiddleware, incidentController.assignTeam.bind(incidentController));
 router.get("/:id", authMiddleware, incidentController.getById.bind(incidentController));
+router.get("/", authMiddleware, incidentController.getAll.bind(incidentController));
+router.get("/stats", authMiddleware, incidentController.getStats.bind(incidentController));
 
 export default router;

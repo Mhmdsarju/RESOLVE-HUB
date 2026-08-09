@@ -22,4 +22,11 @@ export interface IIncidentRepository extends IBaseRepository<Incident> {
     total: number;
   }>;
 
+  getStats(organizationId: string): Promise<{
+    total: number;
+    status: Record<string, number>;
+    severity: Record<string, number>;
+    priority: Record<string, number>;
+  }>;
+
 }

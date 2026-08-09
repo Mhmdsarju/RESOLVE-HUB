@@ -10,6 +10,12 @@ import { CreateIncidentDto } from "../../application/dto/createIncidentDto";
 import { IUpdateIncidentStatusUseCase } from "../../domain/interfaces/use-cases/IUpdateIncidentStatusUseCase";
 import { IAssignTeamUseCase } from "../../domain/interfaces/use-cases/IAssignTeamUseCase";
 import { IGetIncidentByIdUseCase } from "../../domain/interfaces/use-cases/IGetIncidentByIdUseCase";
+import { IGetIncidentsUseCase } from "../../domain/interfaces/use-cases/IGetIncidentsUseCase";
+
+import { Status } from "../../domain/enums/status.enum";
+import { Priority } from "../../domain/enums/priority.enum";
+import { Severity } from "../../domain/enums/severity.enum";
+import { IGetIncidentStatsUseCase } from "../../domain/interfaces/use-cases/IGetIncidentStatsUseCase";
 
 @injectable()
 export class IncidentController extends BaseController {
@@ -21,7 +27,11 @@ export class IncidentController extends BaseController {
         @inject(TYPES.AssignTeamUseCase)
         private readonly assignTeamUseCase: IAssignTeamUseCase,
         @inject(TYPES.GetIncidentByIdUseCase)
-        private readonly getIncidentByIdUseCase: IGetIncidentByIdUseCase
+        private readonly getIncidentByIdUseCase: IGetIncidentByIdUseCase,
+        @inject(TYPES.GetIncidentsUseCase)
+        private readonly getIncidentsUseCase: IGetIncidentsUseCase,
+        @inject(TYPES.GetIncidentStatsUseCase)
+        private readonly getIncidentStatsUseCase: IGetIncidentStatsUseCase
     ) {
         super();
     }
@@ -112,6 +122,52 @@ export class IncidentController extends BaseController {
                 res,
                 "Incident fetched successfully",
                 incident
+            );
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getAll(req: Request, res: Response, next: NextFunction) {
+        try {
+            const currentUser = this.getCurrentUser(req);
+
+            const dto = {
+                page: Number(req.query.page) || 1,
+                limit: Number(req.query.limit) || 10,
+                status: req.query.status as Status | undefined,
+                priority: req.query.priority as Priority | undefined,
+                severity: req.query.severity as Severity | undefined,
+                assignedTeamId: req.query.assignedTeamId as string | undefined,
+            };
+
+            const result = await this.getIncidentsUseCase.execute(
+                dto,
+                currentUser.organizationId
+            );
+
+            return ResponseHandler.success(
+                res,
+                "Incidents fetched successfully",
+                result
+            );
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getStats(req: Request, res: Response, next: NextFunction) {
+        try {
+            const currentUser = this.getCurrentUser(req);
+
+            const stats = await this.getIncidentStatsUseCase.execute(
+                currentUser.organizationId
+            );
+
+            return ResponseHandler.success(
+                res,
+                "Incident stats fetched successfully",
+                stats
             );
         } catch (error) {
             next(error);

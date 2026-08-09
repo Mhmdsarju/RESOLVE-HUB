@@ -63,7 +63,9 @@ model User {
   teamMemberships    TeamMember[]
   createdInvitations TeamInvitation[] @relation("CreatedInvitations")
 
-  incident Incident[]
+  createdIncidents Incident[] @relation("IncidentCreator")
+
+  assignedTasks Task[] @relation("UserAssignedTasks")
 
   @@index([organizationId])
   @@map("users")
@@ -181,8 +183,11 @@ model Incident {
   updatedAt DateTime @updatedAt
 
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  creator      User?        @relation(fields: [createdBy], references: [id])
-  assignedTeam Team?        @relation(fields: [assignedTeamId], references: [id])
+  creator      User?        @relation("IncidentCreator", fields: [createdBy], references: [id])
+
+  assignedTeam Team? @relation(fields: [assignedTeamId], references: [id])
+
+  tasks Task[]
 
   @@index([organizationId])
   @@index([status])
@@ -215,4 +220,42 @@ enum IncidentStatus {
 enum IncidentType {
   MANUAL
   AUTOMATED
+}
+
+model Task {
+  id String @id @default(cuid())
+
+  title       String
+  description String?
+
+  incidentId String
+  assignedTo String? @db.Uuid
+
+  status   TaskStatus   @default(TODO)
+  priority TaskPriority @default(MEDIUM)
+
+  dueDate DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  incident Incident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  assignee User?    @relation("UserAssignedTasks", fields: [assignedTo], references: [id])
+
+  @@index([incidentId])
+  @@index([assignedTo])
+  @@index([status])
+  @@map("tasks")
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
 }
