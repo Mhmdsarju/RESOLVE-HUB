@@ -30,6 +30,9 @@ model Organization {
 
   incidents Incident[]
 
+  monitoringProjects MonitoringProject[]
+  integrations       Integration[]
+
   @@map("organizations")
 }
 
@@ -66,6 +69,8 @@ model User {
   createdIncidents Incident[] @relation("IncidentCreator")
 
   assignedTasks Task[] @relation("UserAssignedTasks")
+
+  createdMonitoringProjects MonitoringProject[]
 
   @@index([organizationId])
   @@map("users")
@@ -187,7 +192,8 @@ model Incident {
 
   assignedTeam Team? @relation(fields: [assignedTeamId], references: [id])
 
-  tasks Task[]
+  tasks  Task[]
+  alerts Alert[]
 
   @@index([organizationId])
   @@index([status])
@@ -258,4 +264,123 @@ enum TaskPriority {
   LOW
   MEDIUM
   HIGH
+}
+
+model MonitoringProject {
+  id             String  @id @default(cuid())
+  name           String
+  description    String?
+  organizationId String  @db.Uuid
+  createdBy      String  @db.Uuid
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  creator      User         @relation(fields: [createdBy], references: [id])
+
+  alertRules   AlertRule[]
+  integrations Integration[]
+  alerts       Alert[]
+
+  @@unique([organizationId, name])
+  @@index([organizationId])
+  @@map("monitoring_projects")
+}
+
+model Integration {
+  id                  String @id @default(cuid())
+  monitoringProjectId String
+  organizationId      String @db.Uuid
+
+  type   IntegrationType
+  name   String
+  config Json
+
+  createdAt DateTime @default(now())
+
+  monitoringProject MonitoringProject @relation(fields: [monitoringProjectId], references: [id], onDelete: Cascade)
+  organization      Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  alerts Alert[]
+
+  isActive Boolean @default(true)
+
+  @@index([monitoringProjectId])
+  @@index([organizationId])
+  @@map("integrations")
+}
+
+model AlertRule {
+  id String @id @default(cuid())
+
+  monitoringProjectId String
+  organizationId      String @db.Uuid
+
+  name String
+
+  metric    String
+  operator  AlertOperator
+  threshold Float
+
+  severity IncidentSeverity
+  priority IncidentPriority
+
+  autoCreateIncident Boolean @default(true)
+
+  createdAt DateTime @default(now())
+
+  monitoringProject MonitoringProject @relation(fields: [monitoringProjectId], references: [id], onDelete: Cascade)
+
+  @@index([monitoringProjectId])
+  @@map("alert_rules")
+}
+
+model Alert {
+  id String @id @default(cuid())
+
+  organizationId String @db.Uuid
+
+  monitoringProjectId String
+  integrationId       String
+
+  title   String
+  message String?
+
+  status AlertStatus
+
+  payload Json
+
+  incidentId String?
+
+  createdAt DateTime @default(now())
+
+  monitoringProject MonitoringProject @relation(fields: [monitoringProjectId], references: [id], onDelete: Cascade)
+  integration       Integration       @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+  incident          Incident?         @relation(fields: [incidentId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId])
+  @@index([monitoringProjectId])
+  @@index([integrationId])
+  @@index([incidentId])
+  @@index([monitoringProjectId, status])
+}
+
+enum IntegrationType {
+  PROMETHEUS
+  GRAFANA
+  WEBHOOK
+}
+
+enum AlertStatus {
+  FIRING
+  RESOLVED
+}
+
+enum AlertOperator {
+  GT // >
+  LT // <
+  GTE // >=
+  LTE // <=
+  EQ // ==
 }
