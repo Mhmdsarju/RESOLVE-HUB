@@ -11,10 +11,13 @@ const router = Router();
 const controller = container.get<MonitoringProjectController>(TYPES.MonitoringProjectController);
 
 
-router.post("/", authMiddleware, controller.create.bind(controller));
-router.get("/", authMiddleware, controller.getAll.bind(controller));
-router.get("/:id", authMiddleware, controller.getById.bind(controller));
-router.put("/:id", authMiddleware, controller.update.bind(controller));
-router.delete("/monitoring-projects/:id", authMiddleware, controller.delete.bind(controller));
+router.route("/")
+  .post(authMiddleware, controller.create.bind(controller))
+  .get(authMiddleware, controller.getAll.bind(controller));
+
+router.route("/:id")
+  .get(authMiddleware, controller.getById.bind(controller))
+  .put(authMiddleware, controller.update.bind(controller))
+  .delete(authMiddleware, controller.delete.bind(controller));
 
 export default router;
