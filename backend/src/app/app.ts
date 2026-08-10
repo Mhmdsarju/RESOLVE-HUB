@@ -9,6 +9,7 @@ import teamInvitationRoutes from "@/modules/team-management/presentation/routes/
 import incidentRoutes from "@/modules/incident/presentation/routes/incident.routes";
 import taskRoutes from "@/modules/task-management/presentation/routes/task.routes";
 import monitorProjectRoutes from "@/modules/monitoring/presentation/routes/monitorProjects.routes";
+import integrationRoutes from "@/modules/integration/presentation/routes/integration.routes";
 
 import { errorHandler } from "./middlewares/errorHandler";
 const app = express();
@@ -30,6 +31,7 @@ app.use("/api", teamInvitationRoutes);
 app.use("/api/incidents", incidentRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/monitoring-projects",monitorProjectRoutes);
+app.use("/api/monitoring-projects", integrationRoutes);
 
 app.use(errorHandler);
 
