@@ -8,11 +8,12 @@ import { ICreateTaskUseCase } from "../../domain/interfaces/use-cases/ICreateTas
 
 import { AppError } from "@/shared/errors/AppError";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
+import { TYPES } from "@/config/types";
 
 @injectable()
 export class CreateTaskUseCase implements ICreateTaskUseCase {
   constructor(
-    @inject("TaskRepository")
+    @inject(TYPES.TaskRepository)
     private readonly taskRepository: ITaskRepository
   ) {}
 

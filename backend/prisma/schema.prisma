@@ -312,27 +312,30 @@ model Integration {
 }
 
 model AlertRule {
-  id String @id @default(cuid())
-
+  id                  String          @id @default(cuid())
   monitoringProjectId String
-  organizationId      String @db.Uuid
+  organizationId      String          @db.Uuid
 
-  name String
+  name                String
+  metric              String
+  operator            AlertOperator
+  threshold           Float
+  severity            IncidentSeverity
+  priority            IncidentPriority
 
-  metric    String
-  operator  AlertOperator
-  threshold Float
+  autoCreateIncident  Boolean         @default(true)
 
-  severity IncidentSeverity
-  priority IncidentPriority
+  isPredefined        Boolean         @default(false)
+  isActive             Boolean         @default(true)
 
-  autoCreateIncident Boolean @default(true)
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
 
-  createdAt DateTime @default(now())
-
-  monitoringProject MonitoringProject @relation(fields: [monitoringProjectId], references: [id], onDelete: Cascade)
+  monitoringProject MonitoringProject  @relation(fields: [monitoringProjectId], references: [id], onDelete: Cascade)
 
   @@index([monitoringProjectId])
+  @@index([organizationId])
+  @@index([monitoringProjectId, isActive])
   @@map("alert_rules")
 }
 

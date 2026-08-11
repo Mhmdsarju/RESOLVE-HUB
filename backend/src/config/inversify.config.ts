@@ -6,6 +6,7 @@ import { bindIncident } from "./bindings/incident.bindings";
 import { bindTask } from "./bindings/task.bindings";
 import { bindMonitoring } from "./bindings/monitoring.bindings";
 import { bindIntegration } from "./bindings/integration.bindings";
+import { bindAlertRule } from "./bindings/alertRule.bindings";
 const container = new Container();
 
 bindAuth(container);
@@ -15,5 +16,6 @@ bindIncident(container);
 bindTask(container);
 bindMonitoring(container);
 bindIntegration(container);
+bindAlertRule(container);
 
 export default container;

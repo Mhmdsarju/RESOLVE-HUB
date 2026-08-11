@@ -1,0 +1,26 @@
+import container from "@/config/inversify.config";
+import { Router } from "express";
+import { AlertRuleController } from "../controllers/AlertRuleController";
+import { TYPES } from "@/config/types";
+import { authMiddleware } from "@/app/middlewares/authMiddleware";
+
+
+
+const router = Router();
+
+const controller = container.get<AlertRuleController>(TYPES.AlertRuleController);
+
+router.route("/:projectId/alert-rules")
+    .post(authMiddleware, controller.create.bind(controller))
+    .get(authMiddleware, controller.getAll.bind(controller));
+
+router.route("/alert-rules/:id")
+    .get(authMiddleware, controller.getById.bind(controller))
+    .put(authMiddleware, controller.update.bind(controller))
+    .delete(authMiddleware, controller.delete.bind(controller));
+
+router.get("/alert-rules/defaults", authMiddleware, controller.getDefaults.bind(controller));
+
+router.post("/:projectId/alert-rules/default", authMiddleware, controller.applyDefault.bind(controller));
+
+export default router;

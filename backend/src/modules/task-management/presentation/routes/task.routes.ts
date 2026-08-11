@@ -1,12 +1,14 @@
 import { Router } from "express";
 
 import container from "../../../../config/inversify.config";
-
+import { TYPES } from "@/config/types";
 import { TaskController } from "../controllers/TaskController";
+
+
 
 const router = Router();
 
-const taskController = container.get(TaskController);
+const taskController = container.get<TaskController>(TYPES.TaskController);
 
 router.post("/", taskController.createTask.bind(taskController));
 router.get("/incident/:incidentId",taskController.getTasksByIncident.bind(taskController));

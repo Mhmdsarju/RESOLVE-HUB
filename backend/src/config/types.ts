@@ -5,6 +5,8 @@ import { INCIDENT_TYPES } from "./types/incident.types";
 import { TASK_TYPES } from "./types/task.types";
 import { MONITORING_TYPES } from "./types/monitoring.types";
 import { INTEGRATION_TYPES } from "./types/integration.types";
+import { ALERTRULES_TYPES } from "./types/alertRule.types";
+
 export const TYPES = {
   ...AUTH_TYPES,
   ...ORGANIZATION_TYPES,
@@ -12,5 +14,7 @@ export const TYPES = {
   ...INCIDENT_TYPES,
   ...TASK_TYPES,
   ...MONITORING_TYPES,
-  ...INTEGRATION_TYPES
+  ...INTEGRATION_TYPES,
+  ...ALERTRULES_TYPES
+
 } ;
