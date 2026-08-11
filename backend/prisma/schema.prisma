@@ -32,6 +32,7 @@ model Organization {
 
   monitoringProjects MonitoringProject[]
   integrations       Integration[]
+  alertRoutingRules  AlertRoutingRule[]
 
   @@map("organizations")
 }
@@ -71,6 +72,7 @@ model User {
   assignedTasks Task[] @relation("UserAssignedTasks")
 
   createdMonitoringProjects MonitoringProject[]
+  createdAlertRoutingRules  AlertRoutingRule[]  @relation("CreatedAlertRoutingRules")
 
   @@index([organizationId])
   @@map("users")
@@ -99,7 +101,8 @@ model Team {
   members     TeamMember[]
   invitations TeamInvitation[]
 
-  incidents Incident[]
+  incidents         Incident[]
+  alertRoutingRules AlertRoutingRule[]
 
   @@unique([organizationId, name])
   @@index([organizationId])
@@ -279,9 +282,10 @@ model MonitoringProject {
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   creator      User         @relation(fields: [createdBy], references: [id])
 
-  alertRules   AlertRule[]
-  integrations Integration[]
-  alerts       Alert[]
+  alertRules        AlertRule[]
+  integrations      Integration[]
+  alerts            Alert[]
+  alertRoutingRules AlertRoutingRule[]
 
   @@unique([organizationId, name])
   @@index([organizationId])
@@ -312,26 +316,26 @@ model Integration {
 }
 
 model AlertRule {
-  id                  String          @id @default(cuid())
+  id                  String @id @default(cuid())
   monitoringProjectId String
-  organizationId      String          @db.Uuid
+  organizationId      String @db.Uuid
 
-  name                String
-  metric              String
-  operator            AlertOperator
-  threshold           Float
-  severity            IncidentSeverity
-  priority            IncidentPriority
+  name      String
+  metric    String
+  operator  AlertOperator
+  threshold Float
+  severity  IncidentSeverity
+  priority  IncidentPriority
 
-  autoCreateIncident  Boolean         @default(true)
+  autoCreateIncident Boolean @default(true)
 
-  isPredefined        Boolean         @default(false)
-  isActive             Boolean         @default(true)
+  isPredefined Boolean @default(false)
+  isActive     Boolean @default(true)
 
-  createdAt            DateTime        @default(now())
-  updatedAt            DateTime        @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  monitoringProject MonitoringProject  @relation(fields: [monitoringProjectId], references: [id], onDelete: Cascade)
+  monitoringProject MonitoringProject @relation(fields: [monitoringProjectId], references: [id], onDelete: Cascade)
 
   @@index([monitoringProjectId])
   @@index([organizationId])
@@ -340,23 +344,23 @@ model AlertRule {
 }
 
 model Alert {
-  id                  String @id @default(cuid())
-  organizationId      String @db.Uuid
+  id                  String      @id @default(cuid())
+  organizationId      String      @db.Uuid
   monitoringProjectId String
   integrationId       String?
   createdBy           String?
   source              AlertSource
 
-  title               String
-  message             String?
-  status              AlertStatus
-  payload             Json
-  incidentId          String?
-  createdAt           DateTime @default(now())
+  title      String
+  message    String?
+  status     AlertStatus
+  payload    Json
+  incidentId String?
+  createdAt  DateTime    @default(now())
 
   monitoringProject MonitoringProject @relation(fields: [monitoringProjectId], references: [id], onDelete: Cascade)
-  integration       Integration? @relation(fields: [integrationId], references: [id], onDelete: Cascade)
-  incident          Incident? @relation(fields: [incidentId], references: [id], onDelete: SetNull)
+  integration       Integration?      @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+  incident          Incident?         @relation(fields: [incidentId], references: [id], onDelete: SetNull)
 
   @@index([organizationId])
   @@index([monitoringProjectId])
@@ -388,4 +392,32 @@ enum AlertOperator {
   GTE // >=
   LTE // <=
   EQ // ==
+}
+
+model AlertRoutingRule {
+  id                  String @id @default(cuid())
+  organizationId      String @db.Uuid
+  monitoringProjectId String
+  teamId              String
+  createdBy           String @db.Uuid
+
+  name       String
+  conditions Json
+  priority   Int     @default(100)
+  isActive   Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  organization      Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  monitoringProject MonitoringProject @relation(fields: [monitoringProjectId], references: [id], onDelete: Cascade)
+  team              Team              @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  creator           User              @relation("CreatedAlertRoutingRules", fields: [createdBy], references: [id])
+
+  @@index([organizationId])
+  @@index([monitoringProjectId])
+  @@index([teamId])
+  @@index([createdBy])
+  @@index([monitoringProjectId, isActive, priority])
+  @@map("alert_routing_rules")
 }

@@ -7,6 +7,7 @@ import { MONITORING_TYPES } from "./types/monitoring.types";
 import { INTEGRATION_TYPES } from "./types/integration.types";
 import { ALERTRULES_TYPES } from "./types/alertRule.types";
 import { ALERT_TYPES } from "./types/alert.types";
+import { ALERT_ROUTING_RULE_TYPES } from "./types/alertRoutingRule.types";
 export const TYPES = {
   ...AUTH_TYPES,
   ...ORGANIZATION_TYPES,
@@ -16,5 +17,6 @@ export const TYPES = {
   ...MONITORING_TYPES,
   ...INTEGRATION_TYPES,
   ...ALERTRULES_TYPES,
-  ...ALERT_TYPES
+  ...ALERT_TYPES,
+  ...ALERT_ROUTING_RULE_TYPES
 };

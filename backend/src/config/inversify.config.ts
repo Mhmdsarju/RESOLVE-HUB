@@ -8,6 +8,7 @@ import { bindMonitoring } from "./bindings/monitoring.bindings";
 import { bindIntegration } from "./bindings/integration.bindings";
 import { bindAlertRule } from "./bindings/alertRule.bindings";
 import { bindAlert } from "./bindings/alert.bindings";
+import { bindAlertRoutingRule } from "./bindings/alertRoutingRule.bindings";
 const container = new Container();
 
 bindAuth(container);
@@ -19,5 +20,6 @@ bindMonitoring(container);
 bindIntegration(container);
 bindAlertRule(container);
 bindAlert(container);
+bindAlertRoutingRule(container);
 
 export default container;
