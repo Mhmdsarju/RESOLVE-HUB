@@ -340,33 +340,35 @@ model AlertRule {
 }
 
 model Alert {
-  id String @id @default(cuid())
-
-  organizationId String @db.Uuid
-
+  id                  String @id @default(cuid())
+  organizationId      String @db.Uuid
   monitoringProjectId String
-  integrationId       String
+  integrationId       String?
+  createdBy           String?
+  source              AlertSource
 
-  title   String
-  message String?
-
-  status AlertStatus
-
-  payload Json
-
-  incidentId String?
-
-  createdAt DateTime @default(now())
+  title               String
+  message             String?
+  status              AlertStatus
+  payload             Json
+  incidentId          String?
+  createdAt           DateTime @default(now())
 
   monitoringProject MonitoringProject @relation(fields: [monitoringProjectId], references: [id], onDelete: Cascade)
-  integration       Integration       @relation(fields: [integrationId], references: [id], onDelete: Cascade)
-  incident          Incident?         @relation(fields: [incidentId], references: [id], onDelete: SetNull)
+  integration       Integration? @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+  incident          Incident? @relation(fields: [incidentId], references: [id], onDelete: SetNull)
 
   @@index([organizationId])
   @@index([monitoringProjectId])
   @@index([integrationId])
   @@index([incidentId])
   @@index([monitoringProjectId, status])
+  @@map("alerts")
+}
+
+enum AlertSource {
+  MANUAL
+  AUTOMATIC
 }
 
 enum IntegrationType {

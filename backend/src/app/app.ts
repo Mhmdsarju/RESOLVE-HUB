@@ -11,6 +11,7 @@ import taskRoutes from "@/modules/task-management/presentation/routes/task.route
 import monitorProjectRoutes from "@/modules/monitoring/presentation/routes/monitorProjects.routes";
 import integrationRoutes from "@/modules/integration/presentation/routes/integration.routes";
 import alertRuleRoutes from "@/modules/alertRule/presentation/routes/alertRules.routes";
+import alertRoutes from "@/modules/alert/presentation/routes/alert.routes";
 
 import { errorHandler } from "./middlewares/errorHandler";
 const app = express();
@@ -34,6 +35,7 @@ app.use("/api/tasks", taskRoutes);
 app.use("/api/monitoring-projects",monitorProjectRoutes);
 app.use("/api/monitoring-projects", integrationRoutes);
 app.use("/api/monitoring-projects", alertRuleRoutes);
+app.use("/", alertRoutes);
 
 app.use(errorHandler);
 
