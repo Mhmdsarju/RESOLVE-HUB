@@ -20,10 +20,7 @@ export function useVerifyOtp() {
     },
 
     onError: (error) => {
-      toast.error(
-        error.response?.data?.message ??
-        "OTP verification failed.",
-      );
+      toast.error(error.response?.data?.message ?? "OTP verification failed.",);
     },
   });
 }

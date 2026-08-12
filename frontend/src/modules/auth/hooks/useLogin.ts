@@ -30,10 +30,7 @@ export function useLogin() {
     },
 
     onError: (error) => {
-      const message =
-        error.response?.data?.message ??
-        "Login failed";
-
+      const message = error.response?.data?.message ?? "Login failed";
       toast.error(message);
     },
   });

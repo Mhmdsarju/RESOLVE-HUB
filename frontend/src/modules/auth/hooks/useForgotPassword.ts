@@ -18,10 +18,7 @@ export function useForgotPassword() {
     },
 
     onError: (error) => {
-      const message =
-        error.response?.data?.message ??
-        "Failed to send OTP.";
-
+      const message = error.response?.data?.message ?? "Failed to send OTP.";
       toast.error(message);
     },
   });

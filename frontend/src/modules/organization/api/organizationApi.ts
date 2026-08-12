@@ -1,12 +1,8 @@
 import { api } from "@/core/api/axios";
 
-import type {  Organization,  UpdateOrganizationDto,} from "../types/organization.types";
+import type { Organization, UpdateOrganizationDto, } from "../types/organization.types";
 
-interface ApiResponse<T> {
-  success: boolean;
-  message: string;
-  data: T;
-}
+import type { ApiResponse } from "@/core/types/api.types";
 
 export async function getOrganization() {
   const response = await api.get<ApiResponse<Organization>>(
@@ -16,9 +12,7 @@ export async function getOrganization() {
   return response.data.data;
 }
 
-export async function updateOrganization(
-  dto: UpdateOrganizationDto,
-) {
+export async function updateOrganization(dto: UpdateOrganizationDto,) {
   const response = await api.put<ApiResponse<Organization>>(
     "/organizations/me",
     dto,

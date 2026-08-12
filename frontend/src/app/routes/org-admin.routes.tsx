@@ -6,6 +6,9 @@ import DashboardLayout from "@/modules/dashboard/layout/DashboardLayout";
 import DashboardPage from "@/modules/dashboard/pages/DashboardPage";
 import OrganizationSettingsPage from "@/modules/organization/pages/OrganizationSettingsPage";
 
+import TeamListPage from "@/modules/team/pages/TeamListPage";
+import TeamDetailsPage from "@/modules/team/pages/TeamDetailsPage";
+
 export const orgAdminRoutes: RouteObject[] = [
   {
     element: <ProtectedGuard />,
@@ -17,9 +20,20 @@ export const orgAdminRoutes: RouteObject[] = [
             path: "/dashboard",
             element: <DashboardPage />,
           },
+
           {
             path: "/organization/settings",
             element: <OrganizationSettingsPage />,
+          },
+
+          {
+            path: "/teams",
+            element: <TeamListPage />,
+          },
+
+          {
+            path: "/teams/:id",
+            element: <TeamDetailsPage />,
           },
         ],
       },

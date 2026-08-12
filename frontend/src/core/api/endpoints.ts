@@ -22,7 +22,9 @@ export const ENDPOINTS = {
 
   INCIDENT: {},
 
-  TASK: {},
+  TEAM: {
+    BASE: "/teams",
+  },
 
   WAR_ROOM: {},
 } as const;
