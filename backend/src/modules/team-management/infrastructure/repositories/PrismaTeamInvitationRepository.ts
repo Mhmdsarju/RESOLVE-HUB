@@ -87,6 +87,21 @@ export class PrismaTeamInvitationRepository implements ITeamInvitationRepository
         return TeamInvitationMapper.fromDb(invitation);
     }
 
+    async findPendingInvitationByEmail(invitedEmail: string,): Promise<TeamInvitation | null> {
+        const invitation = await prisma.teamInvitation.findFirst({
+            where: {
+                invitedEmail,
+                status: "PENDING",
+            },
+        });
+
+        if (!invitation) {
+            return null;
+        }
+
+        return TeamInvitationMapper.fromDb(invitation);
+    }
+
     async findByTeamId(teamId: string): Promise<TeamInvitation[]> {
         const invitations = await prisma.teamInvitation.findMany({
             where: {

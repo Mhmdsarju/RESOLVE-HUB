@@ -11,7 +11,7 @@ import { UpdateTeamMembersRoleDto } from "../../application/dto/updateTeamMember
 import { IRemoveTeamMemberUseCase } from "../../domain/interfaces/use-case/IRemoveTeamMemberUseCase";
 import { BaseController } from "@/shared/base/controllers/BaseController";
 import { IGetMyTeamsUseCase } from "../../domain/interfaces/use-case/IGetMyTeamsUseCase";
-
+import { PaginationDto } from "@/shared/utils/Pagination/PaginationDto"; 
 
 @injectable()
 export class TeamMemberController extends BaseController {
@@ -25,7 +25,7 @@ export class TeamMemberController extends BaseController {
         @inject(TYPES.RemoveTeamMemberUseCase)
         private readonly removeTeamMemberUseCase: IRemoveTeamMemberUseCase,
         @inject(TYPES.GetMyTeamsUseCase)
-        private readonly getMyTeamsUseCase:IGetMyTeamsUseCase,
+        private readonly getMyTeamsUseCase: IGetMyTeamsUseCase,
     ) { super() }
 
     async addMember(req: Request, res: Response, next: NextFunction) {
@@ -55,7 +55,16 @@ export class TeamMemberController extends BaseController {
 
             this.getCurrentUser(req);
 
-            const members = await this.getTeamMembersUseCase.execute(req.params.teamId)
+            const pagination: PaginationDto = {
+                page: Number(req.query.page) || 1,
+                limit: Number(req.query.limit) || 10,
+                search: req.query.search as string | undefined,
+            };
+
+            const members = await this.getTeamMembersUseCase.execute(
+                req.params.teamId,
+                pagination,
+            );
 
             return ResponseHandler.success(res, "Team members fetched successfully", members)
 

@@ -41,6 +41,9 @@ import { NodemailerEmailService } from "@/modules/auth/infrastructure/services/N
 import { RedisSignupStore } from "@/modules/auth/infrastructure/signup-store/RedisSignupStore";
 import { RedisTokenStore } from "@/modules/auth/infrastructure/token-store/RedisTokenStore";
 import { AuthController } from "@/modules/auth/presentation/controllers/AuthController";
+import { IGetUsersByOrganizationUseCase } from "@/modules/auth/domain/interfaces/use-cases/IGetUsersByOrganizationUseCase";
+import { GetUsersByOrganizationUseCase } from "@/modules/auth/application/use-cases/GetUsersByOrganizationUseCase";
+import { UserController } from "@/modules/auth/presentation/controllers/UserController";
 
 export function bindAuth(container: Container) {
 
@@ -69,5 +72,7 @@ export function bindAuth(container: Container) {
 
 
     container.bind<AuthController>(TYPES.AuthController).to(AuthController).inSingletonScope();
+    container.bind<IGetUsersByOrganizationUseCase>(TYPES.GetUsersByOrganizationUseCase).to(GetUsersByOrganizationUseCase).inSingletonScope();
+    container.bind<UserController>(TYPES.UserController).to(UserController).inSingletonScope();
 
 }

@@ -7,6 +7,7 @@ export interface ITeamInvitationRepository extends IBaseRepository<TeamInvitatio
     findByToken(token: string): Promise<TeamInvitation | null>;
 
     findPendingInvitation(teamId: string, invitedEmail: string): Promise<TeamInvitation | null>;
+    findPendingInvitationByEmail(invitedEmail: string,): Promise<TeamInvitation | null>;
 
     findByTeamId(teamId: string): Promise<TeamInvitation[]>;
 }

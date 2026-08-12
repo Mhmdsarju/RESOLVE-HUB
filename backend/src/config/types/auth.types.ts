@@ -29,4 +29,7 @@ export const AUTH_TYPES = {
 
     //repositories
     UserRepository: Symbol.for("UserRepository"),
+
+    GetUsersByOrganizationUseCase:Symbol.for("GetUsersByOrganizationUseCase"),
+    UserController:Symbol.for("UserController")
 }

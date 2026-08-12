@@ -34,6 +34,16 @@ export class PrismaUserRepository implements IUserRepository {
     return users.map(UserMapper.fromDb);
   }
 
+  async findUsersByOrganizationId(    organizationId: string,  ): Promise<User[]> {
+    const users = await prisma.user.findMany({
+      where: {
+        organizationId,
+      },
+    });
+
+    return users.map(UserMapper.fromDb);
+  }
+
   async update(id: string, data: Partial<User>): Promise<User> {
     const updatedUser = await prisma.user.update({
       where: { id },

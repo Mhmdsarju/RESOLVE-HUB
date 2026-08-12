@@ -52,26 +52,26 @@ export class TeamInvitationController extends BaseController {
     }
 
     async accept(req: Request, res: Response, next: NextFunction) {
-    try {
+        try {
 
-        const dto: AcceptTeamInvitationDto = {
-            token: req.params.token,
-            name: req.body.name,
-            password: req.body.password,
-        };
+            const dto: AcceptTeamInvitationDto = {
+                token: req.params.token,
+                name: req.body.name,
+                password: req.body.password,
+            };
 
-        const result = await this.acceptTeamInvitationUseCase.execute(dto);
+            const result = await this.acceptTeamInvitationUseCase.execute(dto);
 
-        return ResponseHandler.success(
-            res,
-            "Registration completed successfully",
-            result
-        );
+            return ResponseHandler.success(
+                res,
+                "Registration completed successfully",
+                result
+            );
 
-    } catch (error) {
-        next(error);
+        } catch (error) {
+            next(error);
+        }
     }
-}
 
     async getAll(req: Request, res: Response, next: NextFunction) {
         try {

@@ -53,6 +53,12 @@ export class CreateTeamInvitationUseCase implements ICreateTeamInvitationUseCase
             throw new AppError(ErrorMessages.INVITATION_ALREADY_EXISTS, HttpStatusCode.CONFLICT);
         }
 
+        const existingPendingInvitation = await this.invitationRepository.findPendingInvitationByEmail(dto.invitedEmail);
+
+        if (existingPendingInvitation) {
+            throw new AppError("Invitation alredy sent by other team", HttpStatusCode.CONFLICT);
+        }
+
         const user = await this.userRepository.findByEmail(dto.invitedEmail);
 
         if (user) {

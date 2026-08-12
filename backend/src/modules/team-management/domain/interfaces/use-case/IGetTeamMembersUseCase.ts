@@ -1,5 +1,9 @@
-import { TeamMember } from "../../entities/teamMember.entity";
+import { PaginationDto } from "@/shared/utils/Pagination/PaginationDto"; 
+import { PaginationResult } from "@/shared/utils/Pagination/PaginationResult"; 
 
-export interface IGetTeamMembersUseCase{
-    execute(teamId:string):Promise<TeamMember[]>;
+import {  TeamMemberWithUser,} from "../ITeamMemberRepository";
+
+
+export interface IGetTeamMembersUseCase {
+  execute(    teamId: string,    pagination: PaginationDto,  ): Promise<PaginationResult<TeamMemberWithUser>>;
 }
