@@ -11,6 +11,8 @@ import { IGetAlertByIdUseCase } from "@/modules/alert/domain/interfaces/use-case
 import { GetAlertByIdUseCase } from "@/modules/alert/application/use-cases/getAlertByIdUseCase";
 import { IResolveAlertUseCase } from "@/modules/alert/domain/interfaces/use-case/IResolveAlertUseCase";
 import { ResolveAlertUseCase } from "@/modules/alert/application/use-cases/resolveAlertUseCase";
+import { IProcessAlertUseCase } from "@/modules/alert/domain/interfaces/IProcessAlertUseCase";
+import { ProcessAlertUseCase } from "@/modules/alert/application/use-cases/ProcessAlertUseCase";
 
 export function bindAlert(container:Container){
     container.bind<IAlertRepository>(TYPES.AlertRepository).to(PrismaAlertRepository).inSingletonScope();
@@ -19,4 +21,5 @@ export function bindAlert(container:Container){
     container.bind<IGetAlertsUseCase>(TYPES.GetAlertsUseCase).to(GetAlertsUseCase).inSingletonScope();
     container.bind<IGetAlertByIdUseCase>(TYPES.GetAlertByIdUseCase).to(GetAlertByIdUseCase).inSingletonScope();
     container.bind<IResolveAlertUseCase>(TYPES.ResolveAlertUseCase).to(ResolveAlertUseCase).inSingletonScope();
+    container.bind<IProcessAlertUseCase>(TYPES.ProcessAlertUseCase).to(ProcessAlertUseCase).inSingletonScope();
 }

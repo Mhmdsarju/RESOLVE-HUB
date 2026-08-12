@@ -7,12 +7,15 @@ import { Alert } from "../../domain/entities/alert.entity";
 import { IAlertRepository } from "../../domain/interfaces/IAlertRepository";
 import { ICreateAlertUseCase } from "../../domain/interfaces/use-case/ICreateAlertUseCase";
 import { CreateAlertDTO } from "../dto/createAlertDto";
+import { IProcessAlertUseCase } from "../../domain/interfaces/IProcessAlertUseCase";
 
 @injectable()
 export class CreateAlertUseCase implements ICreateAlertUseCase {
     constructor(
         @inject(TYPES.AlertRepository)
-        private readonly alertRepository: IAlertRepository
+        private readonly alertRepository: IAlertRepository,
+        @inject(TYPES.ProcessAlertUseCase)
+        private readonly processAlertUseCase: IProcessAlertUseCase,
     ) { }
 
     async execute(dto: CreateAlertDTO): Promise<Alert> {
@@ -30,6 +33,7 @@ export class CreateAlertUseCase implements ICreateAlertUseCase {
             incidentId: dto.incidentId,
         });
 
-        return await this.alertRepository.create(alert);
+        const createdAlert = await this.alertRepository.create(alert);
+        return await this.processAlertUseCase.execute(createdAlert);
     }
 }

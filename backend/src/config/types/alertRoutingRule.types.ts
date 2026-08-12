@@ -7,4 +7,6 @@ export const ALERT_ROUTING_RULE_TYPES = {
     DeleteAlertRoutingRuleUseCase: Symbol.for("DeleteAlertRoutingRuleUseCase"),
     GetAlertRoutingRuleByIdUseCase: Symbol.for("GetAlertRoutingRuleByIdUseCase"),
     UpdateAlertRoutingRuleUseCase:Symbol.for("UpdateAlertRoutingRuleUseCase"),
+    RouteAlertUseCase:Symbol.for("RouteAlertUseCase"),
+    AlertRoutingEvaluator: Symbol.for("AlertRoutingEvaluator"),
 }

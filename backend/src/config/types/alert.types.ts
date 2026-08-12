@@ -6,4 +6,5 @@ export const ALERT_TYPES = {
     GetAlertsUseCase: Symbol.for("GetAlertsUseCase"),
     ResolveAlertUseCase: Symbol.for("ResolveAlertUseCase"),
     GetAlertByIdUseCase: Symbol.for("GetAlertByIdUseCase"),
+    ProcessAlertUseCase: Symbol.for("ProcessAlertUseCase"),
 }
