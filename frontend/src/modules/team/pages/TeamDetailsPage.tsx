@@ -1,11 +1,6 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import {
-  ArrowLeft,
-  Edit,
-  Trash2,
-  Users,
-} from "lucide-react";
+import { ArrowLeft, Edit, Trash2, Users } from "lucide-react";
 
 import { useTeam } from "../hooks/useTeam";
 import EditTeamModal from "../components/EditTeamModal";
@@ -17,18 +12,12 @@ export default function TeamDetailsPage() {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-  const {
-    data: team,
-    isLoading,
-    isError,
-  } = useTeam(id ?? "");
+  const { data: team, isLoading, isError } = useTeam(id ?? "");
 
   if (isLoading) {
     return (
       <div className="rounded-2xl bg-white p-10 text-center shadow-sm">
-        <p className="text-stone-500">
-          Loading team...
-        </p>
+        <p className="text-stone-500">Loading team...</p>
       </div>
     );
   }
@@ -53,9 +42,7 @@ export default function TeamDetailsPage() {
         </Link>
 
         <div className="rounded-2xl bg-white p-10 text-center shadow-sm">
-          <p className="text-red-500">
-            Failed to load team.
-          </p>
+          <p className="text-red-500">Failed to load team.</p>
         </div>
       </div>
     );
@@ -63,8 +50,6 @@ export default function TeamDetailsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Back */}
-
       <Link
         to="/teams"
         className="
@@ -80,8 +65,6 @@ export default function TeamDetailsPage() {
         <ArrowLeft size={18} />
         Back to Teams
       </Link>
-
-      {/* Header */}
 
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
@@ -101,17 +84,11 @@ export default function TeamDetailsPage() {
           </div>
 
           <div>
-            <h1 className="text-3xl font-bold text-[#4B3932]">
-              {team.name}
-            </h1>
+            <h1 className="text-3xl font-bold text-[#4B3932]">{team.name}</h1>
 
-            <p className="mt-1 text-sm text-stone-500">
-              Team details
-            </p>
+            <p className="mt-1 text-sm text-stone-500">Team details</p>
           </div>
         </div>
-
-        {/* Actions */}
 
         <div className="flex items-center gap-3">
           <button
@@ -161,77 +138,41 @@ export default function TeamDetailsPage() {
         </div>
       </div>
 
-      {/* Team Information */}
-
       <div className="rounded-2xl bg-white p-6 shadow-sm">
-        <h2 className="text-lg font-semibold text-[#4B3932]">
-          Team Information
-        </h2>
+        <h2 className="text-lg font-semibold text-[#4B3932]">Team Information</h2>
 
         <div className="mt-6 grid gap-6 sm:grid-cols-2">
-          {/* Team Name */}
+          <div>
+            <p className="text-sm text-stone-500">Team Name</p>
+
+            <p className="mt-1 font-medium text-[#4B3932]">{team.name}</p>
+          </div>
 
           <div>
-            <p className="text-sm text-stone-500">
-              Team Name
-            </p>
+            <p className="text-sm text-stone-500">Created</p>
 
             <p className="mt-1 font-medium text-[#4B3932]">
-              {team.name}
+              {new Date(team.createdAt).toLocaleDateString()}
             </p>
           </div>
 
-          {/* Created */}
-
           <div>
-            <p className="text-sm text-stone-500">
-              Created
-            </p>
+            <p className="text-sm text-stone-500">Last Updated</p>
 
             <p className="mt-1 font-medium text-[#4B3932]">
-              {new Date(
-                team.createdAt,
-              ).toLocaleDateString()}
+              {new Date(team.updatedAt).toLocaleDateString()}
             </p>
           </div>
 
-          {/* Last Updated */}
-
           <div>
-            <p className="text-sm text-stone-500">
-              Last Updated
-            </p>
+            <p className="text-sm text-stone-500">Team ID</p>
 
-            <p className="mt-1 font-medium text-[#4B3932]">
-              {new Date(
-                team.updatedAt,
-              ).toLocaleDateString()}
-            </p>
-          </div>
-
-          {/* Team ID */}
-
-          <div>
-            <p className="text-sm text-stone-500">
-              Team ID
-            </p>
-
-            <p className="mt-1 break-all text-sm font-medium text-[#4B3932]">
-              {team.id}
-            </p>
+            <p className="mt-1 break-all text-sm font-medium text-[#4B3932]">{team.id}</p>
           </div>
         </div>
       </div>
 
-      {/* Edit Modal */}
-
-      <EditTeamModal
-        team={team}
-        isOpen={isEditOpen}
-        onClose={() => setIsEditOpen(false)}
-      />
-
-      {/* Delete Modal */}
+      <EditTeamModal team={team} isOpen={isEditOpen} onClose={() => setIsEditOpen(false)} />
 
       <DeleteTeamModal
         team={team}
