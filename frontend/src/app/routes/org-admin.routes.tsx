@@ -8,6 +8,7 @@ import OrganizationSettingsPage from "@/modules/organization/pages/OrganizationS
 
 import TeamListPage from "@/modules/team/pages/TeamListPage";
 import TeamDetailsPage from "@/modules/team/pages/TeamDetailsPage";
+import TeamInvitationPage from "@/modules/team-invitation/pages/TeamInvitationPage";
 
 export const orgAdminRoutes: RouteObject[] = [
   {
@@ -29,6 +30,10 @@ export const orgAdminRoutes: RouteObject[] = [
           {
             path: "/teams",
             element: <TeamListPage />,
+          },
+          {
+            path: "/team-invitations",
+            element: <TeamInvitationPage/>,
           },
 
           {

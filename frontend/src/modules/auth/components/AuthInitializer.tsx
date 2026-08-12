@@ -8,25 +8,15 @@ interface Props {
   children: React.ReactNode;
 }
 
-export default function AuthInitializer({
-  children,
-}: Props) {
-  const {
-    setAccessToken,
-    setUser,
-    clearUser,
-    setLoading,
-    isLoading,
-  } = useAuthStore();
+export default function AuthInitializer({ children }: Props) {
+  const { setAccessToken, setUser, clearUser, setLoading, isLoading } = useAuthStore();
 
-  const refreshMutation =
-    useRefreshToken();
+  const refreshMutation = useRefreshToken();
 
   useEffect(() => {
     const initialize = async () => {
       try {
-        const { accessToken } =
-          await refreshMutation.mutateAsync();
+        const { accessToken } = await refreshMutation.mutateAsync();
 
         setAccessToken(accessToken);
 
@@ -55,13 +45,9 @@ export default function AuthInitializer({
         "
       >
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-[#4B3932]">
-            ResolveHub
-          </h1>
+          <h1 className="text-3xl font-bold text-[#4B3932]">ResolveHub</h1>
 
-          <p className="mt-3 text-stone-500">
-            Loading...
-          </p>
+          <p className="mt-3 text-stone-500">Loading...</p>
         </div>
       </div>
     );

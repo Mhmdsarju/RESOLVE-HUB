@@ -18,12 +18,22 @@ export const ENDPOINTS = {
     PROFILE: "/organizations/me",
   },
 
-  USER: {},
+  USER: {
+    BASE: "/users",
+  },
 
   INCIDENT: {},
 
   TEAM: {
     BASE: "/teams",
+    INVITATIONS: (teamId: string) => `/teams/${teamId}/invitations`,
+    MEMBERS: (teamId: string) =>
+    `/teams/${teamId}/members`,
+  },
+
+  TEAM_INVITATION: {
+    ACCEPT: (token: string) => `/team-invitations/accept/${token}`,
+    CANCEL: (id: string) => `/team-invitations/${id}`,
   },
 
   WAR_ROOM: {},

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-import type { ClipboardEvent, KeyboardEvent } from "react";
+import type { ClipboardEvent, FocusEvent, KeyboardEvent } from "react";
 
 interface OtpInputProps {
   value: string;
@@ -17,16 +17,18 @@ export default function OtpInput({ value, onChange }: OtpInputProps) {
   }, []);
 
   const handleChange = (index: number, inputValue: string) => {
-    if (!/^\d?$/.test(inputValue)) {
+    const cleanValue = inputValue.slice(-1);
+
+    if (!/^\d?$/.test(cleanValue)) {
       return;
     }
 
     const updatedOtp = [...otp];
-    updatedOtp[index] = inputValue;
+    updatedOtp[index] = cleanValue;
 
     onChange(updatedOtp.join("").trim());
 
-    if (inputValue && index < 5) {
+    if (cleanValue && index < 5) {
       inputsRef.current[index + 1]?.focus();
     }
   };
@@ -37,7 +39,7 @@ export default function OtpInput({ value, onChange }: OtpInputProps) {
 
       const updatedOtp = [...otp];
 
-      if (otp[index]) {
+      if (otp[index]?.trim()) {
         updatedOtp[index] = "";
         onChange(updatedOtp.join("").trim());
       } else if (index > 0) {
@@ -56,6 +58,14 @@ export default function OtpInput({ value, onChange }: OtpInputProps) {
     if (event.key === "ArrowRight" && index < 5) {
       inputsRef.current[index + 1]?.focus();
     }
+  };
+
+  const handleFocus = (event: FocusEvent<HTMLInputElement>) => {
+    event.target.select();
+  };
+
+  const handleClick = (event: React.MouseEvent<HTMLInputElement>) => {
+    (event.target as HTMLInputElement).select();
   };
 
   const handlePaste = (event: ClipboardEvent<HTMLInputElement>) => {
@@ -89,6 +99,8 @@ export default function OtpInput({ value, onChange }: OtpInputProps) {
           value={digit.trim()}
           onChange={(event) => handleChange(index, event.target.value)}
           onKeyDown={(event) => handleKeyDown(event, index)}
+          onFocus={handleFocus}
+          onClick={handleClick}
           onPaste={handlePaste}
           className="
   h-12

@@ -5,6 +5,7 @@ import { ArrowLeft, Edit, Trash2, Users } from "lucide-react";
 import { useTeam } from "../hooks/useTeam";
 import EditTeamModal from "../components/EditTeamModal";
 import DeleteTeamModal from "../components/DeleteTeamModal";
+import TeamMemberList from "@/modules/team-member/components/TeamMemberList";
 
 export default function TeamDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -171,6 +172,8 @@ export default function TeamDetailsPage() {
           </div>
         </div>
       </div>
+
+      <TeamMemberList teamId={id ?? ""} />
 
       <EditTeamModal team={team} isOpen={isEditOpen} onClose={() => setIsEditOpen(false)} />
 

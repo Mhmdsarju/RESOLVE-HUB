@@ -11,6 +11,7 @@ import ForgotPasswordPage from "@/modules/auth/pages/ForgotPasswordPage";
 import VerifyOtpPage from "@/modules/auth/pages/VerifyOtpPage";
 import ResetPasswordPage from "@/modules/auth/pages/ResetPasswordPage";
 import NotFoundPage from "@/pages/NotFound";
+import AcceptInvitationPage from "@/modules/team-invitation/pages/AcceptInvitationPage";
 
 export const publicRoutes: RouteObject[] = [
   {
@@ -50,6 +51,10 @@ export const publicRoutes: RouteObject[] = [
           {
             path: "/forgot-password/reset-password",
             element: <ResetPasswordPage />,
+          },
+          {
+            path: "/accept-invitation/:token",
+            element: <AcceptInvitationPage />,
           },
 
           {
