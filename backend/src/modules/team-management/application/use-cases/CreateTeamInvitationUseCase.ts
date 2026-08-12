@@ -19,6 +19,7 @@ import { InvitationStatus } from "../../domain/enums/InvitationStatus";
 import { AppError } from "@/shared/errors/AppError";
 import { ErrorMessages } from "@/shared/constant/ErrorMessages";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
+import { UserRole } from "@/modules/auth/domain/enums/UserRole";
 
 @injectable()
 export class CreateTeamInvitationUseCase implements ICreateTeamInvitationUseCase {
@@ -47,6 +48,8 @@ export class CreateTeamInvitationUseCase implements ICreateTeamInvitationUseCase
             throw new AppError(ErrorMessages.TEAM_NOT_FOUND, HttpStatusCode.NOT_FOUND)
         }
 
+
+
         const existingInvitation = await this.invitationRepository.findPendingInvitation(dto.teamId, dto.invitedEmail);
 
         if (existingInvitation) {
@@ -56,12 +59,21 @@ export class CreateTeamInvitationUseCase implements ICreateTeamInvitationUseCase
         const existingPendingInvitation = await this.invitationRepository.findPendingInvitationByEmail(dto.invitedEmail);
 
         if (existingPendingInvitation) {
-            throw new AppError("Invitation alredy sent by other team", HttpStatusCode.CONFLICT);
+            throw new AppError("Invitation already sent by other team", HttpStatusCode.CONFLICT);
         }
 
         const user = await this.userRepository.findByEmail(dto.invitedEmail);
 
+
+
         if (user) {
+
+            if (user.organizationId === dto.organizationId && user.role === UserRole.ORG_ADMIN) {
+                throw new AppError(
+                    "Organization admin cannot be invited to a team.",
+                    HttpStatusCode.CONFLICT,
+                );
+            }
 
             const member = await this.teamMemberRepository.findMember(
                 dto.teamId,
