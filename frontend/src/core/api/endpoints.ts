@@ -22,13 +22,19 @@ export const ENDPOINTS = {
     BASE: "/users",
   },
 
-  INCIDENT: {},
+  INCIDENT: {
+    BASE: "/incidents",
+    BY_ID: (id: string) => `/incidents/${id}`,
+    STATS: "/incidents/stats",
+    STATUS: (id: string) => `/incidents/${id}/status`,
+    ASSIGN: (id: string) => `/incidents/${id}/assign`,
+  },
 
   TEAM: {
     BASE: "/teams",
     INVITATIONS: (teamId: string) => `/teams/${teamId}/invitations`,
     MEMBERS: (teamId: string) =>
-    `/teams/${teamId}/members`,
+      `/teams/${teamId}/members`,
   },
 
   TEAM_INVITATION: {

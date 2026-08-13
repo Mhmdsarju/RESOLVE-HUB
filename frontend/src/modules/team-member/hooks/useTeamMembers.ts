@@ -2,9 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { getTeamMembers } from "../api/teamMemberApi";
 
-import type {
-  GetTeamMembersParams, GetTeamMembersResponse,
-} from "../types/teamMember.types";
+import type {  GetTeamMembersParams, GetTeamMembersResponse,} from "../types/teamMember.types";
 
 
 export function useTeamMembers(
