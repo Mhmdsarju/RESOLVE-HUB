@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, CalendarDays, Clock3, FileText, Pencil, Trash2 } from "lucide-react";
+import { ArrowLeft, CalendarDays, Clock3, FileText, Pencil, Plus, Trash2 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { useMonitoringProject } from "../hooks/useMonitoringProject";
@@ -7,7 +7,14 @@ import { useMonitoringProject } from "../hooks/useMonitoringProject";
 import EditMonitoringProjectModal from "../components/EditMonitoringProjectModal";
 import DeleteMonitoringProjectModal from "../components/DeleteMonitoringProjectModal";
 
-// import type { MonitoringProject } from "../types/monitoringProject.types";
+import IntegrationList from "@/modules/integration/components/IntegrationList";
+import CreateIntegrationModal from "@/modules/integration/components/CreateIntegrationModal";
+import EditIntegrationModal from "@/modules/integration/components/EditIntegrationModal";
+import DeleteIntegrationModal from "@/modules/integration/components/DeleteIntegrationModal";
+
+import { useIntegrations } from "@/modules/integration/hooks/useIntegrations";
+
+import type { Integration } from "@/modules/integration/types/integration.types";
 
 export default function MonitoringProjectDetailsPage() {
   const navigate = useNavigate();
@@ -18,7 +25,25 @@ export default function MonitoringProjectDetailsPage() {
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
+  const [isCreateIntegrationOpen, setIsCreateIntegrationOpen] = useState(false);
+
+  const [editingIntegration, setEditingIntegration] = useState<Integration | null>(null);
+
+  const [deletingIntegration, setDeletingIntegration] = useState<Integration | null>(null);
+
   const { data: project, isLoading, isError } = useMonitoringProject(id ?? "");
+
+  const {
+    data: integrationsData,
+    isLoading: isIntegrationsLoading,
+    isError: isIntegrationsError,
+  } = useIntegrations({
+    projectId: id ?? "",
+    page: 1,
+    limit: 100,
+  });
+
+  const integrations = integrationsData?.data ?? [];
 
   if (isLoading) {
     return (
@@ -32,15 +57,17 @@ export default function MonitoringProjectDetailsPage() {
             <div
               key={index}
               className="
-                  h-28
-                  animate-pulse
-                  rounded-2xl
-                  bg-white
-                  shadow-sm
-                "
+                h-28
+                animate-pulse
+                rounded-2xl
+                bg-white
+                shadow-sm
+              "
             />
           ))}
         </div>
+
+        <div className="h-80 animate-pulse rounded-2xl bg-white shadow-sm" />
       </div>
     );
   }
@@ -117,9 +144,22 @@ export default function MonitoringProjectDetailsPage() {
     navigate("/monitoring");
   };
 
+  const handleIntegrationClick = (integration: Integration) => {
+    navigate(`/monitoring/${project.id}/integrations/${integration.id}`);
+  };
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div
+        className="
+          flex
+          flex-col
+          gap-4
+          sm:flex-row
+          sm:items-center
+          sm:justify-between
+        "
+      >
         <button
           type="button"
           onClick={() => navigate("/monitoring")}
@@ -281,11 +321,29 @@ export default function MonitoringProjectDetailsPage() {
                 Monitoring Project
               </div>
 
-              <h1 className="mt-4 break-words text-3xl font-bold tracking-tight text-white sm:text-4xl">
+              <h1
+                className="
+                  mt-4
+                  break-words
+                  text-3xl
+                  font-bold
+                  tracking-tight
+                  text-white
+                  sm:text-4xl
+                "
+              >
                 {project.name}
               </h1>
 
-              <p className="mt-3 max-w-3xl text-sm leading-6 text-[#E7DDD3]">
+              <p
+                className="
+                  mt-3
+                  max-w-3xl
+                  text-sm
+                  leading-6
+                  text-[#E7DDD3]
+                "
+              >
                 {project.description || "No description provided."}
               </p>
             </div>
@@ -497,6 +555,74 @@ export default function MonitoringProjectDetailsPage() {
         </div>
       </div>
 
+      <div
+        className="
+          rounded-2xl
+          border
+          border-[#E7DDD3]
+          bg-white
+          p-6
+          shadow-sm
+        "
+      >
+        <div
+          className="
+            flex
+            flex-col
+            gap-4
+            sm:flex-row
+            sm:items-center
+            sm:justify-between
+          "
+        >
+          <div>
+            <h2 className="text-xl font-bold text-[#4B3932]">Integrations</h2>
+
+            <p className="mt-1 text-sm text-stone-500">
+              Connect monitoring and notification services to this project.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setIsCreateIntegrationOpen(true)}
+            className="
+              inline-flex
+              items-center
+              justify-center
+              gap-2
+              rounded-xl
+              bg-[#4B3932]
+              px-5
+              py-3
+              text-sm
+              font-semibold
+              text-white
+              shadow-sm
+              transition-all
+              duration-300
+              hover:-translate-y-0.5
+              hover:bg-[#3B2E29]
+              hover:shadow-lg
+            "
+          >
+            <Plus size={18} />
+            Add Integration
+          </button>
+        </div>
+
+        <div className="mt-6">
+          <IntegrationList
+            integrations={integrations}
+            isLoading={isIntegrationsLoading}
+            isError={isIntegrationsError}
+            onIntegrationClick={handleIntegrationClick}
+            onIntegrationEdit={setEditingIntegration}
+            onIntegrationDelete={setDeletingIntegration}
+          />
+        </div>
+      </div>
+
       <EditMonitoringProjectModal
         project={project}
         isOpen={isEditModalOpen}
@@ -508,6 +634,24 @@ export default function MonitoringProjectDetailsPage() {
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onDeleted={handleDeleted}
+      />
+
+      <CreateIntegrationModal
+        projectId={project.id}
+        isOpen={isCreateIntegrationOpen}
+        onClose={() => setIsCreateIntegrationOpen(false)}
+      />
+
+      <EditIntegrationModal
+        integration={editingIntegration}
+        isOpen={Boolean(editingIntegration)}
+        onClose={() => setEditingIntegration(null)}
+      />
+
+      <DeleteIntegrationModal
+        integration={deletingIntegration}
+        isOpen={Boolean(deletingIntegration)}
+        onClose={() => setDeletingIntegration(null)}
       />
     </div>
   );

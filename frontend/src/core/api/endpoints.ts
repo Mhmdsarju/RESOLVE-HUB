@@ -32,18 +32,35 @@ export const ENDPOINTS = {
 
   TEAM: {
     BASE: "/teams",
-    INVITATIONS: (teamId: string) => `/teams/${teamId}/invitations`,
+    INVITATIONS: (teamId: string) =>
+      `/teams/${teamId}/invitations`,
     MEMBERS: (teamId: string) =>
       `/teams/${teamId}/members`,
   },
 
   TEAM_INVITATION: {
-    ACCEPT: (token: string) => `/team-invitations/accept/${token}`,
-    CANCEL: (id: string) => `/team-invitations/${id}`,
+    ACCEPT: (token: string) =>
+      `/team-invitations/accept/${token}`,
+    CANCEL: (id: string) =>
+      `/team-invitations/${id}`,
   },
 
   MONITORING_PROJECT: {
     BASE: "/monitoring-projects",
-    BY_ID: (id: string) => `/monitoring-projects/${id}`,
+
+    BY_ID: (id: string) =>
+      `/monitoring-projects/${id}`,
+  },
+
+  MONITORING: {
+    PROJECTS: "/monitoring-projects",
+
+    INTEGRATIONS: {
+      BY_PROJECT: (projectId: string) =>
+        `/monitoring-projects/${projectId}/integrations`,
+
+      BY_ID: (id: string) =>
+        `/monitoring-projects/integrations/${id}`,
+    },
   },
 } as const;

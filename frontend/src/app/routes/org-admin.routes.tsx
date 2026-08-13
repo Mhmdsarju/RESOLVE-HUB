@@ -15,7 +15,7 @@ import IncidentDetailsPage from "@/modules/incident/pages/IncidentDetailsPage";
 
 import MonitoringProjectsPage from "@/modules/monitoring/pages/MonitoringProjectsPage";
 import MonitoringProjectDetailsPage from "@/modules/monitoring/pages/MonitoringProjectDetailsPage";
-
+import IntegrationDetailsPage from "@/modules/integration/pages/IntegrationDetailsPage";
 
 export const orgAdminRoutes: RouteObject[] = [
   {
@@ -67,6 +67,10 @@ export const orgAdminRoutes: RouteObject[] = [
           {
             path: "/monitoring/:id",
             element: <MonitoringProjectDetailsPage />,
+          },
+          {
+            path: "/monitoring/:projectId/integrations/:integrationId",
+            element: <IntegrationDetailsPage />,
           },
         ],
       },
