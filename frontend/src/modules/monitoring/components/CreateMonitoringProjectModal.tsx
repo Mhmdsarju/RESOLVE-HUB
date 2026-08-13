@@ -1,0 +1,307 @@
+import { useState } from "react";
+import { FolderPlus, X } from "lucide-react";
+
+import { useCreateMonitoringProject } from "../hooks/useCreateMonitoringProject";
+
+interface CreateMonitoringProjectModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+interface FormState {
+  name: string;
+  description: string;
+}
+
+const initialForm: FormState = {
+  name: "",
+  description: "",
+};
+
+export default function CreateMonitoringProjectModal({
+  isOpen,
+  onClose,
+}: CreateMonitoringProjectModalProps) {
+  const [form, setForm] = useState<FormState>(initialForm);
+
+  const createMutation = useCreateMonitoringProject();
+
+  if (!isOpen) {
+    return null;
+  }
+
+  const handleChange = (field: keyof FormState, value: string) => {
+    setForm((current) => ({
+      ...current,
+      [field]: value,
+    }));
+  };
+
+  const handleClose = () => {
+    if (createMutation.isPending) {
+      return;
+    }
+
+    setForm(initialForm);
+    onClose();
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const name = form.name.trim();
+
+    if (!name) {
+      return;
+    }
+
+    createMutation.mutate(
+      {
+        name,
+        description: form.description.trim() || undefined,
+      },
+      {
+        onSuccess: () => {
+          setForm(initialForm);
+          onClose();
+        },
+      },
+    );
+  };
+
+  return (
+    <div
+      className="
+        fixed
+        inset-0
+        z-50
+        flex
+        items-center
+        justify-center
+        bg-black/40
+        px-4
+        py-8
+        backdrop-blur-[2px]
+      "
+    >
+      <div
+        className="
+          w-full
+          max-w-lg
+          rounded-3xl
+          bg-white
+          p-6
+          shadow-2xl
+          transition-all
+          duration-300
+        "
+      >
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-3">
+            <div
+              className="
+                flex
+                h-11
+                w-11
+                items-center
+                justify-center
+                rounded-xl
+                bg-[#F0E7D5]
+                text-[#4B3932]
+              "
+            >
+              <FolderPlus size={21} />
+            </div>
+
+            <div>
+              <h2 className="text-lg font-bold text-[#4B3932]">Create Monitoring Project</h2>
+
+              <p className="mt-1 text-xs text-stone-400">
+                Create a project to organize your monitoring setup.
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleClose}
+            disabled={createMutation.isPending}
+            className="
+              rounded-lg
+              p-2
+              text-stone-400
+              transition-all
+              duration-200
+              hover:bg-[#FAF6F0]
+              hover:text-[#4B3932]
+              disabled:cursor-not-allowed
+              disabled:opacity-50
+            "
+          >
+            <X size={19} />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="mt-7 space-y-5">
+          <div>
+            <label
+              htmlFor="monitoring-project-name"
+              className="
+                mb-2
+                block
+                text-sm
+                font-semibold
+                text-[#4B3932]
+              "
+            >
+              Project Name
+            </label>
+
+            <input
+              id="monitoring-project-name"
+              type="text"
+              value={form.name}
+              onChange={(event) => handleChange("name", event.target.value)}
+              placeholder="Production Monitoring"
+              disabled={createMutation.isPending}
+              className="
+                w-full
+                rounded-xl
+                border
+                border-[#E7DDD3]
+                bg-white
+                px-4
+                py-3
+                text-sm
+                text-[#4B3932]
+                outline-none
+                transition-all
+                duration-200
+                placeholder:text-stone-300
+                hover:border-[#D8C9BD]
+                focus:border-[#4B3932]
+                focus:ring-2
+                focus:ring-[#4B3932]/10
+                disabled:cursor-not-allowed
+                disabled:opacity-60
+              "
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="monitoring-project-description"
+              className="
+                mb-2
+                block
+                text-sm
+                font-semibold
+                text-[#4B3932]
+              "
+            >
+              Description
+              <span className="ml-1 font-normal text-stone-400">Optional</span>
+            </label>
+
+            <textarea
+              id="monitoring-project-description"
+              value={form.description}
+              onChange={(event) => handleChange("description", event.target.value)}
+              placeholder="Describe what this monitoring project is used for..."
+              rows={4}
+              disabled={createMutation.isPending}
+              className="
+                w-full
+                resize-none
+                rounded-xl
+                border
+                border-[#E7DDD3]
+                bg-white
+                px-4
+                py-3
+                text-sm
+                leading-6
+                text-[#4B3932]
+                outline-none
+                transition-all
+                duration-200
+                placeholder:text-stone-300
+                hover:border-[#D8C9BD]
+                focus:border-[#4B3932]
+                focus:ring-2
+                focus:ring-[#4B3932]/10
+                disabled:cursor-not-allowed
+                disabled:opacity-60
+              "
+            />
+          </div>
+
+          <div
+            className="
+              rounded-2xl
+              border
+              border-[#E7DDD3]
+              bg-[#FAF6F0]
+              p-4
+            "
+          >
+            <p className="text-xs leading-5 text-stone-500">
+              The project will automatically be associated with your current organization.
+            </p>
+          </div>
+
+          <div className="flex justify-end gap-3 pt-2">
+            <button
+              type="button"
+              onClick={handleClose}
+              disabled={createMutation.isPending}
+              className="
+                rounded-xl
+                border
+                border-[#E7DDD3]
+                px-5
+                py-2.5
+                text-sm
+                font-medium
+                text-[#4B3932]
+                transition-all
+                duration-200
+                hover:-translate-y-0.5
+                hover:bg-[#FAF6F0]
+                hover:shadow-sm
+                disabled:cursor-not-allowed
+                disabled:opacity-50
+              "
+            >
+              Cancel
+            </button>
+
+            <button
+              type="submit"
+              disabled={!form.name.trim() || createMutation.isPending}
+              className="
+                rounded-xl
+                bg-[#4B3932]
+                px-5
+                py-2.5
+                text-sm
+                font-semibold
+                text-white
+                shadow-sm
+                transition-all
+                duration-200
+                hover:-translate-y-0.5
+                hover:bg-[#3B2E29]
+                hover:shadow-lg
+                disabled:cursor-not-allowed
+                disabled:opacity-50
+              "
+            >
+              {createMutation.isPending ? "Creating..." : "Create Project"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}

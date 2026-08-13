@@ -9,8 +9,13 @@ import OrganizationSettingsPage from "@/modules/organization/pages/OrganizationS
 import TeamListPage from "@/modules/team/pages/TeamListPage";
 import TeamDetailsPage from "@/modules/team/pages/TeamDetailsPage";
 import TeamInvitationPage from "@/modules/team-invitation/pages/TeamInvitationPage";
-import IncidentDetailsPage from "@/modules/incident/pages/IncidentDetailsPage";
+
 import IncidentListPage from "@/modules/incident/pages/IncidentListPage";
+import IncidentDetailsPage from "@/modules/incident/pages/IncidentDetailsPage";
+
+import MonitoringProjectsPage from "@/modules/monitoring/pages/MonitoringProjectsPage";
+import MonitoringProjectDetailsPage from "@/modules/monitoring/pages/MonitoringProjectDetailsPage";
+
 
 export const orgAdminRoutes: RouteObject[] = [
   {
@@ -33,6 +38,7 @@ export const orgAdminRoutes: RouteObject[] = [
             path: "/teams",
             element: <TeamListPage />,
           },
+
           {
             path: "/team-invitations",
             element: <TeamInvitationPage />,
@@ -42,13 +48,25 @@ export const orgAdminRoutes: RouteObject[] = [
             path: "/teams/:id",
             element: <TeamDetailsPage />,
           },
+
           {
             path: "/incidents",
-            element: <IncidentListPage/>,
+            element: <IncidentListPage />,
           },
+
           {
             path: "/incidents/:id",
             element: <IncidentDetailsPage />,
+          },
+
+          {
+            path: "/monitoring",
+            element: <MonitoringProjectsPage />,
+          },
+
+          {
+            path: "/monitoring/:id",
+            element: <MonitoringProjectDetailsPage />,
           },
         ],
       },

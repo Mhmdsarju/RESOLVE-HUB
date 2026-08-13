@@ -42,5 +42,8 @@ export const ENDPOINTS = {
     CANCEL: (id: string) => `/team-invitations/${id}`,
   },
 
-  WAR_ROOM: {},
+  MONITORING_PROJECT: {
+    BASE: "/monitoring-projects",
+    BY_ID: (id: string) => `/monitoring-projects/${id}`,
+  },
 } as const;

@@ -293,7 +293,7 @@ export default function IncidentDetailsPage() {
                 <span>Incident ID:</span>
 
                 <span
-                  className="max-w-[280px] truncate font-medium text-white/80"
+                  className="max-w-280px truncate font-medium text-white/80"
                   title={incident.id}
                 >
                   {incident.id}
@@ -313,7 +313,7 @@ export default function IncidentDetailsPage() {
 
             <div
               className="
-                min-w-[170px]
+                min-w-170px
                 rounded-2xl
                 border
                 border-white/10
