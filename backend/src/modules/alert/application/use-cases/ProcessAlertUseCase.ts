@@ -18,7 +18,6 @@ import { Priority } from "@/modules/incident/domain/enums/priority.enum";
 
 @injectable()
 export class ProcessAlertUseCase implements IProcessAlertUseCase {
-
     constructor(
         @inject(TYPES.AlertRepository)
         private readonly alertRepository: IAlertRepository,
@@ -28,10 +27,9 @@ export class ProcessAlertUseCase implements IProcessAlertUseCase {
 
         @inject(TYPES.CreateIncidentUseCase)
         private readonly createIncidentUseCase: ICreateIncidentUseCase,
-    ) { }
+    ) {}
 
     async execute(alert: Alert): Promise<Alert> {
-
         if (alert.source !== AlertSource.AUTOMATIC) {
             return alert;
         }
@@ -42,11 +40,17 @@ export class ProcessAlertUseCase implements IProcessAlertUseCase {
             return alert;
         }
 
+        const labels =
+            typeof alert.payload.labels === "object" &&
+            alert.payload.labels !== null
+                ? (alert.payload.labels as Record<string, unknown>)
+                : {};
+
         const incidentDto: CreateIncidentDto = {
             title: alert.title,
             description: alert.message,
-            severity: this.getSeverity(alert.payload.severity),
-            priority: this.getPriority(alert.payload.priority),
+            severity: this.getSeverity(labels.severity),
+            priority: this.getPriority(labels.priority),
             assignedTeamId: teamId,
             type: IncidentType.AUTOMATED,
         };
@@ -66,7 +70,12 @@ export class ProcessAlertUseCase implements IProcessAlertUseCase {
     }
 
     private getSeverity(value: unknown): Severity {
-        if (value === Severity.LOW || value === Severity.MEDIUM || value === Severity.HIGH || value === Severity.CRITICAL) {
+        if (
+            value === Severity.LOW ||
+            value === Severity.MEDIUM ||
+            value === Severity.HIGH ||
+            value === Severity.CRITICAL
+        ) {
             return value;
         }
 
@@ -74,7 +83,12 @@ export class ProcessAlertUseCase implements IProcessAlertUseCase {
     }
 
     private getPriority(value: unknown): Priority {
-        if (value === Priority.P1 || value === Priority.P2 || value === Priority.P3 || value === Priority.P4) {
+        if (
+            value === Priority.P1 ||
+            value === Priority.P2 ||
+            value === Priority.P3 ||
+            value === Priority.P4
+        ) {
             return value;
         }
 

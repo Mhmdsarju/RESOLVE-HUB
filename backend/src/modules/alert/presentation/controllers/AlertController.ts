@@ -13,6 +13,11 @@ import { AlertStatus } from "../../domain/enums/alertStatus.enum";
 import { CreateAlertDTO } from "../../application/dto/createAlertDto";
 import { BaseController } from "@/shared/base/controllers/BaseController";
 
+import { IIntegrationRepository } from "@/modules/integration/domain/interfaces/IIntegrationRepository";
+import { IntegrationType } from "@/modules/integration/domain/enums/integrationType.enum";
+// import { AlertSource } from "../../domain/enums/alertSource.enum";
+// import { AlertStatus } from "../../domain/enums/alertStatus.enum";
+
 @injectable()
 export class AlertController extends BaseController {
     constructor(
@@ -26,7 +31,9 @@ export class AlertController extends BaseController {
         private readonly getAlertByIdUseCase: IGetAlertByIdUseCase,
 
         @inject(TYPES.ResolveAlertUseCase)
-        private readonly resolveAlertUseCase: IResolveAlertUseCase
+        private readonly resolveAlertUseCase: IResolveAlertUseCase,
+        @inject(TYPES.IntegrationRepository)
+        private readonly integrationRepository: IIntegrationRepository
     ) { super(); }
 
     async create(req: Request, res: Response, next: NextFunction) {
@@ -120,4 +127,92 @@ export class AlertController extends BaseController {
             next(error);
         }
     }
+
+    async prometheusWebhook(
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ) {
+        try {
+            const integration =
+                await this.integrationRepository.findById(
+                    req.params.integrationId
+                );
+
+            if (!integration) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Integration not found",
+                });
+            }
+
+            if (integration.type !== IntegrationType.PROMETHEUS) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Integration is not a Prometheus integration",
+                });
+            }
+
+            if (!integration.isActive) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Integration is inactive",
+                });
+            }
+
+            const alerts = Array.isArray(req.body.alerts)
+                ? req.body.alerts
+                : [];
+
+            const results = [];
+
+            for (const alert of alerts) {
+                const status =
+                    alert.status === "firing"
+                        ? AlertStatus.FIRING
+                        : AlertStatus.RESOLVED;
+
+                const createdAlert =
+                    await this.createAlertUseCase.execute({
+                        organizationId: integration.organizationId,
+                        monitoringProjectId:
+                            integration.monitoringProjectId,
+                        integrationId: integration.id,
+
+                        source: AlertSource.AUTOMATIC,
+
+                        title:
+                            alert.labels?.alertname ??
+                            "Prometheus Alert",
+
+                        message:
+                            alert.annotations?.description ??
+                            alert.annotations?.summary ??
+                            "Prometheus alert received",
+
+                        status,
+
+                        payload: {
+                            labels: alert.labels ?? {},
+                            annotations: alert.annotations ?? {},
+                            startsAt: alert.startsAt,
+                            endsAt: alert.endsAt,
+                            generatorURL: alert.generatorURL,
+                        },
+                    });
+
+                results.push(createdAlert);
+            }
+
+            return ResponseHandler.success(
+                res,
+                "Prometheus alerts processed successfully",
+                results
+            );
+        } catch (error) {
+            next(error);
+        }
+    }
+
+
 }

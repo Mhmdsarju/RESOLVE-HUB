@@ -1,6 +1,7 @@
 import { injectable } from "inversify";
 
 import { prisma } from "@/config/database";
+import { Prisma } from "@prisma/client";
 
 import { Integration } from "../../domain/entities/integration.entity";
 import { IIntegrationRepository } from "../../domain/interfaces/IIntegrationRepository";
@@ -39,13 +40,32 @@ export class PrismaIntegrationRepository implements IIntegrationRepository {
         return integrations.map(IntegrationMapper.fromDb);
     }
 
-    async update(id: string, data: Partial<Integration>): Promise<Integration> {
-
+    async update(
+        id: string,
+        data: Partial<Integration>,
+    ): Promise<Integration> {
         const updated = await prisma.integration.update({
-            where: { id },
-            data: IntegrationMapper.toDb({
-                ...(data as Integration),
-            }),
+            where: {
+                id,
+            },
+
+            data: {
+                ...(data.name !== undefined && {
+                    name: data.name,
+                }),
+
+                ...(data.type !== undefined && {
+                    type: data.type,
+                }),
+
+                ...(data.config !== undefined && {
+                    config: data.config as Prisma.InputJsonValue,
+                }),
+
+                ...(data.isActive !== undefined && {
+                    isActive: data.isActive,
+                }),
+            },
         });
 
         return IntegrationMapper.fromDb(updated);

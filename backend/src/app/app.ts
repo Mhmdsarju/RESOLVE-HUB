@@ -39,7 +39,7 @@ app.use("/api/tasks", taskRoutes);
 app.use("/api/monitoring-projects",monitorProjectRoutes);
 app.use("/api/monitoring-projects", integrationRoutes);
 app.use("/api/monitoring-projects", alertRuleRoutes);
-app.use("/", alertRoutes);
+app.use("/api", alertRoutes);
 app.use("/api/alert-routing-rules",alertRoutingRoutes);
 app.use("/api/users", userRoutes);
 
