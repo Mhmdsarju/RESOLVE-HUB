@@ -11,30 +11,44 @@ import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
 import { TYPES } from "@/config/types";
 
 @injectable()
-export class UpdateTaskStatusUseCase  implements IUpdateTaskStatusUseCase{
-  constructor(
-    @inject(TYPES.TaskRepository)
-    private readonly taskRepository: ITaskRepository
-  ) {}
+export class UpdateTaskStatusUseCase
+    implements IUpdateTaskStatusUseCase
+{
+    constructor(
+        @inject(TYPES.TaskRepository)
+        private readonly taskRepository: ITaskRepository
+    ) {}
 
-  async execute(taskId: string, status: TaskStatus): Promise<Task> {
+    async execute(
+        taskId: string,
+        status: TaskStatus
+    ): Promise<Task> {
+        if (!taskId) {
+            throw new AppError(
+                "Task ID is required",
+                HttpStatusCode.BAD_REQUEST
+            );
+        }
 
-    if (!taskId) {
-      throw new AppError("Task ID is required", HttpStatusCode.BAD_REQUEST);
+        if (!status) {
+            throw new AppError(
+                "Status is required",
+                HttpStatusCode.BAD_REQUEST
+            );
+        }
+
+        const existingTask =
+            await this.taskRepository.findById(taskId);
+
+        if (!existingTask) {
+            throw new AppError(
+                "Task not found",
+                HttpStatusCode.NOT_FOUND
+            );
+        }
+
+        return await this.taskRepository.update(taskId, {
+            status,
+        });
     }
-
-    if (!status) {
-      throw new AppError("Status is required", HttpStatusCode.BAD_REQUEST);
-    }
-
-    const existing = await this.taskRepository.findById(taskId);
-
-    if (!existing) {
-      throw new AppError("Task not found", HttpStatusCode.NOT_FOUND);
-    }
-
-    return await this.taskRepository.update(taskId, {
-      status,
-    });
-  }
 }

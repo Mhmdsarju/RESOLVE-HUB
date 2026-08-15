@@ -3,8 +3,8 @@ import { inject, injectable } from "inversify";
 import { ITaskRepository } from "../../domain/interfaces/ITaskRepository";
 import { Task } from "../../domain/entities/task.entity";
 
-import { CreateTaskDto } from "../dto/createTaskDto"; 
-import { ICreateTaskUseCase } from "../../domain/interfaces/use-cases/ICreateTaskUseCase"; 
+import { CreateTaskDto } from "../dto/createTaskDto";
+import { ICreateTaskUseCase } from "../../domain/interfaces/use-cases/ICreateTaskUseCase";
 
 import { AppError } from "@/shared/errors/AppError";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
@@ -15,26 +15,31 @@ export class CreateTaskUseCase implements ICreateTaskUseCase {
   constructor(
     @inject(TYPES.TaskRepository)
     private readonly taskRepository: ITaskRepository
-  ) {}
+  ) { }
 
   async execute(dto: CreateTaskDto): Promise<Task> {
-
-    
-    if (!dto.title) {
-      throw new AppError("Task title is required", HttpStatusCode.BAD_REQUEST);
+    if (!dto.title?.trim()) {
+      throw new AppError(
+        "Task title is required",
+        HttpStatusCode.BAD_REQUEST
+      );
     }
 
     if (!dto.incidentId) {
-      throw new AppError("Incident ID is required", HttpStatusCode.BAD_REQUEST);
+      throw new AppError(
+        "Incident ID is required",
+        HttpStatusCode.BAD_REQUEST
+      );
     }
 
     const task = new Task({
-      title: dto.title,
+      title: dto.title.trim(),
       description: dto.description,
 
       incidentId: dto.incidentId,
       assignedTo: dto.assignedTo,
 
+      type: dto.type,
       priority: dto.priority,
       dueDate: dto.dueDate,
     });

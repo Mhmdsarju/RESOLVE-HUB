@@ -8,7 +8,6 @@ import { TeamMember } from "../entities/teamMember.entity";
 
 export interface TeamWithRole {
   role: string;
-
   team: {
     id: string;
     name: string;
@@ -28,4 +27,5 @@ export interface ITeamMemberRepository
   findMember(teamId: string, userId: string,): Promise<TeamMember | null>;
   findMembers(teamId: string, pagination: PaginationDto,): Promise<PaginationResult<TeamMemberWithUser>>;
   findTeamsByUserId(userId: string,): Promise<TeamWithRole[]>;
+  findTeamLead(teamId: string,): Promise<TeamMember | null>;
 }

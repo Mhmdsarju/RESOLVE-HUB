@@ -184,4 +184,19 @@ export class PrismaTeamMemberRepository
             },
         }));
     }
+
+    async findTeamLead(teamId: string,): Promise<TeamMember | null> {
+        const member = await prisma.teamMember.findFirst({
+            where: {
+                teamId,
+                role: "LEAD",
+            },
+        });
+
+        if (!member) {
+            return null;
+        }
+
+        return TeamMemberMapper.fromDb(member);
+    }
 }

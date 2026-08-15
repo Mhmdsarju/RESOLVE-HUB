@@ -4,13 +4,14 @@ import {
   Task as PrismaTask,
   TaskStatus as PrismaTaskStatus,
   TaskPriority as PrismaTaskPriority,
+  TaskType as PrismaTaskType,
 } from "@prisma/client";
 
 import { TaskStatus } from "../../domain/enums/taskStatus.enum";
 import { TaskPriority } from "../../domain/enums/taskPriority.enum";
+import { TaskType } from "../../domain/enums/taskType.enum";
 
 export class TaskMapper {
-
   static toDb(task: Task) {
     return {
       id: task.id,
@@ -20,6 +21,7 @@ export class TaskMapper {
       incidentId: task.incidentId,
       assignedTo: task.assignedTo ?? null,
 
+      type: task.type as PrismaTaskType,
       status: task.status as PrismaTaskStatus,
       priority: task.priority as PrismaTaskPriority,
 
@@ -39,6 +41,7 @@ export class TaskMapper {
       incidentId: data.incidentId,
       assignedTo: data.assignedTo ?? undefined,
 
+      type: data.type as TaskType,
       status: data.status as TaskStatus,
       priority: data.priority as TaskPriority,
 
@@ -48,5 +51,4 @@ export class TaskMapper {
       updatedAt: data.updatedAt,
     });
   }
-
 }

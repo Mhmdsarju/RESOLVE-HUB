@@ -1,14 +1,17 @@
-import { TaskPriority } from "../../domain/enums/taskPriority.enum"; 
+import { TaskPriority } from "../../domain/enums/taskPriority.enum";
+import { TaskType } from "../../domain/enums/taskType.enum";
 
 export interface CreateTaskDto {
-  title: string;
-  description?: string;
+    title: string;
+    description?: string;
 
-  incidentId: string;
+    incidentId: string;
 
-  assignedTo?: string;
+    assignedTo?: string;
 
-  priority?: TaskPriority;
+    type?: TaskType;
 
-  dueDate?: Date;
+    priority?: TaskPriority;
+
+    dueDate?: Date;
 }

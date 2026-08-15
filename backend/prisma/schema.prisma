@@ -240,6 +240,7 @@ model Task {
   incidentId String
   assignedTo String? @db.Uuid
 
+  type     TaskType     @default(MANUAL)
   status   TaskStatus   @default(TODO)
   priority TaskPriority @default(MEDIUM)
 
@@ -254,7 +255,13 @@ model Task {
   @@index([incidentId])
   @@index([assignedTo])
   @@index([status])
+  @@index([type])
   @@map("tasks")
+}
+
+enum TaskType {
+  MANUAL
+  AUTOMATIC
 }
 
 enum TaskStatus {
