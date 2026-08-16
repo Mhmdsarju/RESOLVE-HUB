@@ -11,15 +11,13 @@ import { PaginationResult } from "@/shared/utils/Pagination/PaginationResult";
 @injectable()
 export class PrismaAlertRepository implements IAlertRepository {
 
-    async create(alert: Alert): Promise<Alert> {
-        const created = await prisma.alert.create({
-            data: AlertMapper.toDb(alert),
-        });
+    async create(alert: Alert,): Promise<Alert> {
+        const created = await prisma.alert.create({ data: AlertMapper.toDb(alert), });
 
         return AlertMapper.fromDb(created);
     }
 
-    async findById(id: string): Promise<Alert | null> {
+    async findById(id: string,): Promise<Alert | null> {
         const alert = await prisma.alert.findUnique({
             where: { id },
         });
@@ -41,7 +39,7 @@ export class PrismaAlertRepository implements IAlertRepository {
         return alerts.map(AlertMapper.fromDb);
     }
 
-    async update(id: string, data: Partial<Alert>): Promise<Alert> {
+    async update(id: string, data: Partial<Alert>,): Promise<Alert> {
         const updated = await prisma.alert.update({
             where: { id },
             data: AlertMapper.toDb({
@@ -52,18 +50,26 @@ export class PrismaAlertRepository implements IAlertRepository {
         return AlertMapper.fromDb(updated);
     }
 
-    async delete(id: string): Promise<void> {
+    async delete(id: string,): Promise<void> {
         await prisma.alert.delete({
             where: { id },
         });
     }
 
-    async findAlerts(dto: GetAlertsDTO): Promise<PaginationResult<Alert>> {
-        const { organizationId, monitoringProjectId, page, limit, } = dto;
+    async findAlerts(dto: GetAlertsDTO,): Promise<PaginationResult<Alert>> {
+        const {
+            organizationId,
+            monitoringProjectId,
+            page,
+            limit,
+        } = dto;
 
         const skip = (page - 1) * limit;
 
-        const where = { organizationId, monitoringProjectId, };
+        const where = {
+            organizationId,
+            monitoringProjectId,
+        };
 
         const [alerts, total] = await Promise.all([
             prisma.alert.findMany({

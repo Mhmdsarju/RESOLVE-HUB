@@ -1,4 +1,5 @@
-import {  Alert as PrismaAlert,
+import {
+  Alert as PrismaAlert,
   AlertSource as PrismaAlertSource,
   AlertStatus as PrismaAlertStatus,
   Prisma,
@@ -15,6 +16,7 @@ export class AlertMapper {
       organizationId: data.organizationId,
       monitoringProjectId: data.monitoringProjectId,
       integrationId: data.integrationId ?? undefined,
+      alertRuleId: data.alertRuleId ?? undefined,
       createdBy: data.createdBy ?? undefined,
       source: data.source as AlertSource,
       title: data.title,
@@ -31,6 +33,7 @@ export class AlertMapper {
       organizationId: alert.organizationId,
       monitoringProjectId: alert.monitoringProjectId,
       integrationId: alert.integrationId ?? null,
+      alertRuleId: alert.alertRuleId ?? null,
       createdBy: alert.createdBy ?? null,
       source: alert.source as PrismaAlertSource,
       title: alert.title,

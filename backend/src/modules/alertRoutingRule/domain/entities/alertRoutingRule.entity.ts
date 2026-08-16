@@ -1,20 +1,13 @@
-export interface AlertRoutingCondition {
-  all?: AlertRoutingCondition[];
-  any?: AlertRoutingCondition[];
-  field?: string;
-  operator?: string;
-  value?: string | number | boolean;
-}
-
 interface AlertRoutingRuleProps {
   id?: string;
+
   organizationId: string;
   monitoringProjectId: string;
+  alertRuleId: string;
   teamId: string;
   createdBy: string;
 
   name: string;
-  conditions: AlertRoutingCondition;
   priority: number;
   isActive: boolean;
 
@@ -27,11 +20,11 @@ export class AlertRoutingRule {
 
   public organizationId: string;
   public monitoringProjectId: string;
+  public alertRuleId: string;
   public teamId: string;
   public createdBy: string;
 
   public name: string;
-  public conditions: AlertRoutingCondition;
   public priority: number;
   public isActive: boolean;
 
@@ -43,11 +36,11 @@ export class AlertRoutingRule {
 
     this.organizationId = props.organizationId;
     this.monitoringProjectId = props.monitoringProjectId;
+    this.alertRuleId = props.alertRuleId;
     this.teamId = props.teamId;
     this.createdBy = props.createdBy;
 
     this.name = props.name;
-    this.conditions = props.conditions;
     this.priority = props.priority;
     this.isActive = props.isActive;
 

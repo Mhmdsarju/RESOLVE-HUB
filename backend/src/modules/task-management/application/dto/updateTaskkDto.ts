@@ -8,4 +8,7 @@ export interface UpdateTaskDto {
   status?: TaskStatus;
   priority?: TaskPriority;
   dueDate?: Date;
+  userId: string;
+  role: string;
+  taskId: string;
 }

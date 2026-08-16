@@ -6,6 +6,7 @@ interface AlertProps {
     organizationId: string;
     monitoringProjectId: string;
     integrationId?: string;
+    alertRuleId?: string;
     createdBy?: string;
     source: AlertSource;
     title: string;
@@ -21,6 +22,7 @@ export class Alert {
     public readonly organizationId: string;
     public readonly monitoringProjectId: string;
     public readonly integrationId?: string;
+    public readonly alertRuleId?: string;
     public readonly createdBy?: string;
     public readonly source: AlertSource;
 
@@ -39,6 +41,7 @@ export class Alert {
         this.organizationId = props.organizationId;
         this.monitoringProjectId = props.monitoringProjectId;
         this.integrationId = props.integrationId;
+        this.alertRuleId = props.alertRuleId;
         this.createdBy = props.createdBy;
         this.source = props.source;
 

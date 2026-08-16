@@ -4,6 +4,8 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+// npx prisma studio
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -344,6 +346,9 @@ model AlertRule {
 
   monitoringProject MonitoringProject @relation(fields: [monitoringProjectId], references: [id], onDelete: Cascade)
 
+  alertRoutingRules AlertRoutingRule[]
+  alerts            Alert[]
+
   @@index([monitoringProjectId])
   @@index([organizationId])
   @@index([monitoringProjectId, isActive])
@@ -355,6 +360,7 @@ model Alert {
   organizationId      String      @db.Uuid
   monitoringProjectId String
   integrationId       String?
+  alertRuleId         String?
   createdBy           String?
   source              AlertSource
 
@@ -367,11 +373,13 @@ model Alert {
 
   monitoringProject MonitoringProject @relation(fields: [monitoringProjectId], references: [id], onDelete: Cascade)
   integration       Integration?      @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+  alertRule         AlertRule?        @relation(fields: [alertRuleId], references: [id], onDelete: SetNull)
   incident          Incident?         @relation(fields: [incidentId], references: [id], onDelete: SetNull)
 
   @@index([organizationId])
   @@index([monitoringProjectId])
   @@index([integrationId])
+  @@index([alertRuleId])
   @@index([incidentId])
   @@index([monitoringProjectId, status])
   @@map("alerts")
@@ -405,11 +413,11 @@ model AlertRoutingRule {
   id                  String @id @default(cuid())
   organizationId      String @db.Uuid
   monitoringProjectId String
+  alertRuleId         String
   teamId              String
   createdBy           String @db.Uuid
 
   name       String
-  conditions Json
   priority   Int     @default(100)
   isActive   Boolean @default(true)
 
@@ -418,11 +426,13 @@ model AlertRoutingRule {
 
   organization      Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   monitoringProject MonitoringProject @relation(fields: [monitoringProjectId], references: [id], onDelete: Cascade)
+  alertRule         AlertRule         @relation(fields: [alertRuleId], references: [id], onDelete: Cascade)
   team              Team              @relation(fields: [teamId], references: [id], onDelete: Cascade)
   creator           User              @relation("CreatedAlertRoutingRules", fields: [createdBy], references: [id])
 
   @@index([organizationId])
   @@index([monitoringProjectId])
+  @@index([alertRuleId])
   @@index([teamId])
   @@index([createdBy])
   @@index([monitoringProjectId, isActive, priority])

@@ -4,6 +4,7 @@ import { TYPES } from "@/config/types";
 
 import { Alert } from "../../domain/entities/alert.entity";
 import { AlertSource } from "../../domain/enums/alertSource.enum";
+import { AlertStatus } from "../../domain/enums/alertStatus.enum";
 
 import { IAlertRepository } from "../../domain/interfaces/IAlertRepository";
 import { IProcessAlertUseCase } from "../../domain/interfaces/IProcessAlertUseCase";
@@ -16,10 +17,10 @@ import { IncidentType } from "@/modules/incident/domain/enums/incidentType.enum"
 import { Severity } from "@/modules/incident/domain/enums/severity.enum";
 import { Priority } from "@/modules/incident/domain/enums/priority.enum";
 
-import { ITeamMemberRepository } from "@/modules/team-management/domain/interfaces/ITeamMemberRepository"; 
+import { ITeamMemberRepository } from "@/modules/team-management/domain/interfaces/ITeamMemberRepository";
 
-import { ICreateTaskUseCase } from "@/modules/task-management/domain/interfaces/use-cases/ICreateTaskUseCase"; 
-import { TaskType } from "@/modules/task-management/domain/enums/taskType.enum"; 
+import { ICreateTaskUseCase } from "@/modules/task-management/domain/interfaces/use-cases/ICreateTaskUseCase";
+import { TaskType } from "@/modules/task-management/domain/enums/taskType.enum";
 import { TaskPriority } from "@/modules/task-management/domain/enums/taskPriority.enum";
 
 @injectable()
@@ -46,20 +47,24 @@ export class ProcessAlertUseCase implements IProcessAlertUseCase {
             return alert;
         }
 
+        if (alert.status !== AlertStatus.FIRING) {
+            return alert;
+        }
+
         const teamId = await this.routeAlertUseCase.execute(alert);
 
         if (!teamId) {
             return alert;
         }
 
-        const labels =
-            typeof alert.payload.labels === "object" &&
-                alert.payload.labels !== null
-                ? (alert.payload.labels as Record<string, unknown>)
-                : {};
+        const labels = typeof alert.payload.labels === "object" &&
+            alert.payload.labels !== null
+            ? (alert.payload.labels as Record<string, unknown>)
+            : {};
 
-        const severity = this.getSeverity(labels.severity);
-        const priority = this.getPriority(labels.priority);
+        const severity = this.getSeverity(labels.severity,);
+
+        const priority = this.getPriority(labels.priority,);
 
         const incidentDto: CreateIncidentDto = {
             title: alert.title,
@@ -70,14 +75,9 @@ export class ProcessAlertUseCase implements IProcessAlertUseCase {
             type: IncidentType.AUTOMATED,
         };
 
-        const incident = await this.createIncidentUseCase.execute(
-            incidentDto,
-            undefined,
-            alert.organizationId,
-        );
+        const incident = await this.createIncidentUseCase.execute(incidentDto, undefined, alert.organizationId,);
 
-        const teamLead =
-            await this.teamMemberRepository.findTeamLead(teamId);
+        const teamLead = await this.teamMemberRepository.findTeamLead(teamId,);
 
         if (teamLead) {
             await this.createTaskUseCase.execute({
@@ -88,7 +88,8 @@ export class ProcessAlertUseCase implements IProcessAlertUseCase {
                 incidentId: incident.id!,
                 assignedTo: teamLead.userId,
                 type: TaskType.AUTOMATIC,
-                priority: this.getTaskPriority(priority),
+                priority:
+                    this.getTaskPriority(priority),
             });
         }
 
@@ -126,9 +127,7 @@ export class ProcessAlertUseCase implements IProcessAlertUseCase {
         return Priority.P3;
     }
 
-    private getTaskPriority(
-        priority: Priority,
-    ): TaskPriority {
+    private getTaskPriority(priority: Priority,): TaskPriority {
         switch (priority) {
             case Priority.P1:
             case Priority.P2:

@@ -2,5 +2,5 @@ import { UpdateTaskDto } from "@/modules/task-management/application/dto/updateT
 import { Task } from "../../entities/task.entity";
 
 export interface IUpdateTaskUseCase {
-  execute(taskId: string, dto: UpdateTaskDto): Promise<Task>;
+    execute(dto: UpdateTaskDto): Promise<Task>;
 }

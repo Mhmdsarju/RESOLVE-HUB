@@ -42,7 +42,7 @@ export class PrismaAlertRuleRepository implements IAlertRuleRepository {
         return alertRules.map(AlertRuleMapper.fromDb);
     }
 
-    async update(id: string, data: Partial<AlertRule>): Promise<AlertRule> {
+    async update(id: string, data: Partial<AlertRule>,): Promise<AlertRule> {
         const updated = await prisma.alertRule.update({
             where: { id },
             data: AlertRuleMapper.toDb({
@@ -59,12 +59,15 @@ export class PrismaAlertRuleRepository implements IAlertRuleRepository {
         });
     }
 
-    async findAlertRules(dto: GetAlertRulesDTO): Promise<PaginationResult<AlertRule>> {
+    async findAlertRules(dto: GetAlertRulesDTO,): Promise<PaginationResult<AlertRule>> {
         const { organizationId, monitoringProjectId, page, limit, } = dto;
 
         const skip = (page - 1) * limit;
 
-        const where = { organizationId, monitoringProjectId, };
+        const where = {
+            organizationId,
+            monitoringProjectId,
+        };
 
         const [alertRules, total] = await Promise.all([
             prisma.alertRule.findMany({
@@ -76,9 +79,7 @@ export class PrismaAlertRuleRepository implements IAlertRuleRepository {
                 },
             }),
 
-            prisma.alertRule.count({
-                where,
-            }),
+            prisma.alertRule.count({ where, }),
         ]);
 
         const totalPages = Math.ceil(total / limit);
@@ -92,5 +93,21 @@ export class PrismaAlertRuleRepository implements IAlertRuleRepository {
                 totalPages,
             },
         };
+    }
+
+    async findByName(monitoringProjectId: string, name: string,): Promise<AlertRule | null> {
+        const alertRule = await prisma.alertRule.findFirst({
+            where: {
+                monitoringProjectId,
+                name,
+                isActive: true,
+            },
+        });
+
+        if (!alertRule) {
+            return null;
+        }
+
+        return AlertRuleMapper.fromDb(alertRule);
     }
 }

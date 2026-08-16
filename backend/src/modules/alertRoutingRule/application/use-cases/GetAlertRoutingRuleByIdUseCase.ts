@@ -10,21 +10,24 @@ import { IAlertRoutingRuleRepository } from "../../domain/interfaces/IAlertRouti
 import { IGetAlertRoutingRuleByIdUseCase } from "../../domain/interfaces/use-case/IGetAlertRoutingRuleByIdUseCase";
 
 @injectable()
-export class GetAlertRoutingRuleByIdUseCase implements IGetAlertRoutingRuleByIdUseCase {
+export class GetAlertRoutingRuleByIdUseCase
+  implements IGetAlertRoutingRuleByIdUseCase {
+  constructor(
+    @inject(TYPES.AlertRoutingRuleRepository)
+    private readonly alertRoutingRuleRepository: IAlertRoutingRuleRepository,
+  ) { }
 
-    constructor(
-        @inject(TYPES.AlertRoutingRuleRepository)
-        private readonly alertRoutingRuleRepository: IAlertRoutingRuleRepository,
-    ) { }
-
-    async execute(id: string): Promise<AlertRoutingRule> {
-
-        const rule = await this.alertRoutingRuleRepository.findById(id);
-
-        if (!rule) {
-            throw new AppError("Alert routing rule not found", HttpStatusCode.NOT_FOUND,);
-        }
-
-        return rule;
+  async execute(id: string): Promise<AlertRoutingRule> {
+    if (!id?.trim()) {
+      throw new AppError("Alert routing rule ID is required", HttpStatusCode.BAD_REQUEST,);
     }
+
+    const rule = await this.alertRoutingRuleRepository.findById(id);
+
+    if (!rule) {
+      throw new AppError("Alert routing rule not found", HttpStatusCode.NOT_FOUND,);
+    }
+
+    return rule;
+  }
 }

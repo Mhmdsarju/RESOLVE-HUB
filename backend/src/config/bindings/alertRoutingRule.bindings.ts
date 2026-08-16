@@ -14,7 +14,7 @@ import { IUpdateAlertRoutingRuleUseCase } from "@/modules/alertRoutingRule/domai
 import { UpdateAlertRoutingRuleUseCase } from "@/modules/alertRoutingRule/application/use-cases/UpdateAlertRoutingRuleUseCase";
 import { AlertRoutingRuleController } from "@/modules/alertRoutingRule/presentation/controllers/AlertRoutingRuleController";
 import { RouteAlertUseCase } from "@/modules/alertRoutingRule/application/use-cases/RouteAlertUseCase";
-import { AlertRoutingEvaluator } from "@/modules/alertRoutingRule/domain/services/AlertRoutingEvaluator";
+// import { AlertRoutingEvaluator } from "@/modules/alertRoutingRule/domain/services/AlertRoutingEvaluator";
 
 export function bindAlertRoutingRule(container:Container){
     container.bind<IAlertRoutingRuleRepository>(TYPES.AlertRoutingRuleRepository).to(PrismaAlertRoutingRuleRepository).inSingletonScope();
@@ -27,5 +27,5 @@ export function bindAlertRoutingRule(container:Container){
     container.bind<IUpdateAlertRoutingRuleUseCase>(TYPES.UpdateAlertRoutingRuleUseCase).to(UpdateAlertRoutingRuleUseCase).inSingletonScope();
     container.bind(TYPES.RouteAlertUseCase).to(RouteAlertUseCase);
     // container.bind(AlertRoutingEvaluator).toSelf().inSingletonScope();
-    container.bind<AlertRoutingEvaluator>(TYPES.AlertRoutingEvaluator).to(AlertRoutingEvaluator).inSingletonScope();
+    // container.bind<AlertRoutingEvaluator>(TYPES.AlertRoutingEvaluator).to(AlertRoutingEvaluator).inSingletonScope();
 }

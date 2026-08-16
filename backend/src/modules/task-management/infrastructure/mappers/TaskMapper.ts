@@ -1,11 +1,6 @@
 import { Task } from "../../domain/entities/task.entity";
 
-import {
-  Task as PrismaTask,
-  TaskStatus as PrismaTaskStatus,
-  TaskPriority as PrismaTaskPriority,
-  TaskType as PrismaTaskType,
-} from "@prisma/client";
+import { Task as PrismaTask, TaskStatus as PrismaTaskStatus, TaskPriority as PrismaTaskPriority, TaskType as PrismaTaskType, } from "@prisma/client";
 
 import { TaskStatus } from "../../domain/enums/taskStatus.enum";
 import { TaskPriority } from "../../domain/enums/taskPriority.enum";

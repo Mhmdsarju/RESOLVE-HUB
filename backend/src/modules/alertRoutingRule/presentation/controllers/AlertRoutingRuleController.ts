@@ -17,7 +17,6 @@ import { IDeleteAlertRoutingRuleUseCase } from "../../domain/interfaces/use-case
 
 @injectable()
 export class AlertRoutingRuleController extends BaseController {
-
     constructor(
         @inject(TYPES.CreateAlertRoutingRuleUseCase)
         private readonly createAlertRoutingRuleUseCase: ICreateAlertRoutingRuleUseCase,
@@ -44,8 +43,8 @@ export class AlertRoutingRuleController extends BaseController {
             const dto: CreateAlertRoutingRuleDto = {
                 name: req.body.name,
                 monitoringProjectId: req.body.monitoringProjectId,
+                alertRuleId: req.body.alertRuleId,
                 teamId: req.body.teamId,
-                conditions: req.body.conditions,
                 priority: req.body.priority,
             };
 
@@ -56,7 +55,6 @@ export class AlertRoutingRuleController extends BaseController {
                 "Alert routing rule created successfully",
                 rule,
             );
-
         } catch (error) {
             next(error);
         }
@@ -73,7 +71,6 @@ export class AlertRoutingRuleController extends BaseController {
                 "Alert routing rules fetched successfully",
                 rules,
             );
-
         } catch (error) {
             next(error);
         }
@@ -90,7 +87,6 @@ export class AlertRoutingRuleController extends BaseController {
                 "Alert routing rule fetched successfully",
                 rule,
             );
-
         } catch (error) {
             next(error);
         }
@@ -103,8 +99,8 @@ export class AlertRoutingRuleController extends BaseController {
             const dto: UpdateAlertRoutingRuleDto = {
                 name: req.body.name,
                 monitoringProjectId: req.body.monitoringProjectId,
+                alertRuleId: req.body.alertRuleId,
                 teamId: req.body.teamId,
-                conditions: req.body.conditions,
                 priority: req.body.priority,
                 isActive: req.body.isActive,
             };
@@ -116,7 +112,6 @@ export class AlertRoutingRuleController extends BaseController {
                 "Alert routing rule updated successfully",
                 rule,
             );
-
         } catch (error) {
             next(error);
         }
@@ -133,7 +128,6 @@ export class AlertRoutingRuleController extends BaseController {
                 "Alert routing rule deleted successfully",
                 null,
             );
-
         } catch (error) {
             next(error);
         }

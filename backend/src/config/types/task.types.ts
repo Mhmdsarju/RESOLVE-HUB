@@ -9,5 +9,8 @@ export const TASK_TYPES={
     DeleteTaskUseCase:Symbol.for("DeleteTaskUseCase"),
     UpdateTaskUseCase:Symbol.for("UpdateTaskUseCase"),
     GetIncidentsUseCase:Symbol.for("GetIncidentsUseCase"),
-    GetIncidentStatsUseCase:Symbol.for("GetIncidentStatsUseCase")
+    GetIncidentStatsUseCase:Symbol.for("GetIncidentStatsUseCase"),
+    GetMyTasksUseCase: Symbol.for("GetMyTasksUseCase"),
+    GetTeamTasksUseCase:Symbol.for("GetTeamTasksUseCase"),
+    TakeTaskUseCase: Symbol.for("TakeTaskUseCase"),
 }

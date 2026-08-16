@@ -4,36 +4,29 @@ import { ITaskRepository } from "../../domain/interfaces/ITaskRepository";
 import { IGetTasksByIncidentUseCase } from "../../domain/interfaces/use-cases/IGetTasksByIncidentUseCase";
 
 import { Task } from "../../domain/entities/task.entity";
-import { TaskStatus } from "../../domain/enums/taskStatus.enum";
-import { TaskPriority } from "../../domain/enums/taskPriority.enum";
 
 import { AppError } from "@/shared/errors/AppError";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
 import { TYPES } from "@/config/types";
 
+import { GetTasksByIncidentDto } from "../dto/getTaskDto";
 @injectable()
 export class GetTasksByIncidentUseCase implements IGetTasksByIncidentUseCase {
+
     constructor(
         @inject(TYPES.TaskRepository)
         private readonly taskRepository: ITaskRepository
     ) { }
 
-    async execute(
-        incidentId: string,
-        page: number = 1,
-        limit: number = 10,
-        filters?: {
-            assignedTo?: string;
-            status?: TaskStatus;
-            priority?: TaskPriority;
-        }
-    ): Promise<{
+    async execute(dto: GetTasksByIncidentDto): Promise<{
         data: Task[];
         total: number;
         page: number;
         limit: number;
         totalPages: number;
     }> {
+
+        const { incidentId, page = 1, limit = 10, filters, } = dto;
 
         if (!incidentId) {
             throw new AppError("Incident ID is required", HttpStatusCode.BAD_REQUEST);
@@ -49,7 +42,12 @@ export class GetTasksByIncidentUseCase implements IGetTasksByIncidentUseCase {
             incidentId,
             skip,
             take,
-            filters,
+            filters: {
+                assignedTo: filters?.assignedTo,
+                status: filters?.status,
+                priority: filters?.priority,
+                search: filters?.search?.trim(),
+            },
         });
 
         return {
@@ -57,7 +55,9 @@ export class GetTasksByIncidentUseCase implements IGetTasksByIncidentUseCase {
             total: result.total,
             page: safePage,
             limit: safeLimit,
-            totalPages: Math.ceil(result.total / safeLimit),
+            totalPages: Math.ceil(
+                result.total / safeLimit
+            ),
         };
     }
 }

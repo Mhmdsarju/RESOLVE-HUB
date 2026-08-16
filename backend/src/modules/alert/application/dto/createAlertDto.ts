@@ -5,6 +5,7 @@ export interface CreateAlertDTO {
     organizationId: string;
     monitoringProjectId: string;
     integrationId?: string;
+    alertRuleId?: string;
     createdBy?: string;
     source: AlertSource;
     title: string;

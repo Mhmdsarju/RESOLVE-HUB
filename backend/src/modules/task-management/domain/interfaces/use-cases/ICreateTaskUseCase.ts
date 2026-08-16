@@ -1,6 +1,10 @@
-import { Task } from "../../entities/task.entity"; 
-import { CreateTaskDto } from "@/modules/task-management/application/dto/createTaskDto"; 
+import { Task } from "../../entities/task.entity";
+import { CreateTaskDto } from "../../../application/dto/createTaskDto";
 
 export interface ICreateTaskUseCase {
-  execute(dto: CreateTaskDto): Promise<Task>;
+    execute(
+        dto: CreateTaskDto,
+        userId?: string,
+        role?: string,
+    ): Promise<Task>;
 }

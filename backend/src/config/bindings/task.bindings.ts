@@ -20,8 +20,14 @@ import { IGetIncidentsUseCase } from "@/modules/incident/domain/interfaces/use-c
 import { GetIncidentsUseCase } from "@/modules/incident/application/use-cases/GetIncidentsUseCase";
 import { IGetIncidentStatsUseCase } from "@/modules/incident/domain/interfaces/use-cases/IGetIncidentStatsUseCase";
 import { GetIncidentStatsUseCase } from "@/modules/incident/application/use-cases/GetIncidentStatsUseCase";
+import { IGetMyTasksUseCase } from "@/modules/task-management/domain/interfaces/use-cases/IGetMyTasksUseCase";
+import { GetMyTasksUseCase } from "@/modules/task-management/application/use-cases/GetMyTasksUseCase";
+import { IGetTeamTasksUseCase } from "@/modules/task-management/domain/interfaces/use-cases/IGetTeamTasksUseCase";
+import { GetTeamTasksUseCase } from "@/modules/task-management/application/use-cases/GetTeamTasksUseCase";
+import { ITakeTaskUseCase } from "@/modules/task-management/domain/interfaces/use-cases/ITakeTaskUseCase";
+import { TakeTaskUseCase } from "@/modules/task-management/application/use-cases/TakeTaskUseCase";
 
-export function  bindTask(container:Container){
+export function bindTask(container: Container) {
 
     container.bind<ITaskRepository>(TYPES.TaskRepository).to(PrismaTaskRepository).inSingletonScope();
     container.bind<TaskController>(TYPES.TaskController).to(TaskController).inSingletonScope();
@@ -34,4 +40,8 @@ export function  bindTask(container:Container){
     container.bind<IUpdateTaskUseCase>(TYPES.UpdateTaskUseCase).to(UpdateTaskUseCase).inSingletonScope();
     container.bind<IGetIncidentsUseCase>(TYPES.GetIncidentsUseCase).to(GetIncidentsUseCase).inSingletonScope();
     container.bind<IGetIncidentStatsUseCase>(TYPES.GetIncidentStatsUseCase).to(GetIncidentStatsUseCase).inSingletonScope();
+
+    container.bind<IGetMyTasksUseCase>(TYPES.GetMyTasksUseCase).to(GetMyTasksUseCase).inSingletonScope();
+    container.bind<IGetTeamTasksUseCase>(TYPES.GetTeamTasksUseCase).to(GetTeamTasksUseCase).inSingletonScope();
+    container.bind<ITakeTaskUseCase>(TYPES.TakeTaskUseCase).to(TakeTaskUseCase);
 }

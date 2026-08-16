@@ -2,6 +2,8 @@ import { inject, injectable } from "inversify";
 
 import { TYPES } from "@/config/types";
 
+import { AppError } from "@/shared/errors/AppError";
+import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
 
 import { Alert } from "../../domain/entities/alert.entity";
 import { IAlertRepository } from "../../domain/interfaces/IAlertRepository";
@@ -14,16 +16,34 @@ export class CreateAlertUseCase implements ICreateAlertUseCase {
     constructor(
         @inject(TYPES.AlertRepository)
         private readonly alertRepository: IAlertRepository,
+
         @inject(TYPES.ProcessAlertUseCase)
         private readonly processAlertUseCase: IProcessAlertUseCase,
     ) { }
 
     async execute(dto: CreateAlertDTO): Promise<Alert> {
+        if (!dto.organizationId?.trim()) {
+            throw new AppError("Organization ID is required", HttpStatusCode.BAD_REQUEST,);
+        }
+
+        if (!dto.monitoringProjectId?.trim()) {
+            throw new AppError("Monitoring project ID is required", HttpStatusCode.BAD_REQUEST,);
+        }
+
+        if (!dto.title?.trim()) {
+            throw new AppError("Alert title is required", HttpStatusCode.BAD_REQUEST,);
+        }
+
+        if (dto.source === "AUTOMATIC" && !dto.alertRuleId?.trim()) {
+            throw new AppError("Alert rule ID is required for automatic alerts", HttpStatusCode.BAD_REQUEST,);
+        }
+
         const alert = new Alert({
             id: crypto.randomUUID(),
             organizationId: dto.organizationId,
             monitoringProjectId: dto.monitoringProjectId,
             integrationId: dto.integrationId,
+            alertRuleId: dto.alertRuleId,
             createdBy: dto.createdBy,
             source: dto.source,
             title: dto.title,
@@ -34,6 +54,7 @@ export class CreateAlertUseCase implements ICreateAlertUseCase {
         });
 
         const createdAlert = await this.alertRepository.create(alert);
-        return await this.processAlertUseCase.execute(createdAlert);
+
+        return await this.processAlertUseCase.execute(createdAlert,);
     }
 }
