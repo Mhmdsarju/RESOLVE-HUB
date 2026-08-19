@@ -14,8 +14,10 @@ export class UserController extends BaseController {
   constructor(
     @inject(TYPES.GetUsersByOrganizationUseCase)
     private readonly getUsersByOrganizationUseCase: IGetUsersByOrganizationUseCase,
+
     @inject(TYPES.getMeUseCase)
     private readonly getMeUseCase: IGetMeUseCase,
+
     @inject(TYPES.updateMeUseCase)
     private readonly updateMeUseCase: IUpdateMeUseCase,
   ) {
@@ -26,34 +28,37 @@ export class UserController extends BaseController {
     try {
       const user = this.getCurrentUser(req);
 
-      const users = await this.getUsersByOrganizationUseCase.execute(user.organizationId,);
+      const users = await this.getUsersByOrganizationUseCase.execute(user.organizationId);
 
       return ResponseHandler.success(
         res,
         "Users fetched successfully",
-        users,
+        users
       );
     } catch (error) {
       next(error);
     }
   }
-  async getMe(req: Request, res: Response, next: NextFunction,) {
+
+  async getMe(req: Request, res: Response, next: NextFunction) {
     try {
       const user = this.getCurrentUser(req);
 
-      const result = await this.getMeUseCase.execute(user.userId);
+      const result = await this.getMeUseCase.execute(
+        user.userId
+      );
 
       return ResponseHandler.success(
         res,
         "User profile fetched successfully",
-        result,
+        result
       );
     } catch (error) {
       next(error);
     }
   }
-  async updateMe(req: Request, res: Response, next: NextFunction,
-  ) {
+
+  async updateMe(req: Request, res: Response, next: NextFunction) {
     try {
       const user = this.getCurrentUser(req);
 
@@ -65,7 +70,7 @@ export class UserController extends BaseController {
       return ResponseHandler.success(
         res,
         "User profile updated successfully",
-        updatedUser,
+        updatedUser
       );
     } catch (error) {
       next(error);

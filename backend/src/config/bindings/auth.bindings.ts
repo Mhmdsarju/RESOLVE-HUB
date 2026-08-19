@@ -48,6 +48,8 @@ import { IGetMeUseCase } from "@/modules/auth/domain/interfaces/use-cases/IGetMe
 import { GetMeUseCase } from "@/modules/auth/application/use-cases/GetMeUseCase";
 import { IUpdateMeUseCase } from "@/modules/auth/domain/interfaces/use-cases/IUpdateMeUseCase";
 import { UpdateMeUseCase } from "@/modules/auth/application/use-cases/UpdateMeUseCase";
+import { OtpController } from "@/modules/auth/presentation/controllers/OtpController";
+import { PasswordController } from "@/modules/auth/presentation/controllers/PasswordController";
 
 export function bindAuth(container: Container) {
 
@@ -61,23 +63,26 @@ export function bindAuth(container: Container) {
     container.bind<ITokenStore>(TYPES.TokenStore).to(RedisTokenStore).inSingletonScope();
     container.bind<ITokenService>(TYPES.TokenService).to(JwtTokenService).inSingletonScope();
 
-    container.bind<IRegisterUseCase>(TYPES.RegisterUseCase).to(RegisterUseCase).inSingletonScope();
-    container.bind<IChangePasswordUseCase>(TYPES.ChangePasswordUseCase).to(ChangePasswordUseCase).inSingletonScope();
-    container.bind<IForgotPasswordUseCase>(TYPES.ForgotPasswordUseCase).to(ForgotPasswordUseCase).inSingletonScope();
-    container.bind<IGetCurrentUseCase>(TYPES.GetCurrentUseUseCase).to(GetCurrentUserUseCase).inSingletonScope();
-    container.bind<ILoginUseCase>(TYPES.LoginUseCase).to(LoginUseCase).inSingletonScope();
-    container.bind<ILogoutUsecase>(TYPES.LogoutUseCase).to(LogoutUseCase).inSingletonScope();
-    container.bind<IRefreshUseCase>(TYPES.RefreshUseCase).to(RefreshUseCase).inSingletonScope();
-    container.bind<IResendForgotPasswordOtpUseCase>(TYPES.ResendForgotPasswordOtpUseCase).to(ResendForgotPasswordOtpUseCase).inSingletonScope();
-    container.bind<IResetPasswordUseCase>(TYPES.ResetPasswordUseCase).to(ResetPasswordUseCase).inSingletonScope();
-    container.bind<IVerifyOtpUseCase>(TYPES.VerifyOtpUseCase).to(VerifyOtpUseCase).inSingletonScope()
-    container.bind<IVerifySignupOtpUseCase>(TYPES.VerifySignUpOtpUseCase).to(VerifySignupOtpUseCase).inSingletonScope();
-    container.bind<IResendSignupOtpUseCase>(TYPES.ResendSignUpOtpUseCase).to(ResendSignupOtpUseCase).inSingletonScope();
+    container.bind<IRegisterUseCase>(TYPES.RegisterUseCase).to(RegisterUseCase);
+    container.bind<IChangePasswordUseCase>(TYPES.ChangePasswordUseCase).to(ChangePasswordUseCase);
+    container.bind<IForgotPasswordUseCase>(TYPES.ForgotPasswordUseCase).to(ForgotPasswordUseCase);
+    container.bind<IGetCurrentUseCase>(TYPES.GetCurrentUseUseCase).to(GetCurrentUserUseCase);
+    container.bind<ILoginUseCase>(TYPES.LoginUseCase).to(LoginUseCase);
+    container.bind<ILogoutUsecase>(TYPES.LogoutUseCase).to(LogoutUseCase);
+    container.bind<IRefreshUseCase>(TYPES.RefreshUseCase).to(RefreshUseCase);
+    container.bind<IResendForgotPasswordOtpUseCase>(TYPES.ResendForgotPasswordOtpUseCase).to(ResendForgotPasswordOtpUseCase);
+    container.bind<IResetPasswordUseCase>(TYPES.ResetPasswordUseCase).to(ResetPasswordUseCase);
+    container.bind<IVerifyOtpUseCase>(TYPES.VerifyOtpUseCase).to(VerifyOtpUseCase)
+    container.bind<IVerifySignupOtpUseCase>(TYPES.VerifySignUpOtpUseCase).to(VerifySignupOtpUseCase);
+    container.bind<IResendSignupOtpUseCase>(TYPES.ResendSignUpOtpUseCase).to(ResendSignupOtpUseCase);
 
 
+    container.bind<IGetUsersByOrganizationUseCase>(TYPES.GetUsersByOrganizationUseCase).to(GetUsersByOrganizationUseCase);
+    container.bind<IGetMeUseCase>(TYPES.getMeUseCase).to(GetMeUseCase)
+    container.bind<IUpdateMeUseCase>(TYPES.updateMeUseCase).to(UpdateMeUseCase);
+    
     container.bind<AuthController>(TYPES.AuthController).to(AuthController).inSingletonScope();
-    container.bind<IGetUsersByOrganizationUseCase>(TYPES.GetUsersByOrganizationUseCase).to(GetUsersByOrganizationUseCase).inSingletonScope();
     container.bind<UserController>(TYPES.UserController).to(UserController).inSingletonScope();
-    container.bind<IGetMeUseCase>(TYPES.getMeUseCase).to(GetMeUseCase).inSingletonScope()
-    container.bind<IUpdateMeUseCase>(TYPES.updateMeUseCase).to(UpdateMeUseCase).inSingletonScope();
+    container.bind<OtpController>(TYPES.OtpController).to(OtpController).inSingletonScope();
+    container.bind<PasswordController>(TYPES.PasswordController).to(PasswordController).inSingletonScope();
 }

@@ -15,6 +15,9 @@ export const AUTH_TYPES = {
 
     //controllers
     AuthController: Symbol.for("AuthController"),
+    OtpController: Symbol.for("OtpController"),
+    PasswordController: Symbol.for("PasswordController"),
+    UserController:Symbol.for("UserController"),
 
     //store
     OtpStore: Symbol.for("OtpStore"),
@@ -31,7 +34,6 @@ export const AUTH_TYPES = {
     UserRepository: Symbol.for("UserRepository"),
 
     GetUsersByOrganizationUseCase:Symbol.for("GetUsersByOrganizationUseCase"),
-    UserController:Symbol.for("UserController"),
     getMeUseCase:Symbol.for("getMeUseCase"),
     updateMeUseCase:Symbol.for("updateMeUseCase")
 }
