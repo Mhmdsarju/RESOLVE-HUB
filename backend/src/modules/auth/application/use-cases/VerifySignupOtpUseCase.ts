@@ -76,7 +76,7 @@ export class VerifySignupOtpUseCase implements IVerifySignupOtpUseCase {
 
     const payload = {
       userId: savedUser.id!,
-      organizationId: savedUser.organizationId,
+      organizationId: savedUser.organizationId!,
       role: savedUser.role,
     };
 
@@ -94,7 +94,7 @@ export class VerifySignupOtpUseCase implements IVerifySignupOtpUseCase {
         id: savedUser.id!,
         name: savedUser.name,
         email: savedUser.email,
-        organizationId: savedUser.organizationId,
+        organizationId: savedUser.organizationId!,
         role: savedUser.role,
       },
       accessToken,

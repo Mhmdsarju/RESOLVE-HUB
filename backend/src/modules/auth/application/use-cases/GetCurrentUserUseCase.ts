@@ -22,7 +22,7 @@ private readonly userRepository: IUserRepository
 
     return {
       id: user.id!,
-      organizationId: user.organizationId,
+      organizationId: user.organizationId!,
       name: user.name,
       email: user.email,
       role: user.role,

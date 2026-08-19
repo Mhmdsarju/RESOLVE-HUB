@@ -55,7 +55,7 @@ export class LoginUseCase implements ILoginUseCase {
 
     const payload = {
       userId: user.id!,
-      organizationId: user.organizationId,
+      organizationId: user.organizationId!,
       role: user.role,
     };
 
@@ -70,7 +70,7 @@ export class LoginUseCase implements ILoginUseCase {
         id: user.id!,
         name: user.name,
         email: user.email,
-        organizationId: user.organizationId,
+        organizationId: user.organizationId!,
         role: user.role,
       },
       accessToken,
