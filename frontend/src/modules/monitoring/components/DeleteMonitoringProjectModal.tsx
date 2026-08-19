@@ -2,21 +2,10 @@ import { AlertTriangle, Trash2, X } from "lucide-react";
 
 import { useDeleteMonitoringProject } from "../hooks/useDeleteMonitoringProject";
 
-import type { MonitoringProject } from "../types/monitoringProject.types";
+import type { DeleteMonitoringProjectModalProps} from "../types/monitoringProject.types";
 
-interface DeleteMonitoringProjectModalProps {
-  project: MonitoringProject;
-  isOpen: boolean;
-  onClose: () => void;
-  onDeleted: () => void;
-}
 
-export default function DeleteMonitoringProjectModal({
-  project,
-  isOpen,
-  onClose,
-  onDeleted,
-}: DeleteMonitoringProjectModalProps) {
+export default function DeleteMonitoringProjectModal({  project,  isOpen,  onClose,  onDeleted,}: DeleteMonitoringProjectModalProps) {
   const deleteMutation = useDeleteMonitoringProject();
 
   if (!isOpen) {

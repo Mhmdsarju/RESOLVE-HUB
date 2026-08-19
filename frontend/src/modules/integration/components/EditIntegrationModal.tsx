@@ -1,51 +1,14 @@
 import { useState } from "react";
-import { Globe, Radio, Webhook, X } from "lucide-react";
+import { X } from "lucide-react";
 
 import { useUpdateIntegration } from "../hooks/useUpdateIntegration";
 
-import type {
-  Integration,
-  IntegrationType,
-  UpdateIntegrationDto,
-} from "../types/integration.types";
+import type {  IntegrationType,  UpdateIntegrationDto,EditIntegrationModalProps,EditIntegrationFormProps} from "../types/integration.types";
+import { INTEGRATION_TYPES } from "../constants/integration.constant";
 
-interface EditIntegrationModalProps {
-  integration: Integration | null;
-  isOpen: boolean;
-  onClose: () => void;
-}
+const integrationTypes=INTEGRATION_TYPES;
 
-const integrationTypes: {
-  value: IntegrationType;
-  label: string;
-  description: string;
-  icon: typeof Globe;
-}[] = [
-  {
-    value: "PROMETHEUS",
-    label: "Prometheus",
-    description: "Metrics monitoring",
-    icon: Radio,
-  },
-  {
-    value: "GRAFANA",
-    label: "Grafana",
-    description: "Metrics visualization",
-    icon: Globe,
-  },
-  {
-    value: "WEBHOOK",
-    label: "Webhook",
-    description: "Event notifications",
-    icon: Webhook,
-  },
-];
-
-export default function EditIntegrationModal({
-  integration,
-  isOpen,
-  onClose,
-}: EditIntegrationModalProps) {
+export default function EditIntegrationModal({  integration,  isOpen,  onClose,}: EditIntegrationModalProps) {
   const updateMutation = useUpdateIntegration();
 
   if (!isOpen || !integration) {
@@ -73,12 +36,6 @@ export default function EditIntegrationModal({
   );
 }
 
-interface EditIntegrationFormProps {
-  integration: Integration;
-  onClose: () => void;
-  isSubmitting: boolean;
-  onUpdate: (data: UpdateIntegrationDto) => void;
-}
 
 function EditIntegrationForm({
   integration,

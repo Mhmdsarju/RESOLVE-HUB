@@ -1,19 +1,12 @@
 import { AxiosError } from "axios";
-import {
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient, } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 
 import { updateMonitoringProject } from "../api/monitoringProjectApi";
 
-import type {
-  MonitoringProject,
-  UpdateMonitoringProjectDto,
-} from "../types/monitoringProject.types";
+import type { MonitoringProject, UpdateMonitoringProjectDto, } from "../types/monitoringProject.types";
 
 import type { ErrorResponse } from "@/core/types/error.types";
-
 
 interface UpdateMonitoringProjectVariables {
   id: string;
@@ -24,13 +17,8 @@ interface UpdateMonitoringProjectVariables {
 export function useUpdateMonitoringProject() {
   const queryClient = useQueryClient();
 
-  return useMutation<
-    MonitoringProject,
-    AxiosError<ErrorResponse>,
-    UpdateMonitoringProjectVariables
-  >({
-    mutationFn: ({ id, data }) =>
-      updateMonitoringProject(id, data),
+  return useMutation<MonitoringProject, AxiosError<ErrorResponse>, UpdateMonitoringProjectVariables>({
+    mutationFn: ({ id, data }) => updateMonitoringProject(id, data),
 
     onSuccess: (data) => {
       queryClient.invalidateQueries({
@@ -42,16 +30,11 @@ export function useUpdateMonitoringProject() {
         data,
       );
 
-      toast.success(
-        "Monitoring project updated successfully",
-      );
+      toast.success("Monitoring project updated successfully",);
     },
 
     onError: (error) => {
-      const message =
-        error.response?.data?.message ??
-        "Failed to update monitoring project";
-
+      const message = error.response?.data?.message ?? "Failed to update monitoring project";
       toast.error(message);
     },
   });

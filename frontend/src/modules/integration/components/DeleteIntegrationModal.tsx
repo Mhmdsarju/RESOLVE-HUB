@@ -2,21 +2,12 @@ import { AlertTriangle, Trash2, X } from "lucide-react";
 
 import { useDeleteIntegration } from "../hooks/useDeleteIntegration";
 
-import type { Integration } from "../types/integration.types";
+import type { DeleteIntegrationModalProps} from "../types/integration.types";
 
 
-interface DeleteIntegrationModalProps {
-  integration: Integration | null;
-  isOpen: boolean;
-  onClose: () => void;
-}
 
 
-export default function DeleteIntegrationModal({
-  integration,
-  isOpen,
-  onClose,
-}: DeleteIntegrationModalProps) {
+export default function DeleteIntegrationModal({  integration,  isOpen,  onClose,}: DeleteIntegrationModalProps) {
   const deleteMutation = useDeleteIntegration();
 
 

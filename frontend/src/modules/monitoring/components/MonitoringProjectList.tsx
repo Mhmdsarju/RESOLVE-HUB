@@ -2,21 +2,10 @@ import { FolderOpen } from "lucide-react";
 
 import MonitoringProjectCard from "./MonitoringProjectCard";
 
-import type { MonitoringProject } from "../types/monitoringProject.types";
+import type {  MonitoringProjectListProps} from "../types/monitoringProject.types";
 
-interface MonitoringProjectListProps {
-  projects: MonitoringProject[];
-  isLoading: boolean;
-  isError: boolean;
-  onProjectClick: (project: MonitoringProject) => void;
-}
 
-export default function MonitoringProjectList({
-  projects,
-  isLoading,
-  isError,
-  onProjectClick,
-}: MonitoringProjectListProps) {
+export default function MonitoringProjectList({  projects,  isLoading,  isError,  onProjectClick,}: MonitoringProjectListProps) {
   if (isLoading) {
     return (
       <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">

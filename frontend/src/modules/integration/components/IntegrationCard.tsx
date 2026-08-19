@@ -1,47 +1,12 @@
-import { ChevronRight, ExternalLink, Globe, Pencil, Radio, Trash2, Webhook } from "lucide-react";
+import { ChevronRight, ExternalLink, Globe, Pencil,  Trash2,  } from "lucide-react";
 
-import type { Integration, IntegrationType } from "../types/integration.types";
+import type { IntegrationCardProps} from "../types/integration.types";
+import { SHORT_INTEGRATION_TYPES } from "../constants/integration.constant";
 
-interface IntegrationCardProps {
-  integration: Integration;
-  onClick: (integration: Integration) => void;
-  onEdit: (integration: Integration) => void;
-  onDelete: (integration: Integration) => void;
-}
 
-const integrationConfig: Record<
-  IntegrationType,
-  {
-    label: string;
-    icon: typeof Globe;
-    description: string;
-  }
-> = {
-  PROMETHEUS: {
-    label: "Prometheus",
-    icon: Radio,
-    description: "Metrics monitoring",
-  },
+const integrationConfig=SHORT_INTEGRATION_TYPES
 
-  GRAFANA: {
-    label: "Grafana",
-    icon: Globe,
-    description: "Metrics visualization",
-  },
-
-  WEBHOOK: {
-    label: "Webhook",
-    icon: Webhook,
-    description: "Event notifications",
-  },
-};
-
-export default function IntegrationCard({
-  integration,
-  onClick,
-  onEdit,
-  onDelete,
-}: IntegrationCardProps) {
+export default function IntegrationCard({  integration,  onClick,  onEdit,  onDelete,}: IntegrationCardProps) {
   const config = integrationConfig[integration.type];
 
   const Icon = config.icon;

@@ -34,3 +34,33 @@ export interface GetMonitoringProjectsResponse {
   limit: number;
   totalPages: number;
 }
+
+export interface CreateMonitoringProjectModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export interface DeleteMonitoringProjectModalProps {
+  project: MonitoringProject;
+  isOpen: boolean;
+  onClose: () => void;
+  onDeleted: () => void;
+}
+
+export interface EditMonitoringProjectModalProps {
+  project: MonitoringProject;
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export interface MonitoringProjectCardProps {
+  project: MonitoringProject;
+  onClick: (project: MonitoringProject) => void;
+}
+
+export interface MonitoringProjectListProps {
+  projects: MonitoringProject[];
+  isLoading: boolean;
+  isError: boolean;
+  onProjectClick: (project: MonitoringProject) => void;
+}

@@ -96,9 +96,15 @@ export default function VerifySignupOtpPage() {
   };
 
   const onSubmit = async (data: VerifySignupOtpFormData) => {
-    await verifySignupOtpMutation.mutateAsync(data);
+    try {
+      await verifySignupOtpMutation.mutateAsync(data);
 
-    navigate("/dashboard");
+      navigate("/organization/verification", {
+        replace: true,
+      });
+    } catch {
+      return;
+    }
   };
 
   return (

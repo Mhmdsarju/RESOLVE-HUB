@@ -2,11 +2,7 @@ import { useState } from "react";
 import { FolderPlus, X } from "lucide-react";
 
 import { useCreateMonitoringProject } from "../hooks/useCreateMonitoringProject";
-
-interface CreateMonitoringProjectModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
+import type { CreateMonitoringProjectModalProps } from "../types/monitoringProject.types";
 
 interface FormState {
   name: string;

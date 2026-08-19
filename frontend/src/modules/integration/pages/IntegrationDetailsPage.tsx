@@ -1,55 +1,30 @@
-import {
-  ArrowLeft,
-  CalendarDays,
-  CheckCircle2,
-  Globe,
-  Radio,
-  Settings2,
-  Webhook,
-  XCircle,
-} from "lucide-react";
+import { ArrowLeft, CalendarDays, CheckCircle2, Globe, Settings2, XCircle } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { useIntegration } from "../hooks/useIntegration";
 
-import type { IntegrationType } from "../types/integration.types";
+import { useMonitoringProjects } from "@/modules/monitoring/hooks/useMonitoringProjects";
 
-const integrationConfig: Record<
-  IntegrationType,
-  {
-    label: string;
-    icon: typeof Globe;
-    description: string;
-  }
-> = {
-  PROMETHEUS: {
-    label: "Prometheus",
-    icon: Radio,
-    description: "Metrics monitoring",
-  },
+// import type { IntegrationType } from "../types/integration.types";
+import { SHORT_INTEGRATION_TYPES } from "../constants/integration.constant";
 
-  GRAFANA: {
-    label: "Grafana",
-    icon: Settings2,
-    description: "Metrics visualization",
-  },
-
-  WEBHOOK: {
-    label: "Webhook",
-    icon: Webhook,
-    description: "Event notifications",
-  },
-};
+const integrationConfig = SHORT_INTEGRATION_TYPES;
 
 export default function IntegrationDetailsPage() {
   const navigate = useNavigate();
 
-  const { projectId, integrationId } = useParams<{
-    projectId: string;
-    integrationId: string;
-  }>();
+  const { projectId, integrationId } = useParams<{ projectId: string; integrationId: string }>();
 
   const { data: integration, isLoading, isError } = useIntegration(integrationId ?? "");
+
+  const { data: projectsData, isLoading: isProjectsLoading } = useMonitoringProjects({
+    page: 1,
+    limit: 10,
+  });
+
+  const projects = projectsData?.data ?? [];
+
+  const project = projects.find((item) => item.id === projectId);
 
   if (isLoading) {
     return (
@@ -64,6 +39,8 @@ export default function IntegrationDetailsPage() {
         </div>
 
         <div className="h-80 animate-pulse rounded-2xl bg-white shadow-sm" />
+
+        <div className="h-48 animate-pulse rounded-2xl bg-white shadow-sm" />
       </div>
     );
   }
@@ -154,7 +131,6 @@ export default function IntegrationDetailsPage() {
 
   return (
     <div className="space-y-7">
-      {/* Back Button */}
       <div>
         <button
           type="button"
@@ -195,7 +171,6 @@ export default function IntegrationDetailsPage() {
         </button>
       </div>
 
-      {/* Hero */}
       <section
         className="
           group
@@ -328,7 +303,6 @@ export default function IntegrationDetailsPage() {
         </div>
       </section>
 
-      {/* Summary Cards */}
       <div className="grid gap-5 md:grid-cols-2">
         <div
           className="
@@ -461,7 +435,6 @@ export default function IntegrationDetailsPage() {
         </div>
       </div>
 
-      {/* Configuration */}
       <section
         className="
           group
@@ -549,22 +522,20 @@ export default function IntegrationDetailsPage() {
                   hover:shadow-sm
                 "
               >
-                <div className="flex items-center justify-between gap-4">
-                  <p
-                    className="
-                      text-xs
-                      font-semibold
-                      uppercase
-                      tracking-wide
-                      text-stone-400
-                      transition-colors
-                      duration-200
-                      group-hover/config:text-[#4B3932]
-                    "
-                  >
-                    {key}
-                  </p>
-                </div>
+                <p
+                  className="
+                    text-xs
+                    font-semibold
+                    uppercase
+                    tracking-wide
+                    text-stone-400
+                    transition-colors
+                    duration-200
+                    group-hover/config:text-[#4B3932]
+                  "
+                >
+                  {key}
+                </p>
 
                 <p
                   className="
@@ -583,7 +554,6 @@ export default function IntegrationDetailsPage() {
         )}
       </section>
 
-      {/* Integration Information */}
       <section
         className="
           group
@@ -600,18 +570,22 @@ export default function IntegrationDetailsPage() {
           hover:shadow-lg
         "
       >
-        <h2
-          className="
-            text-lg
-            font-bold
-            text-[#4B3932]
-            transition-colors
-            duration-200
-            group-hover:text-[#3B2E29]
-          "
-        >
-          Integration Information
-        </h2>
+        <div>
+          <h2
+            className="
+              text-lg
+              font-bold
+              text-[#4B3932]
+              transition-colors
+              duration-200
+              group-hover:text-[#3B2E29]
+            "
+          >
+            Integration Information
+          </h2>
+
+          <p className="mt-1 text-sm text-stone-500">Connection details for this integration.</p>
+        </div>
 
         <div className="mt-5 grid gap-4 md:grid-cols-2">
           <div
@@ -628,13 +602,13 @@ export default function IntegrationDetailsPage() {
             "
           >
             <p className="text-xs font-medium uppercase tracking-wide text-stone-400">
-              Integration ID
+              Integration
             </p>
 
             <p
               className="
                 mt-1
-                break-all
+                truncate
                 text-sm
                 font-semibold
                 text-[#4B3932]
@@ -642,9 +616,9 @@ export default function IntegrationDetailsPage() {
                 duration-200
                 group-hover/info:text-[#3B2E29]
               "
-              title={integration.id}
+              title={integration.name}
             >
-              {integration.id}
+              {integration.name}
             </p>
           </div>
 
@@ -662,13 +636,13 @@ export default function IntegrationDetailsPage() {
             "
           >
             <p className="text-xs font-medium uppercase tracking-wide text-stone-400">
-              Monitoring Project ID
+              Monitoring Project
             </p>
 
             <p
               className="
                 mt-1
-                break-all
+                truncate
                 text-sm
                 font-semibold
                 text-[#4B3932]
@@ -676,9 +650,9 @@ export default function IntegrationDetailsPage() {
                 duration-200
                 group-hover/info:text-[#3B2E29]
               "
-              title={integration.monitoringProjectId}
+              title={project?.name ?? "Project unavailable"}
             >
-              {integration.monitoringProjectId}
+              {isProjectsLoading ? "Loading..." : (project?.name ?? "Project unavailable")}
             </p>
           </div>
         </div>

@@ -3,24 +3,14 @@ import { Pencil, X } from "lucide-react";
 
 import { useUpdateMonitoringProject } from "../hooks/useUpdateMonitoringProject";
 
-import type { MonitoringProject } from "../types/monitoringProject.types";
-
-interface EditMonitoringProjectModalProps {
-  project: MonitoringProject;
-  isOpen: boolean;
-  onClose: () => void;
-}
+import type { EditMonitoringProjectModalProps} from "../types/monitoringProject.types";
 
 interface FormState {
   name: string;
   description: string;
 }
 
-export default function EditMonitoringProjectModal({
-  project,
-  isOpen,
-  onClose,
-}: EditMonitoringProjectModalProps) {
+export default function EditMonitoringProjectModal({  project,  isOpen,  onClose,}: EditMonitoringProjectModalProps) {
   const [form, setForm] = useState<FormState>(() => ({
     name: project.name,
     description: project.description ?? "",

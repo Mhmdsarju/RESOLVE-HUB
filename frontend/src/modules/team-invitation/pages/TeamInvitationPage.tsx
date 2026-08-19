@@ -31,7 +31,10 @@ export default function TeamInvitationPage() {
     };
   }, []);
 
-  const { data: teamsData, isLoading: isTeamsLoading } = useTeams({ page: 1, limit: 100 });
+  const { data: teamsData, isLoading: isTeamsLoading } = useTeams({
+    page: 1,
+    limit: 100,
+  });
 
   const teams = teamsData?.items ?? [];
 
@@ -111,6 +114,7 @@ export default function TeamInvitationPage() {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-[#4B3932]">Team Invitations</h1>
@@ -144,50 +148,89 @@ export default function TeamInvitationPage() {
         </button>
       </div>
 
-      <div className="flex flex-col gap-4 sm:flex-row">
-        <select
-          value={activeTeamId}
-          onChange={(event) => {
-            setSelectedTeamId(event.target.value);
-            setSearch("");
-          }}
-          disabled={isTeamsLoading}
-          className="
-            rounded-xl
-            border
-            border-[#E7DDD3]
-            bg-white
-            px-4
-            py-3
-            text-sm
-            text-[#4B3932]
-            outline-none
-            transition
-            focus:border-[#4B3932]
-          "
-        >
-          {teams.length === 0 && <option value="">No teams available</option>}
+      {/* Team Selection + Search */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
+        {/* Select Team */}
+        <div className="w-full sm:w-72">
+          <label
+            htmlFor="team-select"
+            className="
+              mb-2
+              block
+              text-sm
+              font-semibold
+              text-[#4B3932]
+            "
+          >
+            Select Team
+          </label>
 
-          {teams.map((team) => (
-            <option key={team.id} value={team.id}>
-              {team.name}
-            </option>
-          ))}
-        </select>
+          <select
+            id="team-select"
+            value={activeTeamId}
+            onChange={(event) => {
+              setSelectedTeamId(event.target.value);
+              setSearch("");
+            }}
+            disabled={isTeamsLoading || teams.length === 0}
+            className="
+              w-full
+              rounded-xl
+              border
+              border-[#E7DDD3]
+              bg-white
+              px-4
+              py-3
+              text-sm
+              font-medium
+              text-[#4B3932]
+              outline-none
+              transition
+              hover:border-[#BFAEA1]
+              focus:border-[#4B3932]
+              disabled:cursor-not-allowed
+              disabled:bg-[#FAF6F0]
+              disabled:opacity-60
+            "
+          >
+            {teams.length === 0 && <option value="">No teams available</option>}
 
+            {teams.map((team) => (
+              <option key={team.id} value={team.id}>
+                {team.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Search */}
         <div className="relative flex-1">
+          <label
+            htmlFor="invitation-search"
+            className="
+              mb-2
+              block
+              text-sm
+              font-semibold
+              text-[#4B3932]
+            "
+          >
+            Search Invitations
+          </label>
+
           <Search
             size={18}
             className="
               absolute
               left-4
-              top-1/2
+              top-[calc(50%+4px)]
               -translate-y-1/2
               text-stone-400
             "
           />
 
           <input
+            id="invitation-search"
             type="text"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
@@ -202,25 +245,31 @@ export default function TeamInvitationPage() {
               pl-11
               pr-4
               text-sm
+              text-[#4B3932]
               outline-none
+              transition
+              hover:border-[#BFAEA1]
               focus:border-[#4B3932]
             "
           />
         </div>
       </div>
 
+      {/* Loading */}
       {(isTeamsLoading || isInvitationsLoading) && (
         <div className="rounded-2xl bg-white p-10 text-center shadow-sm">
           <p className="text-stone-500">Loading invitations...</p>
         </div>
       )}
 
+      {/* Error */}
       {!isTeamsLoading && !isInvitationsLoading && isError && (
         <div className="rounded-2xl bg-white p-10 text-center shadow-sm">
           <p className="text-red-500">Failed to load invitations.</p>
         </div>
       )}
 
+      {/* Empty */}
       {!isTeamsLoading && !isInvitationsLoading && !isError && filteredInvitations.length === 0 && (
         <div className="rounded-2xl bg-white p-12 text-center shadow-sm">
           <h2 className="text-lg font-semibold text-[#4B3932]">No invitations found</h2>
@@ -252,6 +301,7 @@ export default function TeamInvitationPage() {
         </div>
       )}
 
+      {/* Invitations Table */}
       {!isTeamsLoading && !isInvitationsLoading && !isError && filteredInvitations.length > 0 && (
         <div className="overflow-hidden rounded-2xl bg-white shadow-sm">
           <div
@@ -286,15 +336,15 @@ export default function TeamInvitationPage() {
                 <div
                   key={invitation.id}
                   className="
-                      grid
-                      grid-cols-[2fr_1fr_1fr_auto]
-                      items-center
-                      gap-4
-                      px-6
-                      py-5
-                      transition
-                      hover:bg-[#FAF6F0]
-                    "
+                        grid
+                        grid-cols-[2fr_1fr_1fr_auto]
+                        items-center
+                        gap-4
+                        px-6
+                        py-5
+                        transition
+                        hover:bg-[#FAF6F0]
+                      "
                 >
                   <div>
                     <p className="font-medium text-[#4B3932]">{invitation.invitedEmail}</p>
@@ -311,14 +361,14 @@ export default function TeamInvitationPage() {
                   <div>
                     <span
                       className={`
-                          inline-flex
-                          rounded-full
-                          px-3
-                          py-1
-                          text-xs
-                          font-semibold
-                          ${getStatusClassName(status)}
-                        `}
+                            inline-flex
+                            rounded-full
+                            px-3
+                            py-1
+                            text-xs
+                            font-semibold
+                            ${getStatusClassName(status)}
+                          `}
                     >
                       {status}
                     </span>
@@ -331,15 +381,15 @@ export default function TeamInvitationPage() {
                         onClick={() => handleCancelClick(invitation)}
                         disabled={cancelMutation.isPending}
                         className="
-                            rounded-lg
-                            p-2
-                            text-stone-500
-                            transition
-                            hover:bg-red-50
-                            hover:text-red-500
-                            disabled:cursor-not-allowed
-                            disabled:opacity-50
-                          "
+                              rounded-lg
+                              p-2
+                              text-stone-500
+                              transition
+                              hover:bg-red-50
+                              hover:text-red-500
+                              disabled:cursor-not-allowed
+                              disabled:opacity-50
+                            "
                         title="Cancel invitation"
                       >
                         <X size={18} />
@@ -351,15 +401,15 @@ export default function TeamInvitationPage() {
                         type="button"
                         onClick={() => setIsCreateOpen(true)}
                         className="
-                            rounded-lg
-                            px-3
-                            py-2
-                            text-sm
-                            font-semibold
-                            text-[#4B3932]
-                            transition
-                            hover:bg-[#F0E7D5]
-                          "
+                              rounded-lg
+                              px-3
+                              py-2
+                              text-sm
+                              font-semibold
+                              text-[#4B3932]
+                              transition
+                              hover:bg-[#F0E7D5]
+                            "
                       >
                         Send Again
                       </button>
@@ -376,6 +426,7 @@ export default function TeamInvitationPage() {
         </div>
       )}
 
+      {/* Create Invitation Modal */}
       {activeTeamId && (
         <CreateInvitationModal
           teamId={activeTeamId}
@@ -384,6 +435,7 @@ export default function TeamInvitationPage() {
         />
       )}
 
+      {/* Cancel Confirmation */}
       {cancelInvitation && (
         <div
           className="

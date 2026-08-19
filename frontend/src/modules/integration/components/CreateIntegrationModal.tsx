@@ -1,47 +1,14 @@
 import { useState } from "react";
-import { Globe, Radio, Webhook, X } from "lucide-react";
+import {  X } from "lucide-react";
 
 import { useCreateIntegration } from "../hooks/useCreateIntegration";
 
-import type { CreateIntegrationDto, IntegrationType } from "../types/integration.types";
+import type { CreateIntegrationDto, IntegrationType ,CreateIntegrationModalProps} from "../types/integration.types";
+import { INTEGRATION_TYPES } from "../constants/integration.constant";
 
-interface CreateIntegrationModalProps {
-  projectId: string;
-  isOpen: boolean;
-  onClose: () => void;
-}
+const integrationTypes=INTEGRATION_TYPES;
 
-const integrationTypes: {
-  value: IntegrationType;
-  label: string;
-  description: string;
-  icon: typeof Globe;
-}[] = [
-  {
-    value: "PROMETHEUS",
-    label: "Prometheus",
-    description: "Connect Prometheus for metrics monitoring.",
-    icon: Radio,
-  },
-  {
-    value: "GRAFANA",
-    label: "Grafana",
-    description: "Connect Grafana for metrics visualization.",
-    icon: Globe,
-  },
-  {
-    value: "WEBHOOK",
-    label: "Webhook",
-    description: "Receive monitoring events through a webhook.",
-    icon: Webhook,
-  },
-];
-
-export default function CreateIntegrationModal({
-  projectId,
-  isOpen,
-  onClose,
-}: CreateIntegrationModalProps) {
+export default function CreateIntegrationModal({  projectId,  isOpen,  onClose,}: CreateIntegrationModalProps) {
   const createMutation = useCreateIntegration();
 
   const [name, setName] = useState("");

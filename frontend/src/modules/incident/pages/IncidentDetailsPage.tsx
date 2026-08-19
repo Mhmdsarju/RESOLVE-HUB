@@ -1,13 +1,21 @@
-import { ArrowLeft, AlertCircle, ExternalLink } from "lucide-react";
+import { AlertCircle, ArrowLeft, ExternalLink, ListChecks, ShieldAlert } from "lucide-react";
+
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import IncidentDetails from "../components/IncidentDetails";
+import TaskSection from "@/modules/task-management/components/TaskSection";
+
 import { useIncident } from "../hooks/useIncident";
+
+type IncidentTab = "details" | "tasks";
 
 export default function IncidentDetailsPage() {
   const navigate = useNavigate();
 
   const { id } = useParams<{ id: string }>();
+
+  const [activeTab, setActiveTab] = useState<IncidentTab>("details");
 
   const { data: incident, isLoading, isError } = useIncident(id ?? "");
 
@@ -116,8 +124,6 @@ export default function IncidentDetailsPage() {
     );
   }
 
-  const formattedStatus = incident.status.replace("_", " ");
-
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -162,6 +168,7 @@ export default function IncidentDetailsPage() {
         <div className="flex items-center gap-2 text-xs text-stone-400">
           <span>Incident</span>
           <span>/</span>
+
           <span className="max-w-180px truncate text-stone-500">{incident.id}</span>
         </div>
       </div>
@@ -212,29 +219,39 @@ export default function IncidentDetailsPage() {
         />
 
         <div className="relative">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div className="max-w-3xl">
-              <div className="mb-4 flex flex-wrap items-center gap-2">
-                <span
-                  className="
-                    rounded-full
-                    bg-white/10
-                    px-3
-                    py-1.5
-                    text-xs
-                    font-semibold
-                    uppercase
-                    tracking-wide
-                    text-[#F0E7D5]
-                    transition-all
-                    duration-300
-                    hover:scale-105
-                    hover:bg-white/20
-                  "
-                >
-                  {incident.type}
-                </span>
+          <div className="max-w-3xl">
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+              <span
+                className="
+                  rounded-full
+                  bg-white/10
+                  px-3
+                  py-1.5
+                  text-xs
+                  font-semibold
+                  uppercase
+                  tracking-wide
+                  text-[#F0E7D5]
+                "
+              >
+                {incident.type}
+              </span>
 
+              <span
+                className="
+                  rounded-full
+                  bg-white/10
+                  px-3
+                  py-1.5
+                  text-xs
+                  font-semibold
+                  text-white
+                "
+              >
+                {incident.severity}
+              </span>
+
+              {incident.priority && (
                 <span
                   className="
                     rounded-full
@@ -244,130 +261,112 @@ export default function IncidentDetailsPage() {
                     text-xs
                     font-semibold
                     text-white
-                    transition-all
-                    duration-300
-                    hover:scale-105
-                    hover:bg-white/20
                   "
                 >
-                  {incident.severity}
+                  {incident.priority}
                 </span>
-
-                {incident.priority && (
-                  <span
-                    className="
-                      rounded-full
-                      bg-white/10
-                      px-3
-                      py-1.5
-                      text-xs
-                      font-semibold
-                      text-white
-                      transition-all
-                      duration-300
-                      hover:scale-105
-                      hover:bg-white/20
-                    "
-                  >
-                    {incident.priority}
-                  </span>
-                )}
-              </div>
-
-              <h1
-                className="
-                  text-3xl
-                  font-bold
-                  tracking-tight
-                  text-white
-                  transition-transform
-                  duration-300
-                  group-hover:translate-x-1
-                  sm:text-4xl
-                "
-              >
-                {incident.title}
-              </h1>
-
-              <div className="mt-3 flex items-center gap-2 text-sm text-[#E7DDD3]">
-                <span>Incident ID:</span>
-
-                <span
-                  className="max-w-280px truncate font-medium text-white/80"
-                  title={incident.id}
-                >
-                  {incident.id}
-                </span>
-
-                <ExternalLink
-                  size={14}
-                  className="
-                    opacity-60
-                    transition-transform
-                    duration-300
-                    group-hover:translate-x-0.5
-                  "
-                />
-              </div>
+              )}
             </div>
 
-            <div
+            <h1
               className="
-                min-w-170px
-                rounded-2xl
-                border
-                border-white/10
-                bg-white/10
-                px-5
-                py-4
-                backdrop-blur-sm
-                transition-all
-                duration-300
-                hover:-translate-y-1
-                hover:border-white/20
-                hover:bg-white/15
+                text-3xl
+                font-bold
+                tracking-tight
+                text-white
+                sm:text-4xl
               "
             >
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-medium uppercase tracking-wide text-[#E7DDD3]">
-                  Current Status
-                </p>
+              {incident.title}
+            </h1>
 
-                <span className="relative flex h-2.5 w-2.5">
-                  <span
-                    className="
-                      absolute
-                      inline-flex
-                      h-full
-                      w-full
-                      animate-ping
-                      rounded-full
-                      bg-[#F0E7D5]
-                      opacity-60
-                    "
-                  />
+            <div className="mt-3 flex items-center gap-2 text-sm text-[#E7DDD3]">
+              <span>Incident ID:</span>
 
-                  <span
-                    className="
-                      relative
-                      inline-flex
-                      h-2.5
-                      w-2.5
-                      rounded-full
-                      bg-[#F0E7D5]
-                    "
-                  />
-                </span>
-              </div>
+              <span
+                className="max-w-280px truncate font-medium text-white/80"
+                title={incident.id}
+              >
+                {incident.id}
+              </span>
 
-              <p className="mt-2 text-lg font-bold capitalize text-white">{formattedStatus}</p>
+              <ExternalLink size={14} className="opacity-60" />
             </div>
           </div>
         </div>
       </div>
 
-      <div className="rounded-3xl transition-all duration-300 hover:shadow-md">
-        <IncidentDetails incident={incident} />
+      <div
+        className="
+          rounded-2xl
+          border
+          border-[#E7DDD3]
+          bg-white
+          p-1.5
+          shadow-sm
+        "
+      >
+        <div className="grid grid-cols-2 gap-1">
+          <button
+            type="button"
+            onClick={() => setActiveTab("details")}
+            className={`
+              flex
+              items-center
+              justify-center
+              gap-2
+              rounded-xl
+              px-4
+              py-3
+              text-sm
+              font-semibold
+              transition-all
+              duration-200
+              ${
+                activeTab === "details"
+                  ? "bg-[#4B3932] text-white shadow-sm"
+                  : "text-stone-500 hover:bg-[#FAF6F0] hover:text-[#4B3932]"
+              }
+            `}
+          >
+            <ShieldAlert size={17} />
+            Incident Details
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab("tasks")}
+            className={`
+              flex
+              items-center
+              justify-center
+              gap-2
+              rounded-xl
+              px-4
+              py-3
+              text-sm
+              font-semibold
+              transition-all
+              duration-200
+              ${
+                activeTab === "tasks"
+                  ? "bg-[#4B3932] text-white shadow-sm"
+                  : "text-stone-500 hover:bg-[#FAF6F0] hover:text-[#4B3932]"
+              }
+            `}
+          >
+            <ListChecks size={17} />
+            Tasks
+          </button>
+        </div>
+      </div>
+
+      <div>
+        {activeTab === "details" ? (
+          <IncidentDetails incident={incident} />
+        ) : (
+          <TaskSection incidentId={incident.id} teamId={incident.assignedTeamId ?? ""} />
+        )}
       </div>
     </div>
   );

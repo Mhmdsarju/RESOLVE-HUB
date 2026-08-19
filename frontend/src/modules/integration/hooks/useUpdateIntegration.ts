@@ -1,36 +1,19 @@
 import { AxiosError } from "axios";
-import {
-    useMutation,
-    useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient, } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 
 import { updateIntegration } from "../api/integrationApi";
 
-import type {
-    Integration,
-    UpdateIntegrationDto,
-} from "../types/integration.types";
+import type { Integration, UpdateIntegrationVariables } from "../types/integration.types";
 
 import type { ErrorResponse } from "@/core/types/error.types";
-
-
-interface UpdateIntegrationVariables {
-    id: string;
-    data: UpdateIntegrationDto;
-}
 
 
 export function useUpdateIntegration() {
     const queryClient = useQueryClient();
 
-    return useMutation<
-        Integration,
-        AxiosError<ErrorResponse>,
-        UpdateIntegrationVariables
-    >({
-        mutationFn: ({ id, data }) =>
-            updateIntegration(id, data),
+    return useMutation<Integration, AxiosError<ErrorResponse>, UpdateIntegrationVariables>({
+        mutationFn: ({ id, data }) => updateIntegration(id, data),
 
         onSuccess: (data) => {
             queryClient.setQueryData(
@@ -42,16 +25,11 @@ export function useUpdateIntegration() {
                 queryKey: ["integrations"],
             });
 
-            toast.success(
-                "Integration updated successfully",
-            );
+            toast.success("Integration updated successfully",);
         },
 
         onError: (error) => {
-            const message =
-                error.response?.data?.message ??
-                "Failed to update integration";
-
+            const message = error.response?.data?.message ?? "Failed to update integration";
             toast.error(message);
         },
     });

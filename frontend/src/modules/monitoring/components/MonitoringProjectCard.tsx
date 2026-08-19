@@ -1,11 +1,8 @@
 import { CalendarDays, ChevronRight, FileText } from "lucide-react";
 
-import type { MonitoringProject } from "../types/monitoringProject.types";
+import type { MonitoringProjectCardProps} from "../types/monitoringProject.types";
 
-interface MonitoringProjectCardProps {
-  project: MonitoringProject;
-  onClick: (project: MonitoringProject) => void;
-}
+
 
 export default function MonitoringProjectCard({ project, onClick }: MonitoringProjectCardProps) {
   return (

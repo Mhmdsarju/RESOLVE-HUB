@@ -1,4 +1,4 @@
-import { CalendarDays, FileText, Users, Clock3 } from "lucide-react";
+import { CalendarDays, Clock3, FileText, Users } from "lucide-react";
 
 import type { Incident } from "../types/incident.types";
 
@@ -9,131 +9,35 @@ interface IncidentDetailsProps {
   incident: Incident;
 }
 
-const severityStyles = {
-  LOW: "bg-green-100 text-green-700",
-  MEDIUM: "bg-yellow-100 text-yellow-700",
-  HIGH: "bg-orange-100 text-orange-700",
-  CRITICAL: "bg-red-100 text-red-700",
-} as const;
-
-const priorityStyles = {
-  P1: "bg-red-100 text-red-700",
-  P2: "bg-orange-100 text-orange-700",
-  P3: "bg-yellow-100 text-yellow-700",
-  P4: "bg-stone-100 text-stone-700",
-} as const;
-
 export default function IncidentDetails({ incident }: IncidentDetailsProps) {
   return (
     <div className="space-y-6">
       <div
         className="
-          group
           rounded-2xl
           bg-white
-          p-6
+          p-5
           shadow-sm
           transition-all
           duration-300
-          hover:-translate-y-1
-          hover:shadow-lg
+          hover:-translate-y-0.5
+          hover:shadow-md
         "
       >
-        <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-start">
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <span
-                className={`
-                  rounded-full
-                  px-3
-                  py-1
-                  text-xs
-                  font-semibold
-                  transition-all
-                  duration-200
-                  hover:scale-105
-                  ${severityStyles[incident.severity]}
-                `}
-              >
-                {incident.severity}
-              </span>
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-stone-400">Status</p>
 
-              {incident.priority && (
-                <span
-                  className={`
-                    rounded-full
-                    px-3
-                    py-1
-                    text-xs
-                    font-semibold
-                    transition-all
-                    duration-200
-                    hover:scale-105
-                    ${priorityStyles[incident.priority]}
-                  `}
-                >
-                  {incident.priority}
-                </span>
-              )}
-
-              <span
-                className="
-                  rounded-full
-                  bg-[#F0E7D5]
-                  px-3
-                  py-1
-                  text-xs
-                  font-semibold
-                  text-[#4B3932]
-                  transition-all
-                  duration-200
-                  hover:scale-105
-                  hover:bg-[#E7DDD3]
-                "
-              >
-                {incident.type}
-              </span>
-            </div>
-
-            <h1
-              className="
-                mt-4
-                text-2xl
-                font-bold
-                text-[#4B3932]
-                transition-transform
-                duration-300
-                group-hover:translate-x-0.5
-              "
-            >
-              {incident.title}
-            </h1>
-
-            <div className="mt-2 flex items-center gap-2">
-              <span className="text-sm text-stone-400">Incident ID:</span>
-
-              <span
-                className="
-                  max-w-[320px]
-                  truncate
-                  text-sm
-                  font-medium
-                  text-stone-500
-                "
-                title={incident.id}
-              >
-                {incident.id}
-              </span>
-            </div>
+            <p className="mt-1 text-sm text-stone-500">Update incident status</p>
           </div>
 
           <div
             className="
-              rounded-2xl
+              rounded-xl
               border
               border-[#E7DDD3]
               bg-[#FAF6F0]
-              p-2
+              p-1.5
               transition-all
               duration-300
               hover:border-[#D8C9BD]

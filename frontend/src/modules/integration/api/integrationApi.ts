@@ -3,19 +3,10 @@ import { ENDPOINTS } from "@/core/api/endpoints";
 
 import type { ApiResponse } from "@/core/types/api.types";
 
-import type {
-    CreateIntegrationDto,
-    GetIntegrationsParams,
-    GetIntegrationsResponse,
-    Integration,
-    UpdateIntegrationDto,
-} from "../types/integration.types";
+import type {    CreateIntegrationDto,    GetIntegrationsParams,    GetIntegrationsResponse,    Integration,    UpdateIntegrationDto,} from "../types/integration.types";
 
 
-export async function createIntegration(
-    projectId: string,
-    data: CreateIntegrationDto,
-): Promise<Integration> {
+export async function createIntegration(    projectId: string,    data: CreateIntegrationDto,): Promise<Integration> {
     const response = await api.post<ApiResponse<Integration>>(
         ENDPOINTS.MONITORING.INTEGRATIONS.BY_PROJECT(projectId),
         data,
@@ -25,10 +16,7 @@ export async function createIntegration(
 }
 
 
-export async function getIntegrations(
-    projectId: string,
-    params: GetIntegrationsParams,
-): Promise<GetIntegrationsResponse> {
+export async function getIntegrations(    projectId: string,    params: GetIntegrationsParams,): Promise<GetIntegrationsResponse> {
     const response = await api.get<ApiResponse<GetIntegrationsResponse>>(
         ENDPOINTS.MONITORING.INTEGRATIONS.BY_PROJECT(projectId),
         {
@@ -40,9 +28,7 @@ export async function getIntegrations(
 }
 
 
-export async function getIntegrationById(
-    id: string,
-): Promise<Integration> {
+export async function getIntegrationById(    id: string,): Promise<Integration> {
     const response = await api.get<ApiResponse<Integration>>(
         ENDPOINTS.MONITORING.INTEGRATIONS.BY_ID(id),
     );
@@ -51,10 +37,7 @@ export async function getIntegrationById(
 }
 
 
-export async function updateIntegration(
-    id: string,
-    data: UpdateIntegrationDto,
-): Promise<Integration> {
+export async function updateIntegration(    id: string,    data: UpdateIntegrationDto,): Promise<Integration> {
     const response = await api.put<ApiResponse<Integration>>(
         ENDPOINTS.MONITORING.INTEGRATIONS.BY_ID(id),
         data,
@@ -64,9 +47,7 @@ export async function updateIntegration(
 }
 
 
-export async function deleteIntegration(
-    id: string,
-): Promise<null> {
+export async function deleteIntegration(    id: string,): Promise<null> {
     const response = await api.delete<ApiResponse<null>>(
         ENDPOINTS.MONITORING.INTEGRATIONS.BY_ID(id),
     );

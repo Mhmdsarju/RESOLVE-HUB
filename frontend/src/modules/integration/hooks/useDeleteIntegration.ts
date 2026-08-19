@@ -1,8 +1,5 @@
 import { AxiosError } from "axios";
-import {
-    useMutation,
-    useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient, } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 
 import { deleteIntegration } from "../api/integrationApi";
@@ -18,11 +15,7 @@ interface DeleteIntegrationVariables {
 export function useDeleteIntegration() {
     const queryClient = useQueryClient();
 
-    return useMutation<
-        null,
-        AxiosError<ErrorResponse>,
-        DeleteIntegrationVariables
-    >({
+    return useMutation<null, AxiosError<ErrorResponse>, DeleteIntegrationVariables>({
         mutationFn: ({ id }) => deleteIntegration(id),
 
         onSuccess: (_, variables) => {
@@ -38,10 +31,7 @@ export function useDeleteIntegration() {
         },
 
         onError: (error) => {
-            const message =
-                error.response?.data?.message ??
-                "Failed to delete integration";
-
+            const message = error.response?.data?.message ?? "Failed to delete integration";
             toast.error(message);
         },
     });

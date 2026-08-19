@@ -2,25 +2,10 @@ import { Boxes, RefreshCw } from "lucide-react";
 
 import IntegrationCard from "./IntegrationCard";
 
-import type { Integration } from "../types/integration.types";
+import type {  IntegrationListProps} from "../types/integration.types";
 
-interface IntegrationListProps {
-  integrations: Integration[];
-  isLoading: boolean;
-  isError: boolean;
-  onIntegrationClick: (integration: Integration) => void;
-  onIntegrationEdit: (integration: Integration) => void;
-  onIntegrationDelete: (integration: Integration) => void;
-}
 
-export default function IntegrationList({
-  integrations,
-  isLoading,
-  isError,
-  onIntegrationClick,
-  onIntegrationEdit,
-  onIntegrationDelete,
-}: IntegrationListProps) {
+export default function IntegrationList({  integrations,  isLoading,  isError,  onIntegrationClick,  onIntegrationEdit,  onIntegrationDelete,}: IntegrationListProps) {
   if (isLoading) {
     return (
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

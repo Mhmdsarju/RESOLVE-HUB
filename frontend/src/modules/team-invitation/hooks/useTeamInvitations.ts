@@ -8,5 +8,6 @@ export function useTeamInvitations(teamId: string) {
     queryFn: () => getTeamInvitations(teamId),
     enabled: Boolean(teamId),
     refetchInterval: 3000,
+    refetchIntervalInBackground:false
   });
 }
