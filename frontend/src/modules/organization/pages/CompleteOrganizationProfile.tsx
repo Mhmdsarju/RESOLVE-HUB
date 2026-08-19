@@ -183,7 +183,7 @@ export default function CompleteOrganizationProfile() {
           {isRejected && (
             <aside className="order-2 lg:order-1 lg:sticky lg:top-6">
               <div className="relative overflow-hidden rounded-3xl border border-red-200 bg-white shadow-lg shadow-red-900/5">
-                <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-red-400 via-red-500 to-red-300" />
+                <div className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-red-400 via-red-500 to-red-300" />
 
                 <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full bg-red-100/60 blur-2xl" />
 
@@ -210,7 +210,7 @@ export default function CompleteOrganizationProfile() {
                     </p>
 
                     <div className="mt-3 rounded-2xl border border-red-100 bg-red-50/70 p-4">
-                      <p className="break-words text-sm leading-6 text-red-800">
+                      <p className="wrap-break-words text-sm leading-6 text-red-800">
                         {verification?.rejectionReason}
                       </p>
                     </div>
@@ -224,14 +224,14 @@ export default function CompleteOrganizationProfile() {
                   </div>
                 </div>
 
-                <div className="h-1 bg-gradient-to-r from-red-100 via-red-200 to-transparent" />
+                <div className="h-1 bg-linear-to-r from-red-100 via-red-200 to-transparent" />
               </div>
             </aside>
           )}
 
           <div className="order-1 min-w-0 lg:order-2">
             <div className="overflow-hidden rounded-3xl border border-[#E7DDD3] bg-white shadow-xl shadow-[#4B3932]/5">
-              <div className="border-b border-[#E7DDD3] bg-gradient-to-r from-white via-[#FFFCF8] to-[#FAF6F0] px-6 py-5 sm:px-8">
+              <div className="border-b border-[#E7DDD3] bg-linear-to-r from-white via-[#FFFCF8] to-[#FAF6F0] px-6 py-5 sm:px-8">
                 <div className="flex items-center justify-between gap-4">
                   <div>
                     <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-stone-400">

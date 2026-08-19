@@ -58,10 +58,10 @@ export default function OrganizationCard({ organization, onEdit }: OrganizationC
   const isActive = organization.status === "ACTIVE";
 
   return (
-    <div className="overflow-hidden rounded-[24px] bg-white">
+    <div className="overflow-hidden rounded-24px bg-white">
       <div className="relative overflow-hidden bg-[#4B3932] px-6 py-7 sm:px-8">
         <div className="absolute -right-16 -top-20 h-48 w-48 rounded-full bg-white/5" />
-        <div className="absolute -bottom-24 right-20 h-40 w-40 rounded-full bg-white/[0.03]" />
+        <div className="absolute -bottom-24 right-20 h-40 w-40 rounded-full bg-white/0.03" />
 
         <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex min-w-0 items-center gap-4">
