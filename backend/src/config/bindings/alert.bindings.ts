@@ -17,9 +17,9 @@ import { ProcessAlertUseCase } from "@/modules/alert/application/use-cases/Proce
 export function bindAlert(container:Container){
     container.bind<IAlertRepository>(TYPES.AlertRepository).to(PrismaAlertRepository).inSingletonScope();
     container.bind<AlertController>(TYPES.AlertController).to(AlertController).inSingletonScope();
-    container.bind<ICreateAlertUseCase>(TYPES.CreateAlertUseCase).to(CreateAlertUseCase).inSingletonScope();
-    container.bind<IGetAlertsUseCase>(TYPES.GetAlertsUseCase).to(GetAlertsUseCase).inSingletonScope();
-    container.bind<IGetAlertByIdUseCase>(TYPES.GetAlertByIdUseCase).to(GetAlertByIdUseCase).inSingletonScope();
-    container.bind<IResolveAlertUseCase>(TYPES.ResolveAlertUseCase).to(ResolveAlertUseCase).inSingletonScope();
-    container.bind<IProcessAlertUseCase>(TYPES.ProcessAlertUseCase).to(ProcessAlertUseCase).inSingletonScope();
+    container.bind<ICreateAlertUseCase>(TYPES.CreateAlertUseCase).to(CreateAlertUseCase)
+    container.bind<IGetAlertsUseCase>(TYPES.GetAlertsUseCase).to(GetAlertsUseCase)
+    container.bind<IGetAlertByIdUseCase>(TYPES.GetAlertByIdUseCase).to(GetAlertByIdUseCase)
+    container.bind<IResolveAlertUseCase>(TYPES.ResolveAlertUseCase).to(ResolveAlertUseCase)
+    container.bind<IProcessAlertUseCase>(TYPES.ProcessAlertUseCase).to(ProcessAlertUseCase)
 }

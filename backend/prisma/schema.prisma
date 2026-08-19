@@ -20,7 +20,14 @@ model Organization {
   name        String
   industry    String?
   companySize String?
-  status      OrganizationStatus @default(ACTIVE)
+  website     String?
+  description String?
+  phone       String?
+  country     String?
+  state       String?
+  city        String?
+  address     String?
+  status      OrganizationStatus @default(PENDING_PROFILE)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -30,13 +37,44 @@ model Organization {
   teams           Team[]
   teamInvitations TeamInvitation[]
 
-  incidents Incident[]
+  incidents     Incident[]
+  verifications OrganizationVerification[]
 
   monitoringProjects MonitoringProject[]
   integrations       Integration[]
   alertRoutingRules  AlertRoutingRule[]
 
   @@map("organizations")
+}
+
+model OrganizationVerification {
+  id             String  @id @default(cuid())
+  organizationId String  @db.Uuid
+  reviewedBy     String? @db.Uuid
+
+  status          OrganizationVerificationStatus
+  rejectionReason String?
+
+  submittedAt DateTime?
+  reviewedAt  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  reviewer User? @relation("OrganizationVerificationReviewer", fields: [reviewedBy], references: [id])
+
+  @@index([organizationId])
+  @@index([reviewedBy])
+  @@index([status])
+  @@map("organization_verifications")
+}
+
+enum OrganizationVerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 enum UserRole {
@@ -48,7 +86,7 @@ enum UserRole {
 model User {
   id String @id @default(uuid()) @db.Uuid
 
-  organizationId String   @db.Uuid
+  organizationId String?   @db.Uuid
   role           UserRole @default(ENGINEER)
 
   fullName     String
@@ -63,7 +101,8 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization                    Organization?               @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationVerificationReviews OrganizationVerification[] @relation("OrganizationVerificationReviewer")
 
   createdTeams       Team[]           @relation("CreatedTeams")
   teamMemberships    TeamMember[]
@@ -81,8 +120,11 @@ model User {
 }
 
 enum OrganizationStatus {
+  PENDING_PROFILE
+  PENDING_VERIFICATION
   ACTIVE
-  INACTIVE
+  REJECTED
+  SUSPENDED
 }
 
 model Team {
@@ -417,9 +459,9 @@ model AlertRoutingRule {
   teamId              String
   createdBy           String @db.Uuid
 
-  name       String
-  priority   Int     @default(100)
-  isActive   Boolean @default(true)
+  name     String
+  priority Int     @default(100)
+  isActive Boolean @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

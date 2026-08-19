@@ -1,7 +1,7 @@
 import { Organization } from "../../../organization/domain/entities/Organization";
 import { User } from "../../domain/entities/User";
 
-import { OrganizationStatus } from "../../domain/enums/OrganizationStatus";
+// import { OrganizationStatus } from "../../domain/enums/OrganizationStatus";
 import { UserRole } from "../../domain/enums/UserRole";
 import { AppError } from "../../../../shared/errors/AppError";
 import { VerifySignupOtpDto } from "../dto/VerifySignupOtpDto";
@@ -16,6 +16,8 @@ import { TYPES } from "../../../../config/types";
 import { IVerifySignupOtpUseCase } from "../../domain/interfaces/use-cases/IVerifySignupOtpUseCase";
 import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
 import { ErrorMessages } from "../../../../shared/constant/ErrorMessages";
+import { OrganizationStatus } from "@/modules/organization/domain/enums/organizationStatus.enum";
+// import { OrganizationVerificationStatus } from "@/modules/organization/domain/enums/organizationVerificationStatus.enum";
 
 @injectable()
 export class VerifySignupOtpUseCase implements IVerifySignupOtpUseCase {
@@ -57,7 +59,7 @@ export class VerifySignupOtpUseCase implements IVerifySignupOtpUseCase {
       name: signupData.organizationName,
       industry: signupData.industry,
       companySize: signupData.companySize,
-      status: OrganizationStatus.ACTIVE,
+      status: OrganizationStatus.PENDING_PROFILE,
     });
 
     const savedOrganization = await this.organizationRepository.create(organization);

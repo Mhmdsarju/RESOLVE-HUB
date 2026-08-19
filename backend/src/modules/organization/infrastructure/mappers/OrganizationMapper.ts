@@ -1,33 +1,41 @@
-import {  Organization as PrismaOrganization,  OrganizationStatus as PrismaOrganizationStatus,} from "@prisma/client";
+import {  Organization as PrismaOrganization,} from "@prisma/client";
 
-import { Organization } from "../../../organization/domain/entities/Organization";
-import { OrganizationStatus } from "../../../auth/domain/enums/OrganizationStatus"; 
+import { Organization } from "../../domain/entities/Organization";
+import type { OrganizationStatus } from "../../domain/enums/organizationStatus.enum"; 
 
 export class OrganizationMapper {
-  static fromDb( organization: PrismaOrganization ): Organization {
+  static fromDb(organization: PrismaOrganization): Organization {
     return new Organization({
       id: organization.id,
       name: organization.name,
       industry: organization.industry,
       companySize: organization.companySize,
-      status:
-        organization.status === PrismaOrganizationStatus.ACTIVE
-          ? OrganizationStatus.ACTIVE
-          : OrganizationStatus.INACTIVE,
+      website: organization.website,
+      description: organization.description,
+      phone: organization.phone,
+      country: organization.country,
+      state: organization.state,
+      city: organization.city,
+      address: organization.address,
+      status: organization.status as OrganizationStatus,
       createdAt: organization.createdAt,
       updatedAt: organization.updatedAt,
     });
   }
 
-  static toDb( organization: Organization ) {
+  static toDb(organization: Organization) {
     return {
       name: organization.name,
       industry: organization.industry,
       companySize: organization.companySize,
-      status:
-        organization.status === OrganizationStatus.ACTIVE
-          ? PrismaOrganizationStatus.ACTIVE
-          : PrismaOrganizationStatus.INACTIVE,
+      website: organization.website,
+      description: organization.description,
+      phone: organization.phone,
+      country: organization.country,
+      state: organization.state,
+      city: organization.city,
+      address: organization.address,
+      status: organization.status,
     };
   }
 }

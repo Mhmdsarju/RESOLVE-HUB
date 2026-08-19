@@ -14,6 +14,7 @@ export const ErrorMessages = {
   INVITATION_ALREADY_EXISTS:"Invitation already exists",
   USER_ALREADY_IN_TEAM:"User already exists in team",
   INVITATION_EXPIRED:"Invitation expired",
-  INVITATION_ALREADY_ACCEPTED : "Invitation has already been accepted"
+  INVITATION_ALREADY_ACCEPTED : "Invitation has already been accepted",
+  FORBIDDEN:"You do not have permission to perform this action"
 } as const;
 

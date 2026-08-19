@@ -48,22 +48,22 @@ export function bindTeam(container:Container){
     container.bind<ITeamMemberRepository>(TYPES.TeamMemberRepository).to(PrismaTeamMemberRepository).inSingletonScope();
     container.bind<ITeamInvitationRepository>(TYPES.TeamInvitationRepository).to(PrismaTeamInvitationRepository).inSingletonScope()
     
-    container.bind<ICreateTeamUseCase>(TYPES.CreateTeamUseCase).to(CreateTeamUseCase).inSingletonScope();
-    container.bind<IGetTeamsUseCase>(TYPES.GetTeamsUseCase).to(GetTeamsUseCase).inSingletonScope();
-    container.bind<IGetTeamUseCase>(TYPES.GetTeamUseCase).to(GetTeamUseCase).inSingletonScope();
-    container.bind<IUpdateTeamUseCase>(TYPES.UpdateTeamUseCase).to(UpdateTeamUseCase).inSingletonScope();
-    container.bind<IDeleteTeamUseCase>(TYPES.DeleteTeamUseCase).to(DeleteTeamUseCase).inSingletonScope()
+    container.bind<ICreateTeamUseCase>(TYPES.CreateTeamUseCase).to(CreateTeamUseCase);
+    container.bind<IGetTeamsUseCase>(TYPES.GetTeamsUseCase).to(GetTeamsUseCase);
+    container.bind<IGetTeamUseCase>(TYPES.GetTeamUseCase).to(GetTeamUseCase);
+    container.bind<IUpdateTeamUseCase>(TYPES.UpdateTeamUseCase).to(UpdateTeamUseCase);
+    container.bind<IDeleteTeamUseCase>(TYPES.DeleteTeamUseCase).to(DeleteTeamUseCase)
 
     //teamMember
 
-    container.bind<IAddTeamMemberUseCase>(TYPES.AddTeamMemberUseCase).to(AddTeamMemberUseCase).inSingletonScope();
-    container.bind<IGetTeamMembersUseCase>(TYPES.GetTeamMembersUseCase).to(GetTeamMembersUseCase).inSingletonScope();
-    container.bind<IUpdateTeamMemberRoleUseCase>(TYPES.UpdateTeamMemberRoleUseCase).to(UpdateTeamMemberRoleUseCase).inSingletonScope();
-    container.bind<IRemoveTeamMemberUseCase>(TYPES.RemoveTeamMemberUseCase).to(RemoveTeamMemberUseCase).inSingletonScope();
-    container.bind<IGetMyTeamsUseCase>(TYPES.GetMyTeamsUseCase).to(GetMyTeamsUseCase).inSingletonScope();
+    container.bind<IAddTeamMemberUseCase>(TYPES.AddTeamMemberUseCase).to(AddTeamMemberUseCase);
+    container.bind<IGetTeamMembersUseCase>(TYPES.GetTeamMembersUseCase).to(GetTeamMembersUseCase);
+    container.bind<IUpdateTeamMemberRoleUseCase>(TYPES.UpdateTeamMemberRoleUseCase).to(UpdateTeamMemberRoleUseCase);
+    container.bind<IRemoveTeamMemberUseCase>(TYPES.RemoveTeamMemberUseCase).to(RemoveTeamMemberUseCase);
+    container.bind<IGetMyTeamsUseCase>(TYPES.GetMyTeamsUseCase).to(GetMyTeamsUseCase);
 
-    container.bind<ICreateTeamInvitationUseCase>(TYPES.CreateTeamInvitationUseCase).to(CreateTeamInvitationUseCase).inSingletonScope();
-    container.bind<IAcceptTeamInvitationUseCase>(TYPES.AcceptTeamInvitationUseCase).to(AcceptTeamInvitationUseCase).inSingletonScope();
-    container.bind<ICancelTeamInvitationUseCase>(TYPES.CancelTeamInvitationUseCase).to(CancelTeamInvitationUseCase).inSingletonScope();
-    container.bind<IGetTeamInvitationsUseCase>(TYPES.GetTeamInvitationsUseCase).to(GetTeamInvitationUseCase).inSingletonScope();
+    container.bind<ICreateTeamInvitationUseCase>(TYPES.CreateTeamInvitationUseCase).to(CreateTeamInvitationUseCase);
+    container.bind<IAcceptTeamInvitationUseCase>(TYPES.AcceptTeamInvitationUseCase).to(AcceptTeamInvitationUseCase);
+    container.bind<ICancelTeamInvitationUseCase>(TYPES.CancelTeamInvitationUseCase).to(CancelTeamInvitationUseCase);
+    container.bind<IGetTeamInvitationsUseCase>(TYPES.GetTeamInvitationsUseCase).to(GetTeamInvitationUseCase);
 }

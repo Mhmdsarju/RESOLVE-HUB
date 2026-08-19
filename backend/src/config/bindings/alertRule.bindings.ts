@@ -25,8 +25,8 @@ export function bindAlertRule(container:Container){
     container.bind<ICreateAlertRuleUseCase>(TYPES.CreateAlertRuleUseCase).to(CreateAlertRuleUseCase);
     container.bind<IGetAlertRuleByIdUseCase>(TYPES.GetAlertRuleByIdUseCase).to(GetAlertRuleByIdUseCase);
     container.bind<IUpdateAlertRuleUseCase>(TYPES.UpdateAlertRuleUseCase).to(UpdateAlertRuleUseCase);
-    container.bind<IDeleteAlertRuleUseCase>(TYPES.DeleteAlertRuleUseCase).to(DeleteAlertRuleUseCase).inSingletonScope();
-    container.bind<IGetDefaultAlertRulesUseCase>(TYPES.GetDefaultAlertRulesUseCase).to(GetDefaultAlertRulesUseCase).inSingletonScope();
-    container.bind<IApplyDefaultAlertRuleUseCase>(TYPES.ApplyDefaultAlertRuleUseCase).to(ApplyDefaultAlertRuleUseCase).inSingletonScope();
+    container.bind<IDeleteAlertRuleUseCase>(TYPES.DeleteAlertRuleUseCase).to(DeleteAlertRuleUseCase)
+    container.bind<IGetDefaultAlertRulesUseCase>(TYPES.GetDefaultAlertRulesUseCase).to(GetDefaultAlertRulesUseCase)
+    container.bind<IApplyDefaultAlertRuleUseCase>(TYPES.ApplyDefaultAlertRuleUseCase).to(ApplyDefaultAlertRuleUseCase)
     container.bind<IGetAlertRulesUseCase>(TYPES.GetAlertRulesUseCase).to(GetAlertRulesUseCase);
 }

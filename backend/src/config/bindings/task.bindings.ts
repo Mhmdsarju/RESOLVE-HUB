@@ -32,16 +32,16 @@ export function bindTask(container: Container) {
     container.bind<ITaskRepository>(TYPES.TaskRepository).to(PrismaTaskRepository).inSingletonScope();
     container.bind<TaskController>(TYPES.TaskController).to(TaskController).inSingletonScope();
 
-    container.bind<ICreateTaskUseCase>(TYPES.CreateTaskUseCase).to(CreateTaskUseCase).inSingletonScope();
-    container.bind<IGetTasksByIncidentUseCase>(TYPES.GetTasksByIncidentUseCase).to(GetTasksByIncidentUseCase).inSingletonScope();
+    container.bind<ICreateTaskUseCase>(TYPES.CreateTaskUseCase).to(CreateTaskUseCase);
+    container.bind<IGetTasksByIncidentUseCase>(TYPES.GetTasksByIncidentUseCase).to(GetTasksByIncidentUseCase);
     container.bind<IUpdateTaskStatusUseCase>(TYPES.UpdateTaskStatusUseCase).to(UpdateTaskStatusUseCase)
-    container.bind<IAssignTaskUseCase>(TYPES.AssignTaskUseCase).to(AssignTaskUseCase).inSingletonScope();
-    container.bind<IDeleteTaskUseCase>(TYPES.DeleteTaskUseCase).to(DeleteTaskUseCase).inSingletonScope();
-    container.bind<IUpdateTaskUseCase>(TYPES.UpdateTaskUseCase).to(UpdateTaskUseCase).inSingletonScope();
-    container.bind<IGetIncidentsUseCase>(TYPES.GetIncidentsUseCase).to(GetIncidentsUseCase).inSingletonScope();
-    container.bind<IGetIncidentStatsUseCase>(TYPES.GetIncidentStatsUseCase).to(GetIncidentStatsUseCase).inSingletonScope();
+    container.bind<IAssignTaskUseCase>(TYPES.AssignTaskUseCase).to(AssignTaskUseCase);
+    container.bind<IDeleteTaskUseCase>(TYPES.DeleteTaskUseCase).to(DeleteTaskUseCase);
+    container.bind<IUpdateTaskUseCase>(TYPES.UpdateTaskUseCase).to(UpdateTaskUseCase);
+    container.bind<IGetIncidentsUseCase>(TYPES.GetIncidentsUseCase).to(GetIncidentsUseCase);
+    container.bind<IGetIncidentStatsUseCase>(TYPES.GetIncidentStatsUseCase).to(GetIncidentStatsUseCase);
 
-    container.bind<IGetMyTasksUseCase>(TYPES.GetMyTasksUseCase).to(GetMyTasksUseCase).inSingletonScope();
-    container.bind<IGetTeamTasksUseCase>(TYPES.GetTeamTasksUseCase).to(GetTeamTasksUseCase).inSingletonScope();
+    container.bind<IGetMyTasksUseCase>(TYPES.GetMyTasksUseCase).to(GetMyTasksUseCase);
+    container.bind<IGetTeamTasksUseCase>(TYPES.GetTeamTasksUseCase).to(GetTeamTasksUseCase);
     container.bind<ITakeTaskUseCase>(TYPES.TakeTaskUseCase).to(TakeTaskUseCase);
 }

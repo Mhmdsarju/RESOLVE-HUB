@@ -18,9 +18,9 @@ export function bindMonitoring(container:Container){
     container.bind<IMonitoringProjectRepository>(TYPES.MonitoringProjectRepository).to(PrismaMonitoringProjectRepository).inSingletonScope();
     container.bind<MonitoringProjectController>(TYPES.MonitoringProjectController).to(MonitoringProjectController).inSingletonScope();
 
-    container.bind<ICreateMonitoringProjectUseCase>(TYPES.CreateMonitoringProjectUseCase).to(CreateMonitoringProjectUseCase).inSingletonScope();
-    container.bind<IGetMonitoringProjectsUseCase>(TYPES.getMonitoringProjectsUseCase).to(GetMonitoringProjectsUseCase).inSingletonScope();
-    container.bind<IGetMonitoringProjectByIdUseCase>(TYPES.getMonitoringProjectByIdUseCase).to(GetMonitoringProjectByIdUseCase).inSingletonScope();
-    container.bind<IUpdateMonitoringProjectUseCase>(TYPES.updateMonitoringProjectUseCase).to(UpdateMonitoringProjectUseCase).inSingletonScope();
-    container.bind<IDeleteMonitoringProjectUseCase>(TYPES.deleteMonitoringProjectUseCase).to(DeleteMonitoringProjectUseCase).inSingletonScope();
+    container.bind<ICreateMonitoringProjectUseCase>(TYPES.CreateMonitoringProjectUseCase).to(CreateMonitoringProjectUseCase);
+    container.bind<IGetMonitoringProjectsUseCase>(TYPES.getMonitoringProjectsUseCase).to(GetMonitoringProjectsUseCase);
+    container.bind<IGetMonitoringProjectByIdUseCase>(TYPES.getMonitoringProjectByIdUseCase).to(GetMonitoringProjectByIdUseCase);
+    container.bind<IUpdateMonitoringProjectUseCase>(TYPES.updateMonitoringProjectUseCase).to(UpdateMonitoringProjectUseCase);
+    container.bind<IDeleteMonitoringProjectUseCase>(TYPES.deleteMonitoringProjectUseCase).to(DeleteMonitoringProjectUseCase);
 }

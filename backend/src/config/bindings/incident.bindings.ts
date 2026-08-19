@@ -14,12 +14,12 @@ import { GetIncidentByIdUseCase } from "@/modules/incident/application/use-cases
 
 
 export function bindIncident(container:Container){
-    container.bind<IIncidentRepository>(TYPES.IncidentRepository).to(PrismaIncidentRepository);
-    container.bind<IncidentController>(TYPES.IncidentController).to(IncidentController);
+    container.bind<IIncidentRepository>(TYPES.IncidentRepository).to(PrismaIncidentRepository).inSingletonScope();
+    container.bind<IncidentController>(TYPES.IncidentController).to(IncidentController).inSingletonScope();
 
     container.bind<ICreateIncidentUseCase>(TYPES.CreateIncidentUseCase).to(CreateIncidentUseCase);
     container.bind<IUpdateIncidentStatusUseCase>(TYPES.UpdateIncidentStatusUseCase).to(UpdateIncidentStatusUseCase);
-    container.bind<IAssignTeamUseCase>(TYPES.AssignTeamUseCase).to(AssignTeamUseCase).inSingletonScope()
-    container.bind<IGetIncidentByIdUseCase>(TYPES.GetIncidentByIdUseCase).to(GetIncidentByIdUseCase).inSingletonScope();
+    container.bind<IAssignTeamUseCase>(TYPES.AssignTeamUseCase).to(AssignTeamUseCase)
+    container.bind<IGetIncidentByIdUseCase>(TYPES.GetIncidentByIdUseCase).to(GetIncidentByIdUseCase);
 
 }

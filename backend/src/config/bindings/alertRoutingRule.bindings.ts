@@ -20,11 +20,11 @@ export function bindAlertRoutingRule(container:Container){
     container.bind<IAlertRoutingRuleRepository>(TYPES.AlertRoutingRuleRepository).to(PrismaAlertRoutingRuleRepository).inSingletonScope();
     container.bind<AlertRoutingRuleController>(TYPES.AlertRoutingRuleController).to(AlertRoutingRuleController).inSingletonScope();
 
-    container.bind<ICreateAlertRoutingRuleUseCase>(TYPES.CreateAlertRoutingRuleUseCase).to(CreateAlertRoutingRuleUseCase).inSingletonScope();
-    container.bind<IGetAlertRoutingRulesUseCase>(TYPES.GetAlertRoutingRulesUseCase).to(GetAlertRoutingRulesUseCase).inSingletonScope();
-    container.bind<IGetAlertRoutingRuleByIdUseCase>(TYPES.GetAlertRoutingRuleByIdUseCase).to(GetAlertRoutingRuleByIdUseCase).inSingletonScope();
-    container.bind<IDeleteAlertRoutingRuleUseCase>(TYPES.DeleteAlertRoutingRuleUseCase).to(DeleteAlertRoutingRuleUseCase).inSingletonScope();
-    container.bind<IUpdateAlertRoutingRuleUseCase>(TYPES.UpdateAlertRoutingRuleUseCase).to(UpdateAlertRoutingRuleUseCase).inSingletonScope();
+    container.bind<ICreateAlertRoutingRuleUseCase>(TYPES.CreateAlertRoutingRuleUseCase).to(CreateAlertRoutingRuleUseCase);
+    container.bind<IGetAlertRoutingRulesUseCase>(TYPES.GetAlertRoutingRulesUseCase).to(GetAlertRoutingRulesUseCase);
+    container.bind<IGetAlertRoutingRuleByIdUseCase>(TYPES.GetAlertRoutingRuleByIdUseCase).to(GetAlertRoutingRuleByIdUseCase);
+    container.bind<IDeleteAlertRoutingRuleUseCase>(TYPES.DeleteAlertRoutingRuleUseCase).to(DeleteAlertRoutingRuleUseCase);
+    container.bind<IUpdateAlertRoutingRuleUseCase>(TYPES.UpdateAlertRoutingRuleUseCase).to(UpdateAlertRoutingRuleUseCase);
     container.bind(TYPES.RouteAlertUseCase).to(RouteAlertUseCase);
     // container.bind(AlertRoutingEvaluator).toSelf().inSingletonScope();
     // container.bind<AlertRoutingEvaluator>(TYPES.AlertRoutingEvaluator).to(AlertRoutingEvaluator).inSingletonScope();

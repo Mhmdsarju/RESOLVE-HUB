@@ -34,7 +34,7 @@ export class PrismaUserRepository implements IUserRepository {
     return users.map(UserMapper.fromDb);
   }
 
-  async findUsersByOrganizationId(    organizationId: string,  ): Promise<User[]> {
+  async findUsersByOrganizationId(organizationId: string,): Promise<User[]> {
     const users = await prisma.user.findMany({
       where: {
         organizationId,
@@ -44,13 +44,26 @@ export class PrismaUserRepository implements IUserRepository {
     return users.map(UserMapper.fromDb);
   }
 
-  async update(id: string, data: Partial<User>): Promise<User> {
+  async findOrganizationAdminByOrganizationId(organizationId: string,): Promise<User | null> {
+    const admin = await prisma.user.findFirst({
+      where: {
+        organizationId,
+        role: "ORG_ADMIN",
+        isActive: true,
+      },
+    });
+
+    if (!admin) {
+      return null;
+    }
+
+    return UserMapper.fromDb(admin);
+  }
+
+  async update(id: string, data: Partial<User>,): Promise<User> {
     const updatedUser = await prisma.user.update({
       where: { id },
-      data: UserMapper.toDb({
-        ...data,
-        id,
-      } as User),
+      data: UserMapper.toUpdateDb(data),
     });
 
     return UserMapper.fromDb(updatedUser);

@@ -44,6 +44,10 @@ import { AuthController } from "@/modules/auth/presentation/controllers/AuthCont
 import { IGetUsersByOrganizationUseCase } from "@/modules/auth/domain/interfaces/use-cases/IGetUsersByOrganizationUseCase";
 import { GetUsersByOrganizationUseCase } from "@/modules/auth/application/use-cases/GetUsersByOrganizationUseCase";
 import { UserController } from "@/modules/auth/presentation/controllers/UserController";
+import { IGetMeUseCase } from "@/modules/auth/domain/interfaces/use-cases/IGetMeUseCase";
+import { GetMeUseCase } from "@/modules/auth/application/use-cases/GetMeUseCase";
+import { IUpdateMeUseCase } from "@/modules/auth/domain/interfaces/use-cases/IUpdateMeUseCase";
+import { UpdateMeUseCase } from "@/modules/auth/application/use-cases/UpdateMeUseCase";
 
 export function bindAuth(container: Container) {
 
@@ -74,5 +78,6 @@ export function bindAuth(container: Container) {
     container.bind<AuthController>(TYPES.AuthController).to(AuthController).inSingletonScope();
     container.bind<IGetUsersByOrganizationUseCase>(TYPES.GetUsersByOrganizationUseCase).to(GetUsersByOrganizationUseCase).inSingletonScope();
     container.bind<UserController>(TYPES.UserController).to(UserController).inSingletonScope();
-
+    container.bind<IGetMeUseCase>(TYPES.getMeUseCase).to(GetMeUseCase).inSingletonScope()
+    container.bind<IUpdateMeUseCase>(TYPES.updateMeUseCase).to(UpdateMeUseCase).inSingletonScope();
 }

@@ -17,9 +17,9 @@ import { DeleteIntegrationUseCase } from "@/modules/integration/application/use-
 export function bindIntegration(container:Container){
     container.bind<IIntegrationRepository>(TYPES.IntegrationRepository).to(PrismaIntegrationRepository).inSingletonScope();
     container.bind<IntegrationController>(TYPES.IntegrationController).to(IntegrationController).inSingletonScope();
-    container.bind<ICreateIntegrationUseCase>(TYPES.CreateIntegrationUseCase).to(CreateIntegrationUseCase).inSingletonScope();
-    container.bind<IGetIntegrationsUseCase>(TYPES.getIntegrationsUseCase).to(GetIntegrationsUseCase).inSingletonScope();
-    container.bind<IGetIntegrationByIdUseCase>(TYPES.GetIntegrationByIdUseCase).to(GetIntegrationByIdUseCase).inSingletonScope();
-    container.bind<IUpdateIntegrationUseCase>(TYPES.UpdateIntegrationUseCase).to(UpdateIntegrationUseCase).inSingletonScope();
-    container.bind<IDeleteIntegrationUseCase>(TYPES.DeleteIntegrationUseCase).to(DeleteIntegrationUseCase).inSingletonScope();
+    container.bind<ICreateIntegrationUseCase>(TYPES.CreateIntegrationUseCase).to(CreateIntegrationUseCase);
+    container.bind<IGetIntegrationsUseCase>(TYPES.getIntegrationsUseCase).to(GetIntegrationsUseCase);
+    container.bind<IGetIntegrationByIdUseCase>(TYPES.GetIntegrationByIdUseCase).to(GetIntegrationByIdUseCase);
+    container.bind<IUpdateIntegrationUseCase>(TYPES.UpdateIntegrationUseCase).to(UpdateIntegrationUseCase);
+    container.bind<IDeleteIntegrationUseCase>(TYPES.DeleteIntegrationUseCase).to(DeleteIntegrationUseCase);
 }
