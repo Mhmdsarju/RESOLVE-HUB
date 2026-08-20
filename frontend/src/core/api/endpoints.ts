@@ -11,7 +11,7 @@ export const ENDPOINTS = {
     CHANGE_PASSWORD: "/auth/change-password",
     REFRESH: "/auth/refresh",
     LOGOUT: "/auth/logout",
-    ME: "/auth/me",
+    ME: "/users/me",
   },
 
   ORGANIZATION: {
