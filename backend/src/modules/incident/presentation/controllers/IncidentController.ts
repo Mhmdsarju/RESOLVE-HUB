@@ -47,6 +47,7 @@ export class IncidentController extends BaseController {
                 priority: req.body.priority,
                 type: req.body.type,
                 assignedTeamId: req.body.assignedTeamId,
+                monitoringProjectId: req.body.monitoringProjectId,
             };
 
             const incident = await this.createIncidentUseCase.execute(

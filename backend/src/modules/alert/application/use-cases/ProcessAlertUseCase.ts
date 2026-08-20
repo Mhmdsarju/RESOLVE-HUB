@@ -72,6 +72,7 @@ export class ProcessAlertUseCase implements IProcessAlertUseCase {
             severity,
             priority,
             assignedTeamId: teamId,
+            monitoringProjectId: alert.monitoringProjectId,
             type: IncidentType.AUTOMATED,
         };
 

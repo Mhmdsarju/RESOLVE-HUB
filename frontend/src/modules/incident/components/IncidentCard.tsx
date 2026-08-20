@@ -2,6 +2,8 @@ import { CalendarDays, Users, AlertTriangle } from "lucide-react";
 
 import type { Incident } from "../types/incident.types";
 
+import { useMonitoringProject } from "@/modules/monitoring/hooks/useMonitoringProject"; 
+
 interface IncidentCardProps {
   incident: Incident;
   onClick?: () => void;
@@ -22,6 +24,8 @@ const statusStyles = {
 } as const;
 
 export default function IncidentCard({ incident, onClick }: IncidentCardProps) {
+  const { data: project } = useMonitoringProject(incident.monitoringProjectId ?? "");
+
   return (
     <button
       type="button"
@@ -41,6 +45,12 @@ export default function IncidentCard({ incident, onClick }: IncidentCardProps) {
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <h3 className="truncate text-lg font-semibold text-[#4B3932]">{incident.title}</h3>
+
+          {project?.name && (
+            <p className="mt-1 text-xs font-semibold text-[#4B3932]">
+              Project: {project.name}
+            </p>
+          )}
 
           {incident.description && (
             <p className="mt-2 line-clamp-2 text-sm text-stone-500">{incident.description}</p>

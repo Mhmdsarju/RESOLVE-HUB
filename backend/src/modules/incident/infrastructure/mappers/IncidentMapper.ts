@@ -27,6 +27,8 @@ export class IncidentMapper {
       organizationId: incident.organizationId,
       createdBy: incident.createdBy,
       assignedTeamId: incident.assignedTeamId,
+
+      monitoringProjectId: incident.monitoringProjectId,
     };
   }
 
@@ -44,6 +46,8 @@ export class IncidentMapper {
       organizationId: data.organizationId,
       createdBy: data.createdBy ?? undefined,
       assignedTeamId: data.assignedTeamId ?? undefined,
+
+      monitoringProjectId: data.monitoringProjectId,
 
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,

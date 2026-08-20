@@ -3,6 +3,8 @@ import { TYPES } from "@/config/types";
 
 import { IGetIncidentByIdUseCase } from "../../domain/interfaces/use-cases/IGetIncidentByIdUseCase"; 
 import { IIncidentRepository } from "../../domain/interfaces/IIncidentRepository";
+import { AppError } from "@/shared/errors/AppError";
+import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
 
 @injectable()
 export class GetIncidentByIdUseCase implements IGetIncidentByIdUseCase {
@@ -15,7 +17,7 @@ export class GetIncidentByIdUseCase implements IGetIncidentByIdUseCase {
     const incident = await this.incidentRepository.findById(id);
 
     if (!incident) {
-      throw new Error("Incident not found");
+      throw new AppError("Incident not found",HttpStatusCode.NOT_FOUND);
     }
 
     return incident;

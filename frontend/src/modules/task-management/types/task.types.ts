@@ -21,6 +21,8 @@ export interface Task {
     teamId?: string;
     teamRole?: TeamRole;
 
+    projectName?: string;
+
     type: TaskType;
     status: TaskStatus;
     priority: TaskPriority;
@@ -66,6 +68,7 @@ export interface GetTasksParams {
     status?: TaskStatus;
     priority?: TaskPriority;
     assignedTo?: string;
+    type?:string;
 }
 
 export interface TaskPagination {

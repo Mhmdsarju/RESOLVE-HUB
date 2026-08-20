@@ -17,6 +17,7 @@ import { ITakeTaskUseCase } from "../../domain/interfaces/use-cases/ITakeTaskUse
 
 import { TaskStatus } from "../../domain/enums/taskStatus.enum";
 import { TaskPriority } from "../../domain/enums/taskPriority.enum";
+import { TaskType } from "../../domain/enums/taskType.enum";
 
 @injectable()
 export class TaskController extends BaseController {
@@ -81,7 +82,7 @@ export class TaskController extends BaseController {
             });
 
             return ResponseHandler.success(res, "Task updated successfully", updatedTask,);
-            
+
         } catch (error) {
             next(error);
         }
@@ -119,12 +120,31 @@ export class TaskController extends BaseController {
         try {
             const user = this.getCurrentUser(req);
 
-            const tasks = await this.getMyTasksUseCase.execute(user.userId,);
+            const {
+                page = "1",
+                limit = "6",
+                status,
+                priority,
+                type,
+                search,
+            } = req.query;
+
+            const result = await this.getMyTasksUseCase.execute(
+                {
+                    page: Number(page),
+                    limit: Number(limit),
+                    status: status as TaskStatus,
+                    priority: priority as TaskPriority,
+                    type: type as TaskType,
+                    search: search as string,
+                },
+                user.userId,
+            );
 
             return ResponseHandler.success(
                 res,
                 "My tasks fetched successfully",
-                tasks,
+                result,
             );
         } catch (error) {
             next(error);

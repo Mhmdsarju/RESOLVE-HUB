@@ -18,8 +18,11 @@ export class CreateIncidentUseCase implements ICreateIncidentUseCase {
     private readonly incidentRepository: IIncidentRepository
   ) { }
 
-  async execute(dto: CreateIncidentDto, userId: string | undefined, organizationId: string): Promise<Incident> {
-
+  async execute(
+    dto: CreateIncidentDto,
+    userId: string | undefined,
+    organizationId: string
+  ): Promise<Incident> {
     const priority = dto.priority ?? Priority.P3;
 
     const status = Status.OPEN;
@@ -31,9 +34,13 @@ export class CreateIncidentUseCase implements ICreateIncidentUseCase {
       priority,
       status,
       type: dto.type,
+
       organizationId,
       createdBy: dto.type === "MANUAL" ? userId ?? null : null,
+
       assignedTeamId: dto.assignedTeamId ?? null,
+
+      monitoringProjectId: dto.monitoringProjectId,
     });
 
     return await this.incidentRepository.create(incident);

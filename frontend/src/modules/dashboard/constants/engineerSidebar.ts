@@ -1,5 +1,4 @@
 import {
-  Activity,
   ClipboardCheck,
   FolderKanban,
   LayoutDashboard,
@@ -22,11 +21,6 @@ export const engineerSidebar: SidebarSection[] = [
   {
     title: "WORKSPACE",
     items: [
-      {
-        label: "My Incidents",
-        path: "/my-incidents",
-        icon: Activity,
-      },
       {
         label: "My Tasks",
         path: "/my-tasks",

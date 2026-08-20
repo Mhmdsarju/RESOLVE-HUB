@@ -227,9 +227,10 @@ model Incident {
   status   IncidentStatus
   type     IncidentType
 
-  organizationId String  @db.Uuid
-  createdBy      String? @db.Uuid
-  assignedTeamId String?
+  organizationId     String  @db.Uuid
+  createdBy          String? @db.Uuid
+  assignedTeamId     String?
+  monitoringProjectId String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -239,6 +240,8 @@ model Incident {
 
   assignedTeam Team? @relation(fields: [assignedTeamId], references: [id])
 
+  monitoringProject MonitoringProject @relation(    fields: [monitoringProjectId],    references: [id]  )
+
   tasks  Task[]
   alerts Alert[]
 
@@ -246,6 +249,8 @@ model Incident {
   @@index([status])
   @@index([priority])
   @@index([assignedTeamId])
+  @@index([monitoringProjectId])
+
   @@map("incidents")
 }
 
@@ -337,6 +342,8 @@ model MonitoringProject {
   integrations      Integration[]
   alerts            Alert[]
   alertRoutingRules AlertRoutingRule[]
+
+  incidents Incident[]
 
   @@unique([organizationId, name])
   @@index([organizationId])

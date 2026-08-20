@@ -1,7 +1,7 @@
-import { Severity } from "../enums/severity.enum"; 
-import { Priority } from "../enums/priority.enum"; 
-import { Status } from "../enums/status.enum"; 
-import { IncidentType } from "../enums/incidentType.enum"; 
+import { Severity } from "../enums/severity.enum";
+import { Priority } from "../enums/priority.enum";
+import { Status } from "../enums/status.enum";
+import { IncidentType } from "../enums/incidentType.enum";
 
 interface IncidentProps {
   id?: string;
@@ -19,6 +19,7 @@ interface IncidentProps {
   createdBy?: string | null;
 
   assignedTeamId?: string | null;
+  monitoringProjectId: string;
 
   createdAt?: Date;
   updatedAt?: Date;
@@ -40,6 +41,7 @@ export class Incident {
   public createdBy?: string | null;
 
   public assignedTeamId?: string | null;
+  public monitoringProjectId: string;
 
   public readonly createdAt?: Date;
   public updatedAt?: Date;
@@ -60,6 +62,7 @@ export class Incident {
     this.createdBy = props.createdBy ?? null;
 
     this.assignedTeamId = props.assignedTeamId ?? null;
+    this.monitoringProjectId = props.monitoringProjectId;
 
     this.createdAt = props.createdAt;
     this.updatedAt = props.updatedAt;

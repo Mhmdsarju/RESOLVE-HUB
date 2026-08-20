@@ -1,8 +1,29 @@
-import { Check, ChevronDown, Clock3, Pencil, Trash2, UserRound } from "lucide-react";
+import { CalendarDays, Check, ChevronDown, Clock3, Pencil, Trash2, UserRound } from "lucide-react";
 
-import type { TaskStatus, TaskCardProps } from "../types/task.types";
+import type { TaskCardProps, TaskStatus } from "../types/task.types";
 
-export default function TaskCard({
+const statusStyles: Record<
+  TaskStatus,
+  {
+    badge: string;
+    border: string;
+  }
+> = {
+  TODO: {
+    badge: "bg-yellow-50 text-yellow-700",
+    border: "border-yellow-200",
+  },
+  IN_PROGRESS: {
+    badge: "bg-blue-50 text-blue-700",
+    border: "border-blue-200",
+  },
+  DONE: {
+    badge: "bg-green-50 text-green-700",
+    border: "border-green-200",
+  },
+};
+
+export default function MyTaskCard({
   task,
   users,
   role,
@@ -22,30 +43,24 @@ export default function TaskCard({
 
   const assignedUserName = isAssignedToCurrentUser ? "You" : (assignedUser?.name ?? "Unassigned");
 
-  const canEdit = role === "ORG_ADMIN" || (role === "ENGINEER" && isTeamLead);
+  const isOrgAdmin = role === "ORG_ADMIN";
 
-  const canAssign = role === "ORG_ADMIN" || (role === "ENGINEER" && isTeamLead);
+  const isEngineerTeamLead = role === "ENGINEER" && isTeamLead;
 
-  const canDelete = role === "ORG_ADMIN";
+  const canEdit = isOrgAdmin || isEngineerTeamLead;
 
-  const statusBorderClass: Record<TaskStatus, string> = {
-    TODO: "border-yellow-300",
-    IN_PROGRESS: "border-blue-300",
-    DONE: "border-green-300",
-  };
+  const canAssign = isOrgAdmin || isEngineerTeamLead;
 
-  const statusBadgeClass: Record<TaskStatus, string> = {
-    TODO: "bg-yellow-50 text-yellow-700",
-    IN_PROGRESS: "bg-blue-50 text-blue-700",
-    DONE: "bg-green-50 text-green-700",
-  };
+  const canDelete = isOrgAdmin;
+
+  const projectName = task.projectName ?? "No Project";
 
   return (
     <div
       className={`
         rounded-2xl
         border-2
-        ${statusBorderClass[task.status]}
+        ${statusStyles[task.status].border}
         bg-[#FFFEFC]
         p-5
         shadow-sm
@@ -56,9 +71,21 @@ export default function TaskCard({
       `}
     >
       <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="font-bold text-[#4B3932]">{task.title}</h3>
+            <span
+              className="
+                rounded-lg
+                bg-[#F0E7D5]
+                px-2.5
+                py-1
+                text-[11px]
+                font-bold
+                text-[#4B3932]
+              "
+            >
+              PROJECT
+            </span>
 
             <span
               className={`
@@ -77,7 +104,7 @@ export default function TaskCard({
               {task.type}
             </span>
 
-            {role === "ENGINEER" && isTeamLead && (
+            {isEngineerTeamLead && (
               <span
                 className="
                   rounded-lg
@@ -94,6 +121,30 @@ export default function TaskCard({
             )}
           </div>
 
+          <h3
+            className="
+              mt-3
+              truncate
+              text-lg
+              font-bold
+              text-[#4B3932]
+            "
+          >
+            {task.title}
+          </h3>
+
+          <p
+            className="
+              mt-1
+              truncate
+              text-sm
+              font-semibold
+              text-[#8B6F61]
+            "
+          >
+            {projectName}
+          </p>
+
           {task.description && (
             <p
               className="
@@ -107,16 +158,10 @@ export default function TaskCard({
               {task.description}
             </p>
           )}
-
-          {task.projectName && (
-            <p className="mt-2 text-xs font-semibold text-[#4B3932]">
-              Project: {task.projectName}
-            </p>
-          )}
         </div>
 
         {(canEdit || canDelete) && (
-          <div className="flex items-center gap-1">
+          <div className="flex shrink-0 items-center gap-1">
             {canEdit && onEdit && (
               <button
                 type="button"
@@ -164,7 +209,7 @@ export default function TaskCard({
             py-1
             text-xs
             font-semibold
-            ${statusBadgeClass[task.status]}
+            ${statusStyles[task.status].badge}
           `}
         >
           {statusLabel}
@@ -189,14 +234,14 @@ export default function TaskCard({
         className="
           mt-5
           grid
-          gap-3
+          gap-4
           border-t
           border-[#E7DDD3]
           pt-4
           sm:grid-cols-2
         "
       >
-        <div>
+        <div className="min-w-0">
           <div className="flex items-center gap-2 text-xs text-stone-400">
             <UserRound size={14} />
             Assigned to
@@ -230,7 +275,7 @@ export default function TaskCard({
 
         <div>
           <div className="flex items-center gap-2 text-xs text-stone-400">
-            <Clock3 size={14} />
+            <CalendarDays size={14} />
             Due date
           </div>
 
@@ -339,6 +384,22 @@ export default function TaskCard({
         >
           <Check size={14} />
           Task completed
+        </div>
+      )}
+
+      {task.type === "AUTOMATIC" && (
+        <div
+          className="
+            mt-3
+            flex
+            items-center
+            gap-2
+            text-xs
+            text-purple-500
+          "
+        >
+          <Clock3 size={14} />
+          Automatically created from monitoring alert
         </div>
       )}
     </div>

@@ -11,9 +11,13 @@ import type {
     UpdateTaskStatusPayload,
 } from "../types/task.types";
 
-export async function getMyTasks(): Promise<Task[]> {
+
+export async function getMyTasks(    params: GetTasksParams,): Promise<GetTasksResponse> {
     const response = await api.get(
         ENDPOINTS.TASK.MY,
+        {
+            params,
+        },
     );
 
     return response.data.data;

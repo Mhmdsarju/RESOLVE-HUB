@@ -45,7 +45,7 @@ export class PrismaTaskRepository implements ITaskRepository {
         return data.map(TaskMapper.fromDb);
     }
 
-    async findAllByAssignedTo(userId: string,): Promise<MyTask[]> {
+    async findAllByAssignedTo(userId: string): Promise<MyTask[]> {
         const data = await prisma.task.findMany({
             where: {
                 assignedTo: userId,
@@ -54,6 +54,11 @@ export class PrismaTaskRepository implements ITaskRepository {
                 incident: {
                     select: {
                         assignedTeamId: true,
+                        monitoringProject: {
+                            select: {
+                                name: true,
+                            },
+                        },
                     },
                 },
             },
@@ -67,44 +72,52 @@ export class PrismaTaskRepository implements ITaskRepository {
         }
 
         const teamIds = [
-            ...new Set(data.map((task) => task.incident.assignedTeamId,).filter((teamId,): teamId is string => Boolean(teamId),),),
+            ...new Set(
+                data
+                    .map((task) => task.incident.assignedTeamId)
+                    .filter(
+                        (teamId): teamId is string =>
+                            Boolean(teamId)
+                    )
+            ),
         ];
 
-        if (teamIds.length === 0) {
-            return data.map((task) => ({
-                ...TaskMapper.fromDb(task),
-                teamId: "",
-                teamRole: "MEMBER" as const,
-            }));
-        }
-
         const teamMembers =
-            await prisma.teamMember.findMany({
-                where: {
-                    teamId: {
-                        in: teamIds,
+            teamIds.length > 0
+                ? await prisma.teamMember.findMany({
+                    where: {
+                        teamId: {
+                            in: teamIds,
+                        },
+                        userId,
                     },
-                    userId,
-                },
-                select: {
-                    teamId: true,
-                    role: true,
-                },
-            });
+                    select: {
+                        teamId: true,
+                        role: true,
+                    },
+                })
+                : [];
 
-        const teamRoleMap = new Map<string, "LEAD" | "MEMBER">();
+        const teamRoleMap = new Map<
+            string,
+            "LEAD" | "MEMBER"
+        >();
 
         for (const member of teamMembers) {
             teamRoleMap.set(
                 member.teamId,
-                member.role,
+                member.role
             );
         }
 
         return data.map((task) => {
             const mappedTask = TaskMapper.fromDb(task);
 
-            const teamId = task.incident.assignedTeamId ?? "";
+            const teamId =
+                task.incident.assignedTeamId ?? "";
+
+            const projectName =
+                task.incident.monitoringProject?.name ?? "No Project";
 
             return {
                 ...mappedTask,
@@ -112,8 +125,146 @@ export class PrismaTaskRepository implements ITaskRepository {
                 teamRole:
                     teamRoleMap.get(teamId) ??
                     "MEMBER",
+                projectName,
             };
         });
+    }
+
+    async findAllByAssignedToWithPagination(params: {
+        userId: string;
+        skip: number;
+        take: number;
+        filters?: {
+            status?: TaskStatus;
+            priority?: TaskPriority;
+            type?: "MANUAL" | "AUTOMATIC";
+            search?: string;
+        };
+    }): Promise<{ data: MyTask[]; total: number; }> {
+        const search = params.filters?.search?.trim();
+
+        const where = {
+            assignedTo: params.userId,
+            status: params.filters?.status,
+            priority: params.filters?.priority,
+            type: params.filters?.type,
+
+            ...(search
+                ? {
+                    OR: [
+                        {
+                            title: {
+                                contains: search,
+                                mode: "insensitive" as const,
+                            },
+                        },
+                        {
+                            description: {
+                                contains: search,
+                                mode: "insensitive" as const,
+                            },
+                        },
+                    ],
+                }
+                : {}),
+        };
+
+        const [data, total] = await Promise.all([
+            prisma.task.findMany({
+                where,
+                skip: params.skip,
+                take: params.take,
+                include: {
+                    incident: {
+                        select: {
+                            assignedTeamId: true,
+                            monitoringProject: {
+                                select: {
+                                    name: true,
+                                },
+                            },
+                        },
+                    },
+                },
+                orderBy: {
+                    createdAt: "desc",
+                },
+            }),
+
+            prisma.task.count({
+                where,
+            }),
+        ]);
+
+        if (data.length === 0) {
+            return {
+                data: [],
+                total,
+            };
+        }
+
+        const teamIds = [
+            ...new Set(
+                data
+                    .map((task) => task.incident.assignedTeamId)
+                    .filter(
+                        (teamId): teamId is string =>
+                            Boolean(teamId)
+                    )
+            ),
+        ];
+
+        const teamMembers =
+            teamIds.length > 0
+                ? await prisma.teamMember.findMany({
+                    where: {
+                        teamId: {
+                            in: teamIds,
+                        },
+                        userId: params.userId,
+                    },
+                    select: {
+                        teamId: true,
+                        role: true,
+                    },
+                })
+                : [];
+
+        const teamRoleMap = new Map<
+            string,
+            "LEAD" | "MEMBER"
+        >();
+
+        for (const member of teamMembers) {
+            teamRoleMap.set(
+                member.teamId,
+                member.role
+            );
+        }
+
+        const mappedTasks = data.map((task) => {
+            const mappedTask = TaskMapper.fromDb(task);
+
+            const teamId =
+                task.incident.assignedTeamId ?? "";
+
+            const projectName =
+                task.incident.monitoringProject?.name ?? "No Project";
+
+            return {
+                ...mappedTask,
+                teamId,
+                teamRole:
+                    teamRoleMap.get(teamId) ??
+                    "MEMBER",
+                projectName,
+            };
+        });
+
+        return {
+            data: mappedTasks,
+            total,
+        };
     }
 
     async findAllByTeam(teamId: string,): Promise<Task[]> {

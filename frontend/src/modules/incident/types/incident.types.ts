@@ -20,6 +20,7 @@ export interface Incident {
     type: IncidentType;
     status: IncidentStatus;
     assignedTeamId?: string;
+    monitoringProjectId?: string;
     createdBy: string;
     createdAt: string;
     updatedAt: string;

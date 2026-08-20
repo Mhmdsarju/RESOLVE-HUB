@@ -7,6 +7,7 @@ import { TaskPriority } from "../enums/taskPriority.enum";
 export interface MyTask extends Task {
     teamId: string;
     teamRole: "LEAD" | "MEMBER";
+    projectName: string;
 }
 
 export interface ITaskRepository extends IBaseRepository<Task> {
@@ -41,6 +42,21 @@ export interface ITaskRepository extends IBaseRepository<Task> {
     findByTitleAndIncident(title: string, incidentId: string,): Promise<Task | null>;
 
     findAllByAssignedTo(userId: string,): Promise<MyTask[]>;
+
+    findAllByAssignedToWithPagination(params: {
+        userId: string;
+        skip: number;
+        take: number;
+        filters?: {
+            status?: TaskStatus;
+            priority?: TaskPriority;
+            type?: "MANUAL" | "AUTOMATIC";
+            search?: string;
+        };
+    }): Promise<{
+        data: MyTask[];
+        total: number;
+    }>;
 
     findAllByTeam(teamId: string,): Promise<Task[]>;
 }

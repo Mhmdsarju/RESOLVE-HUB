@@ -4,12 +4,16 @@ import { IncidentType } from "../../domain/enums/incidentType.enum";
 
 export interface CreateIncidentDto {
   title: string;
+
   description?: string;
 
   severity: Severity;
+
   priority?: Priority;
 
   assignedTeamId?: string;
+
+  monitoringProjectId: string;
 
   type: IncidentType;
 }
