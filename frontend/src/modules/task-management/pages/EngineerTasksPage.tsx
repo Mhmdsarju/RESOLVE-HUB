@@ -281,7 +281,7 @@ export default function EngineerTasksPage() {
 
           {isLoading && (
             <div className="rounded-3xl border border-[#E7DDD3] bg-[#FFFEFC] p-10 shadow-sm">
-              <div className="flex min-h-[280px] flex-col items-center justify-center">
+              <div className="flex min-h-280px flex-col items-center justify-center">
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F0E7D5] text-[#4B3932]">
                   <Loader2 size={25} className="animate-spin" />
                 </div>
@@ -297,7 +297,7 @@ export default function EngineerTasksPage() {
 
           {isError && (
             <div className="rounded-3xl border border-red-100 bg-[#FFFEFC] p-10 shadow-sm">
-              <div className="flex min-h-[280px] flex-col items-center justify-center text-center">
+              <div className="flex min-h-280px flex-col items-center justify-center text-center">
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-red-50 text-red-500">
                   <AlertCircle size={26} />
                 </div>
@@ -322,7 +322,7 @@ export default function EngineerTasksPage() {
 
           {!isLoading && !isError && tasks.length === 0 && (
             <div className="rounded-3xl border border-[#E7DDD3] bg-[#FFFEFC] p-10 shadow-sm">
-              <div className="flex min-h-[280px] flex-col items-center justify-center text-center">
+              <div className="flex min-h-280px flex-col items-center justify-center text-center">
                 <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#F0E7D5] text-[#4B3932]">
                   <CheckCircle2 size={30} />
                 </div>
