@@ -1,17 +1,11 @@
-import { inject, injectable } from "inversify";
-
-import { TYPES } from "@/config/types";
-
 import { AlertRule } from "../../domain/entities/alertRule.entity";
 import { IAlertRuleRepository } from "../../domain/interfaces/IAlertRuleRepository";
 import { ICreateAlertRuleUseCase } from "../../domain/interfaces/use-case/ICreateAlertRuleUseCase"; 
 
 import { CreateAlertRuleDTO } from "../dto/createAlertRuleDto";
 
-@injectable()
 export class CreateAlertRuleUseCase  implements ICreateAlertRuleUseCase{
   constructor(
-    @inject(TYPES.AlertRuleRepository)
     private readonly alertRuleRepository: IAlertRuleRepository
   ) {}
 

@@ -1,16 +1,11 @@
-import { injectable,inject } from "inversify";
-
 import { ICreateTeamUseCase } from "../../domain/interfaces/use-case/ICreateTeamUseCase";
 import { ITeamRepository } from "../../domain/interfaces/ITeamRepository";
 import { Team } from "../../domain/entities/team.entity";
 import { CreateTeamDto } from "../dto/createTeamDto";
 import { AppError } from "@/shared/errors/AppError";
-import { TYPES } from "@/config/types";
 
-@injectable()
 export class CreateTeamUseCase implements ICreateTeamUseCase{
     constructor(
-        @inject(TYPES.TeamRepository)
         private readonly teamRepository:ITeamRepository
     ){}
 

@@ -1,16 +1,11 @@
-import { inject, injectable } from "inversify";
-
-import { TYPES } from "@/config/types";
 import { AppError } from "@/shared/errors/AppError";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
 
 import { IIntegrationRepository } from "../../domain/interfaces/IIntegrationRepository";
 import { IDeleteIntegrationUseCase } from "../../domain/interfaces/use-cases/IDeleteIntegrationUseCase";
 
-@injectable()
 export class DeleteIntegrationUseCase implements IDeleteIntegrationUseCase {
     constructor(
-        @inject(TYPES.IntegrationRepository)
         private readonly integrationRepository: IIntegrationRepository
     ) { }
 

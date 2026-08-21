@@ -1,8 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import { inject, injectable } from "inversify";
-
-import { TYPES } from "../../../../config/types";
-
 import { AppError } from "../../../../shared/errors/AppError";
 import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
 import { ErrorMessages } from "../../../../shared/constant/ErrorMessages";
@@ -12,16 +8,12 @@ import { IApproveOrganizationVerificationUseCase } from "../../domain/interfaces
 import { IRejectOrganizationVerificationUseCase } from "../../domain/interfaces/IRejectOrganizationVerificationUseCase";
 import { IGetPendingOrganizationVerificationsUseCase } from "../../domain/interfaces/IGetPendingOrganizationVerificationsUseCase";
 import { IGetOrganizationVerificationDetailsUseCase } from "../../domain/interfaces/IGetOrganizationVerificationDetailsUseCase";
-@injectable()
+
 export class SuperAdminOrganizationController {
     constructor(
-        @inject(TYPES.ApproveOrganizationVerificationUseCase)
         private readonly approveOrganizationVerificationUseCase: IApproveOrganizationVerificationUseCase,
-        @inject(TYPES.RejectOrganizationVerificationUseCase)
         private readonly rejectOrganizationVerificationUseCase: IRejectOrganizationVerificationUseCase,
-        @inject(TYPES.GetPendingOrganizationVerificationsUseCase)
         private readonly getPendingOrganizationVerificationsUseCase: IGetPendingOrganizationVerificationsUseCase,
-        @inject(TYPES.GetOrganizationVerificationDetailsUseCase)
         private readonly getOrganizationVerificationDetailsUseCase: IGetOrganizationVerificationDetailsUseCase,
     ) { }
 

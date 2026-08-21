@@ -1,10 +1,5 @@
-import { inject, injectable } from "inversify";
 import { NextFunction, Request, Response } from "express";
-
-import { TYPES } from "@/config/types";
-
 import { ResponseHandler } from "@/shared/response/response-handler";
-
 import { CreateMonitoringProjectDTO } from "../../application/dto/createMonitoringProjectDto";
 import { ICreateMonitoringProjectUseCase } from "../../domain/interfaces/use-cases/ICreateMonitoringProjectUseCase";
 import { BaseController } from "@/shared/base/controllers/BaseController";
@@ -13,20 +8,13 @@ import { IGetMonitoringProjectByIdUseCase } from "../../domain/interfaces/use-ca
 import { IUpdateMonitoringProjectUseCase } from "../../domain/interfaces/use-cases/IUpdateMonitoringProjectUseCase";
 import { IDeleteMonitoringProjectUseCase } from "../../domain/interfaces/use-cases/IDeleteMonitoringProjectUseCase";
 
-@injectable()
 export class MonitoringProjectController extends BaseController {
     constructor(
-        @inject(TYPES.CreateMonitoringProjectUseCase)
         private readonly createMonitoringProjectUseCase: ICreateMonitoringProjectUseCase,
-        @inject(TYPES.getMonitoringProjectsUseCase)
         private readonly getMonitoringProjectsUseCase: IGetMonitoringProjectsUseCase,
-        @inject(TYPES.getMonitoringProjectByIdUseCase)
         private readonly getMonitoringProjectByIdUseCase: IGetMonitoringProjectByIdUseCase,
-        @inject(TYPES.updateMonitoringProjectUseCase)
         private readonly updateMonitoringProjectUseCase: IUpdateMonitoringProjectUseCase,
-        @inject(TYPES.deleteMonitoringProjectUseCase)
         private readonly deleteMonitoringProjectUseCase: IDeleteMonitoringProjectUseCase
-
     ) { super() }
 
     async create(req: Request, res: Response, next: NextFunction) {

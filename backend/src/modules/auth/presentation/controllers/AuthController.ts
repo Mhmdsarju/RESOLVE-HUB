@@ -1,12 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import { inject, injectable } from "inversify";
-
 import { IRegisterUseCase } from "../../domain/interfaces/use-cases/IRegisterUseCase";
 import { ILoginUseCase } from "../../domain/interfaces/use-cases/ILoginUseCase";
 import { ILogoutUsecase } from "../../domain/interfaces/use-cases/ILogoutUseCase";
 import { IRefreshUseCase } from "../../domain/interfaces/use-cases/IRefreshUseCase";
-
-import { TYPES } from "../../../../config/types";
 import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
 import { AppError } from "../../../../shared/errors/AppError";
 import { ErrorMessages } from "../../../../shared/constant/ErrorMessages";
@@ -17,19 +13,11 @@ import {
   clearRefreshTokenCookie,
 } from "@/shared/utils/cookie.util";
 
-@injectable()
 export class AuthController {
   constructor(
-    @inject(TYPES.RegisterUseCase)
     private readonly registerUseCase: IRegisterUseCase,
-
-    @inject(TYPES.LoginUseCase)
     private readonly loginUseCase: ILoginUseCase,
-
-    @inject(TYPES.RefreshUseCase)
     private readonly refreshUseCase: IRefreshUseCase,
-
-    @inject(TYPES.LogoutUseCase)
     private readonly logoutUseCase: ILogoutUsecase,
   ) { }
 

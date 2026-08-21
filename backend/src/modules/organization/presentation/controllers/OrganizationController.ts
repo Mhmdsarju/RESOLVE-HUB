@@ -1,8 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import { inject, injectable } from "inversify";
-
-import { TYPES } from "../../../../config/types";
-
 import { AppError } from "../../../../shared/errors/AppError";
 import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
 import { ErrorMessages } from "../../../../shared/constant/ErrorMessages";
@@ -13,19 +9,11 @@ import { IUpdateOrganizationUseCase } from "../../domain/interfaces/IUpdateOrgan
 import { ISubmitOrganizationVerificationUseCase } from "../../domain/interfaces/ISubmitOrganizationVerificationUseCase";
 import { IGetOrganizationVerificationUseCase } from "../../domain/interfaces/IGetOrganizationVerificationUseCase";
 
-@injectable()
 export class OrganizationController {
   constructor(
-    @inject(TYPES.GetOrganizationProfileUseCase)
     private readonly getOrganizationProfileUseCase: IGetOrganizationProfileUseCase,
-
-    @inject(TYPES.UpdateOrganizationUseCase)
     private readonly updateOrganizationUseCase: IUpdateOrganizationUseCase,
-
-    @inject(TYPES.SubmitOrganizationVerificationUseCase)
     private readonly submitOrganizationVerificationUseCase: ISubmitOrganizationVerificationUseCase,
-
-    @inject(TYPES.GetOrganizationVerificationUseCase)
     private readonly getOrganizationVerificationUseCase: IGetOrganizationVerificationUseCase,
   ) { }
 

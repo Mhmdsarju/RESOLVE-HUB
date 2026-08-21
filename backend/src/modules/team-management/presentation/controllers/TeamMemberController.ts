@@ -1,5 +1,3 @@
-import { TYPES } from "@/config/types";
-import { inject, injectable } from "inversify";
 import { IAddTeamMemberUseCase } from "../../domain/interfaces/use-case/IAddTeamMemberUseCase";
 import { ResponseHandler } from "@/shared/response/response-handler";
 import { CreateTeamMemberDto } from "../../application/dto/createTeamMemberDto";
@@ -13,18 +11,12 @@ import { BaseController } from "@/shared/base/controllers/BaseController";
 import { IGetMyTeamsUseCase } from "../../domain/interfaces/use-case/IGetMyTeamsUseCase";
 import { PaginationDto } from "@/shared/utils/Pagination/PaginationDto"; 
 
-@injectable()
 export class TeamMemberController extends BaseController {
     constructor(
-        @inject(TYPES.AddTeamMemberUseCase)
         private readonly addTeamMemberUseCase: IAddTeamMemberUseCase,
-        @inject(TYPES.GetTeamMembersUseCase)
         private readonly getTeamMembersUseCase: IGetTeamMembersUseCase,
-        @inject(TYPES.UpdateTeamMemberRoleUseCase)
         private readonly updateTeamMemberRoleUseCase: IUpdateTeamMemberRoleUseCase,
-        @inject(TYPES.RemoveTeamMemberUseCase)
         private readonly removeTeamMemberUseCase: IRemoveTeamMemberUseCase,
-        @inject(TYPES.GetMyTeamsUseCase)
         private readonly getMyTeamsUseCase: IGetMyTeamsUseCase,
     ) { super() }
 

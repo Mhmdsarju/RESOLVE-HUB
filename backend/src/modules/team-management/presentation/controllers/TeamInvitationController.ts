@@ -1,8 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import { inject, injectable } from "inversify";
-
-import { TYPES } from "@/config/types";
-
 import { BaseController } from "@/shared/base/controllers/BaseController";
 import { ResponseHandler } from "@/shared/response/response-handler";
 
@@ -14,16 +10,11 @@ import { IAcceptTeamInvitationUseCase } from "../../domain/interfaces/use-case/I
 import { IGetTeamInvitationsUseCase } from "../../domain/interfaces/use-case/IGetTeamInvitationsUseCase";
 import { ICancelTeamInvitationUseCase } from "../../domain/interfaces/use-case/ICancelTeamInvitationUseCase";
 
-@injectable()
 export class TeamInvitationController extends BaseController {
     constructor(
-        @inject(TYPES.CreateTeamInvitationUseCase)
         private readonly createTeamInvitationUseCase: ICreateTeamInvitationUseCase,
-        @inject(TYPES.AcceptTeamInvitationUseCase)
         private readonly acceptTeamInvitationUseCase: IAcceptTeamInvitationUseCase,
-        @inject(TYPES.GetTeamInvitationsUseCase)
         private readonly getTeamInvitationUseCase: IGetTeamInvitationsUseCase,
-        @inject(TYPES.CancelTeamInvitationUseCase)
         private readonly cancelTeamInvitationUseCase: ICancelTeamInvitationUseCase
     ) { super() }
 

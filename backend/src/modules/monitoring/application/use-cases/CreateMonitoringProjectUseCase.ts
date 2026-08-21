@@ -1,15 +1,11 @@
-import { inject, injectable } from "inversify";
 import { IMonitoringProjectRepository } from "../../domain/interfaces/IMonitoringProjectRepository";
 import { MonitoringProject } from "../../domain/entities/monitoringProject.entity";
-import { TYPES } from "@/config/types";
 import { AppError } from "@/shared/errors/AppError";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
 import { CreateMonitoringProjectDTO } from "../dto/createMonitoringProjectDto";
 
-@injectable()
 export class CreateMonitoringProjectUseCase {
     constructor(
-        @inject(TYPES.MonitoringProjectRepository)
         private monitoringRepo: IMonitoringProjectRepository
     ) { }
 

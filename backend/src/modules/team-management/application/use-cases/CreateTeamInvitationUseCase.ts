@@ -1,9 +1,4 @@
 import crypto from "crypto";
-
-import { inject, injectable } from "inversify";
-
-import { TYPES } from "@/config/types";
-
 import { ICreateTeamInvitationUseCase } from "../../domain/interfaces/use-case/ICreateTeamInvitationUseCase";
 import { ITeamInvitationRepository } from "../../domain/interfaces/ITeamInvitationRepository";
 import { ITeamRepository } from "../../domain/interfaces/ITeamRepository";
@@ -21,23 +16,13 @@ import { ErrorMessages } from "@/shared/constant/ErrorMessages";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
 import { UserRole } from "@/modules/auth/domain/enums/UserRole";
 
-@injectable()
 export class CreateTeamInvitationUseCase implements ICreateTeamInvitationUseCase {
 
     constructor(
-        @inject(TYPES.TeamInvitationRepository)
         private readonly invitationRepository: ITeamInvitationRepository,
-
-        @inject(TYPES.TeamRepository)
         private readonly teamRepository: ITeamRepository,
-
-        @inject(TYPES.TeamMemberRepository)
         private readonly teamMemberRepository: ITeamMemberRepository,
-
-        @inject(TYPES.UserRepository)
         private readonly userRepository: IUserRepository,
-
-        @inject(TYPES.EmailService)
         private readonly emailService: IEmailService,
     ) { }
 

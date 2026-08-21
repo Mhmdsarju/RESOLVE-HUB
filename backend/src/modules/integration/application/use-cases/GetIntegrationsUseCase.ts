@@ -1,16 +1,9 @@
-import { inject, injectable } from "inversify";
-
-import { TYPES } from "@/config/types";
-
-
 import { Integration } from "../../domain/entities/integration.entity";
 import { IIntegrationRepository } from "../../domain/interfaces/IIntegrationRepository";
 import { IGetIntegrationsUseCase } from "../../domain/interfaces/use-cases/IGetIntegrationsUseCase";
 
-@injectable()
 export class GetIntegrationsUseCase implements IGetIntegrationsUseCase {
     constructor(
-        @inject(TYPES.IntegrationRepository)
         private readonly integrationRepository: IIntegrationRepository
     ) { }
 

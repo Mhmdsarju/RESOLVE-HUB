@@ -1,6 +1,3 @@
-import { inject, injectable } from "inversify";
-
-import { TYPES } from "@/config/types";
 import { AppError } from "@/shared/errors/AppError";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
 
@@ -9,10 +6,8 @@ import { IIntegrationRepository } from "../../domain/interfaces/IIntegrationRepo
 import { IUpdateIntegrationUseCase } from "../../domain/interfaces/use-cases/IUpdateIntegrationUseCase";
 import { UpdateIntegrationDTO } from "../dto/updateIntegrationDto";
 
-@injectable()
 export class UpdateIntegrationUseCase implements IUpdateIntegrationUseCase {
     constructor(
-        @inject(TYPES.IntegrationRepository)
         private readonly integrationRepository: IIntegrationRepository
     ) { }
 

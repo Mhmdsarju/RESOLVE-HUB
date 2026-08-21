@@ -3,10 +3,7 @@ import { injectable } from "inversify";
 import { prisma } from "../../../../config/database";
 
 import { OrganizationVerification } from "../../domain/entities/organizationVerification.entity";
-import {
-    IOrganizationVerificationRepository,
-    PendingOrganizationVerification, OrganizationVerificationDetails
-} from "../../domain/repositories/IOrganizationVerificationRepository";
+import { IOrganizationVerificationRepository, PendingOrganizationVerification, OrganizationVerificationDetails } from "../../domain/repositories/IOrganizationVerificationRepository";
 
 import { OrganizationVerificationMapper } from "../mappers/OrganizationVerificationMapper";
 

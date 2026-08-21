@@ -1,18 +1,12 @@
-import { inject, injectable } from "inversify";
-
-import { TYPES } from "@/config/types";
 import { AppError } from "@/shared/errors/AppError";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
-
 import { Alert } from "../../domain/entities/alert.entity";
 import { AlertStatus } from "../../domain/enums/alertStatus.enum";
 import { IAlertRepository } from "../../domain/interfaces/IAlertRepository";
 import { IResolveAlertUseCase } from "../../domain/interfaces/use-case/IResolveAlertUseCase";
 
-@injectable()
 export class ResolveAlertUseCase implements IResolveAlertUseCase {
     constructor(
-        @inject(TYPES.AlertRepository)
         private readonly alertRepository: IAlertRepository
     ) { }
 

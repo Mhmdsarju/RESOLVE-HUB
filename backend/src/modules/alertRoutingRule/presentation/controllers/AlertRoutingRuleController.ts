@@ -1,8 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import { inject, injectable } from "inversify";
-
-import { TYPES } from "@/config/types";
-
 import { BaseController } from "@/shared/base/controllers/BaseController";
 import { ResponseHandler } from "@/shared/response/response-handler";
 
@@ -15,22 +11,12 @@ import { IGetAlertRoutingRuleByIdUseCase } from "../../domain/interfaces/use-cas
 import { IUpdateAlertRoutingRuleUseCase } from "../../domain/interfaces/use-case/IUpdateAlertRoutingRuleUseCase";
 import { IDeleteAlertRoutingRuleUseCase } from "../../domain/interfaces/use-case/IDeleteAlertRoutingRuleUseCase";
 
-@injectable()
 export class AlertRoutingRuleController extends BaseController {
     constructor(
-        @inject(TYPES.CreateAlertRoutingRuleUseCase)
         private readonly createAlertRoutingRuleUseCase: ICreateAlertRoutingRuleUseCase,
-
-        @inject(TYPES.GetAlertRoutingRulesUseCase)
         private readonly getAlertRoutingRulesUseCase: IGetAlertRoutingRulesUseCase,
-
-        @inject(TYPES.GetAlertRoutingRuleByIdUseCase)
         private readonly getAlertRoutingRuleByIdUseCase: IGetAlertRoutingRuleByIdUseCase,
-
-        @inject(TYPES.UpdateAlertRoutingRuleUseCase)
         private readonly updateAlertRoutingRuleUseCase: IUpdateAlertRoutingRuleUseCase,
-
-        @inject(TYPES.DeleteAlertRoutingRuleUseCase)
         private readonly deleteAlertRoutingRuleUseCase: IDeleteAlertRoutingRuleUseCase,
     ) {
         super();

@@ -1,19 +1,13 @@
-import { inject, injectable } from "inversify";
-import { TYPES } from "@/config/types";
-
 import { IUpdateIncidentStatusUseCase } from "../../domain/interfaces/use-cases/IUpdateIncidentStatusUseCase";
 import { IIncidentRepository } from "../../domain/interfaces/IIncidentRepository";
-
 import { UpdateIncidentStatusDto } from "../dto/updateIncidentStatusDto";
 import { Status } from "../../domain/enums/status.enum";
 import { Incident } from "../../domain/entities/incident.entity";
 import { AppError } from "@/shared/errors/AppError";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
 
-@injectable()
 export class UpdateIncidentStatusUseCase implements IUpdateIncidentStatusUseCase{
     constructor(
-        @inject(TYPES.IncidentRepository)
         private readonly incidentRepository:IIncidentRepository
     ){}
 

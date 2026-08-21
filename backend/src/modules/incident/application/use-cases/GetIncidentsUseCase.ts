@@ -1,15 +1,9 @@
-import { inject, injectable } from "inversify";
-import { TYPES } from "@/config/types";
-
 import { IIncidentRepository } from "../../domain/interfaces/IIncidentRepository";
 import { IGetIncidentsUseCase } from "../../domain/interfaces/use-cases/IGetIncidentsUseCase";
-
 import { GetIncidentsDto } from "../dto/getIncidentDto";
 
-@injectable()
 export class GetIncidentsUseCase implements IGetIncidentsUseCase {
   constructor(
-    @inject(TYPES.IncidentRepository)
     private readonly incidentRepository: IIncidentRepository
   ) {}
 

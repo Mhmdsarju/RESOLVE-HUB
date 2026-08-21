@@ -1,18 +1,14 @@
 import { Router } from "express";
-
-import container from "../../../../config/inversify.config";
-import { TYPES } from "../../../../config/types";
-
 import { authMiddleware } from "../../../../app/middlewares/authMiddleware";
 import { OrganizationController } from "../controllers/OrganizationController";
 
-const organizationController = container.get<OrganizationController>(  TYPES.OrganizationController);
+export function createOrganizationRoutes(organizationController: OrganizationController) {
+    const router = Router();
 
-const router = Router();
+    router.get("/me", authMiddleware, organizationController.getProfile.bind(organizationController));
+    router.put("/me", authMiddleware, organizationController.updateProfile.bind(organizationController));
+    router.post("/me/submit-verification", authMiddleware, organizationController.submitVerification.bind(organizationController));
+    router.get("/me/verification", authMiddleware, organizationController.getVerificationStatus.bind(organizationController));
 
-router.get("/me", authMiddleware, organizationController.getProfile.bind(organizationController));
-router.put("/me", authMiddleware, organizationController.updateProfile.bind(organizationController));
-router.post("/me/submit-verification", authMiddleware, organizationController.submitVerification.bind(organizationController),);
-router.get("/me/verification", authMiddleware, organizationController.getVerificationStatus.bind(organizationController,),);
-
-export default router;
+    return router;
+}

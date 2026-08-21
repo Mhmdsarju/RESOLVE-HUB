@@ -1,7 +1,3 @@
-import { inject, injectable } from "inversify";
-
-import { TYPES } from "../../../../config/types";
-
 import {
   IOrganizationVerificationRepository,
   PendingOrganizationVerification,
@@ -9,12 +5,9 @@ import {
 
 import { IGetPendingOrganizationVerificationsUseCase } from "../../domain/interfaces/IGetPendingOrganizationVerificationsUseCase";
 
-@injectable()
-export class GetPendingOrganizationVerificationsUseCase
-  implements IGetPendingOrganizationVerificationsUseCase
+export class GetPendingOrganizationVerificationsUseCase  implements IGetPendingOrganizationVerificationsUseCase
 {
   constructor(
-    @inject(TYPES.OrganizationVerificationRepository)
     private readonly verificationRepository: IOrganizationVerificationRepository,
   ) {}
 

@@ -1,6 +1,3 @@
-import { inject, injectable } from "inversify";
-import { TYPES } from "@/config/types";
-
 import { IMonitoringProjectRepository } from "../../domain/interfaces/IMonitoringProjectRepository";
 import { IUpdateMonitoringProjectUseCase } from "../../domain/interfaces/use-cases/IUpdateMonitoringProjectUseCase";
 import { UpdateMonitoringProjectDTO } from "../dto/updateMonitoringProject.dto";
@@ -8,11 +5,8 @@ import { UpdateMonitoringProjectDTO } from "../dto/updateMonitoringProject.dto";
 import { AppError } from "@/shared/errors/AppError";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
 
-@injectable()
 export class UpdateMonitoringProjectUseCase  implements IUpdateMonitoringProjectUseCase {
-
   constructor(
-    @inject(TYPES.MonitoringProjectRepository)
     private repo: IMonitoringProjectRepository
   ) {}
 

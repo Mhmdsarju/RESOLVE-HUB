@@ -1,7 +1,3 @@
-import { inject, injectable } from "inversify";
-
-import { TYPES } from "../../../../config/types";
-
 import { AppError } from "../../../../shared/errors/AppError";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
 
@@ -16,20 +12,11 @@ import { IUserRepository } from "@/modules/auth/domain/repositories/IUserReposit
 import { ISubmitOrganizationVerificationUseCase } from "../../domain/interfaces/ISubmitOrganizationVerificationUseCase";
 import { IOrganizationEmailService } from "../../domain/interfaces/IOrganizationEmailService";
 
-@injectable()
 export class SubmitOrganizationVerificationUseCase implements ISubmitOrganizationVerificationUseCase {
-
     constructor(
-        @inject(TYPES.OrganizationRepository)
         private readonly organizationRepository: IOrganizationRepository,
-
-        @inject(TYPES.OrganizationVerificationRepository)
         private readonly verificationRepository: IOrganizationVerificationRepository,
-
-        @inject(TYPES.UserRepository)
         private readonly userRepository: IUserRepository,
-
-        @inject(TYPES.OrganizationEmailService)
         private readonly organizationEmailService: IOrganizationEmailService,
     ) { }
 

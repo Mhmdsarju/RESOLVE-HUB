@@ -1,18 +1,12 @@
-import { inject, injectable } from "inversify";
-
-import { TYPES } from "@/config/types";
 import { AppError } from "@/shared/errors/AppError";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
-
 import { Integration } from "../../domain/entities/integration.entity";
 import { IIntegrationRepository } from "../../domain/interfaces/IIntegrationRepository";
 import { ICreateIntegrationUseCase } from "../../domain/interfaces/use-cases/ICreateIntegrationUseCase";
 import { CreateIntegrationDTO } from "../dto/createIntegrationDto";
 
-@injectable()
 export class CreateIntegrationUseCase implements ICreateIntegrationUseCase {
     constructor(
-        @inject(TYPES.IntegrationRepository)
         private readonly integrationRepository: IIntegrationRepository
     ) { }
 

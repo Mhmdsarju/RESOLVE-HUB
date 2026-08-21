@@ -1,7 +1,4 @@
-import { inject, injectable } from "inversify";
 import { NextFunction, Request, Response } from "express";
-
-import { TYPES } from "@/config/types";
 import { ResponseHandler } from "@/shared/response/response-handler";
 import { BaseController } from "@/shared/base/controllers/BaseController";
 
@@ -20,25 +17,13 @@ import { IntegrationType } from "@/modules/integration/domain/enums/integrationT
 import { IAlertRuleRepository } from "@/modules/alertRule/domain/interfaces/IAlertRuleRepository";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
 
-@injectable()
 export class AlertController extends BaseController {
     constructor(
-        @inject(TYPES.CreateAlertUseCase)
         private readonly createAlertUseCase: ICreateAlertUseCase,
-
-        @inject(TYPES.GetAlertsUseCase)
         private readonly getAlertsUseCase: IGetAlertsUseCase,
-
-        @inject(TYPES.GetAlertByIdUseCase)
         private readonly getAlertByIdUseCase: IGetAlertByIdUseCase,
-
-        @inject(TYPES.ResolveAlertUseCase)
         private readonly resolveAlertUseCase: IResolveAlertUseCase,
-
-        @inject(TYPES.IntegrationRepository)
         private readonly integrationRepository: IIntegrationRepository,
-
-        @inject(TYPES.AlertRuleRepository)
         private readonly alertRuleRepository: IAlertRuleRepository,
     ) {
         super();

@@ -1,18 +1,13 @@
 import { AppError } from "../../../../shared/errors/AppError";
-
 import { Organization } from "../../domain/entities/Organization";
 import { UpdateOrganizationDto } from "../dto/UpdateOrganizationDto";
 import { IOrganizationRepository } from "../../domain/repositories/IOrganizationRepository";
 import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
 import { IUpdateOrganizationUseCase } from "../../domain/interfaces/IUpdateOrganizationUseCase";
-import { inject, injectable } from "inversify";
-import { TYPES } from "../../../../config/types";
 import { ErrorMessages } from "../../../../shared/constant/ErrorMessages";
 
-@injectable()
 export class UpdateOrganizationUseCase implements IUpdateOrganizationUseCase {
   constructor(
-    @inject(TYPES.OrganizationRepository)
     private readonly organizationRepository: IOrganizationRepository,
   ) { }
 

@@ -1,7 +1,3 @@
-import { inject, injectable } from "inversify";
-
-import { TYPES } from "@/config/types";
-
 import { AppError } from "@/shared/errors/AppError";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
 
@@ -11,14 +7,9 @@ import { IGetTeamTasksUseCase } from "../../domain/interfaces/use-cases/IGetTeam
 
 import { ITeamMemberRepository } from "@/modules/team-management/domain/interfaces/ITeamMemberRepository";
 
-@injectable()
 export class GetTeamTasksUseCase implements IGetTeamTasksUseCase {
-
     constructor(
-        @inject(TYPES.TaskRepository)
         private readonly taskRepository: ITaskRepository,
-
-        @inject(TYPES.TeamMemberRepository)
         private readonly teamMemberRepository: ITeamMemberRepository,
     ) { }
 

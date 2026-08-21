@@ -1,19 +1,13 @@
-import { inject, injectable } from "inversify";
 
 import { IUpdateMeUseCase } from "../../domain/interfaces/use-cases/IUpdateMeUseCase";
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { User } from "../../domain/entities/User";
-
 import { UpdateMeDto } from "../dto/updateMe.dto";
-
-import { TYPES } from "@/config/types";
 import { AppError } from "@/shared/errors/AppError";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
 
-@injectable()
 export class UpdateMeUseCase implements IUpdateMeUseCase {
     constructor(
-        @inject(TYPES.UserRepository)
         private readonly userRepository: IUserRepository,
     ) { }
 
