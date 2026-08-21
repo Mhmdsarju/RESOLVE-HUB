@@ -1,39 +1,22 @@
+import { AUTH_TYPES } from "./types/auth.types";
+import { ORGANIZATION_TYPES } from "./types/organization.types";
+import { TEAM_TYPES } from "./types/team.types";
+import { INCIDENT_TYPES } from "./types/incident.types";
+import { TASK_TYPES } from "./types/task.types";
+import { MONITORING_TYPES } from "./types/monitoring.types";
+import { INTEGRATION_TYPES } from "./types/integration.types";
+import { ALERTRULES_TYPES } from "./types/alertRule.types";
+import { ALERT_TYPES } from "./types/alert.types";
+import { ALERT_ROUTING_RULE_TYPES } from "./types/alertRoutingRule.types";
 export const TYPES = {
-  //repositories
-  UserRepository: Symbol.for("UserRepository"),
-  OrganizationRepository: Symbol.for("OrganizationRepository"),
-
-  //services
-  PasswordHasher: Symbol.for("PasswordHasher"),
-  EmailService: Symbol.for("EmailService"),
-
-  //store
-  OtpStore: Symbol.for("OtpStore"),
-  ResetTokenStore: Symbol.for("ResetTokenStore"),
-  SignupStore: Symbol.for("SignupStore"),
-  TokenStore: Symbol.for("TokenStore"),
-  TokenService: Symbol.for("TokenService"),
-
-  //controllers
-  AuthController: Symbol.for("AuthController"),
-  OrganizationController: Symbol.for("OrganizationController"),
-
-  //usecase
-  RegisterUseCase: Symbol.for("RegisterUseCase"),
-  ChangePasswordUseCase: Symbol.for("ChangePasswordUseCase"),
-  ForgotPasswordUseCase: Symbol.for("ForgotPasswordUseCase"),
-  GetCurrentUseUseCase: Symbol.for("GetCurrentUserUseCase"),
-  LoginUseCase: Symbol.for("LoginUseCase"),
-  LogoutUseCase: Symbol.for("LogoutUseCase"),
-  RefreshUseCase: Symbol.for("RefreshUseCase"),
-  ResendForgotPasswordOtpUseCase: Symbol.for("ResendForgotPasswordOtpUseCase"),
-  ResetPasswordUseCase: Symbol.for("ResetPasswordUseCase"),
-  VerifySignUpOtpUseCase: Symbol.for("VerifySignUpOtpUseCase"),
-  VerifyOtpUseCase: Symbol.for("VerifyOtpUseCase"),
-  ResendSignUpOtpUseCase: Symbol.for("ResendSignUpOtpUseCase"),
-  //org
-  GetOrganizationProfileUseCase: Symbol.for("GetOrganizationProfileUseCase"),
-  UpdateOrganizationUseCase: Symbol.for("UpdateOrganizationUseCase"),
-
-  
-} as const;
+  ...AUTH_TYPES,
+  ...ORGANIZATION_TYPES,
+  ...TEAM_TYPES,
+  ...INCIDENT_TYPES,
+  ...TASK_TYPES,
+  ...MONITORING_TYPES,
+  ...INTEGRATION_TYPES,
+  ...ALERTRULES_TYPES,
+  ...ALERT_TYPES,
+  ...ALERT_ROUTING_RULE_TYPES
+};

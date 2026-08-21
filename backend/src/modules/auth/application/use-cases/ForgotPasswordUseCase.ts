@@ -2,22 +2,15 @@ import { ForgotPasswordDto } from "../dto/ForgotPasswordDto";
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { IOtpStore } from "../../domain/interfaces/IOtpStore";
 import { IEmailService } from "../../domain/interfaces/IEmailService";
-
-import { injectable, inject } from "inversify";
-import { TYPES } from "../../../../config/types";
 import { IForgotPasswordUseCase } from "../../domain/interfaces/use-cases/IForgotPasswordUseCase";
 import { generateotp } from "../../../../shared/utils/generateOtp";
 import { AppError } from "../../../../shared/errors/AppError";
 import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
 import { ErrorMessages } from "../../../../shared/constant/ErrorMessages";
-@injectable()
 export class ForgotPasswordUseCase implements IForgotPasswordUseCase {
     constructor(
-        @inject(TYPES.UserRepository)
         private readonly userRepository: IUserRepository,
-        @inject(TYPES.OtpStore)
         private readonly otpStore: IOtpStore,
-        @inject(TYPES.EmailService)
         private readonly emailService: IEmailService
     ) { }
 

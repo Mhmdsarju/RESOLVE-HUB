@@ -7,23 +7,15 @@ import { ITokenStore } from "../../domain/interfaces/ITokenStore";
 import { LoginType } from "../../domain/enums/LoginType";
 import { UserRole } from "../../domain/enums/UserRole";
 import { AppError } from "../../../../shared/errors/AppError";
-
-import { injectable, inject } from "inversify";
-import { TYPES } from "../../../../config/types";
 import { ILoginUseCase } from "../../domain/interfaces/use-cases/ILoginUseCase";
 import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
 import { ErrorMessages } from "../../../../shared/constant/ErrorMessages";
 
-@injectable()
 export class LoginUseCase implements ILoginUseCase {
   constructor(
-    @inject(TYPES.UserRepository)
     private readonly userRepository: IUserRepository,
-    @inject(TYPES.PasswordHasher)
     private readonly passwordHasher: IPasswordHasher,
-    @inject(TYPES.TokenService)
     private readonly tokenService: ITokenService,
-    @inject(TYPES.TokenStore)
     private readonly tokenStore: ITokenStore
   ) { }
 
@@ -55,7 +47,7 @@ export class LoginUseCase implements ILoginUseCase {
 
     const payload = {
       userId: user.id!,
-      organizationId: user.organizationId,
+      organizationId: user.organizationId!,
       role: user.role,
     };
 
@@ -70,7 +62,7 @@ export class LoginUseCase implements ILoginUseCase {
         id: user.id!,
         name: user.name,
         email: user.email,
-        organizationId: user.organizationId,
+        organizationId: user.organizationId!,
         role: user.role,
       },
       accessToken,

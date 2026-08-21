@@ -25,10 +25,7 @@ export function useVerifySignupOtp() {
     },
 
     onError: (error) => {
-      const message =
-        error.response?.data?.message ??
-        "OTP verification failed.";
-
+      const message = error.response?.data?.message ?? "OTP verification failed.";
       toast.error(message);
     },
   });

@@ -22,10 +22,7 @@ export function useResetPassword() {
         },
 
         onError: (error) => {
-            toast.error(
-                error.response?.data?.message ??
-                "Password reset failed.",
-            );
+            toast.error(error.response?.data?.message ?? "Password reset failed.",);
         },
     });
 }

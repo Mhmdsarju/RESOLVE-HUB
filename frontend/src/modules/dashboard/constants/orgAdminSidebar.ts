@@ -1,12 +1,11 @@
 import {
-  Activity,
-  BarChart3,
+  Activity, BarChart3,
   Building2,
   FolderKanban,
   LayoutDashboard,
   RadioTower,
   ShieldCheck,
-  Users,
+  Users, Mail
 } from "lucide-react";
 
 import type { SidebarSection } from "../types/sidebar.types";
@@ -30,6 +29,12 @@ export const orgAdminSidebar: SidebarSection[] = [
         path: "/teams",
         icon: Users,
       },
+      {
+        label: "Team Invitations",
+        path: "/team-invitations",
+        icon: Mail,
+      },
+
       {
         label: "Monitoring Projects",
         path: "/monitoring",

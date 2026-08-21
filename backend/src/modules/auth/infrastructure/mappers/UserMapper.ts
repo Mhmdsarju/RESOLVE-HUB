@@ -38,4 +38,37 @@ export class UserMapper {
             : PrismaUserRole.ENGINEER,
     };
   }
+
+  static toUpdateDb(data: Partial<User>) {
+    return {
+      ...(data.name !== undefined && {
+        fullName: data.name,
+      }),
+
+      ...(data.email !== undefined && {
+        email: data.email,
+      }),
+
+      ...(data.password !== undefined && {
+        passwordHash: data.password,
+      }),
+
+      ...(data.organizationId !== undefined && {
+        organizationId: data.organizationId,
+      }),
+
+      ...(data.role !== undefined && {
+        role:
+          data.role === UserRole.SUPER_ADMIN
+            ? PrismaUserRole.SUPER_ADMIN
+            : data.role === UserRole.ORG_ADMIN
+              ? PrismaUserRole.ORG_ADMIN
+              : PrismaUserRole.ENGINEER,
+      }),
+
+      ...(data.updatedAt !== undefined && {
+        updatedAt: data.updatedAt,
+      }),
+    };
+  }
 }

@@ -90,7 +90,7 @@ export default function UserLoginPage() {
           >
             {loginMutation.isPending ? "Signing In..." : "Sign In"}
           </button>
-          =
+          
           <div className="border-t border-[#E7DDD3]" />
           <div className="text-center text-sm text-stone-500">
             Need to register your organization?

@@ -1,7 +1,7 @@
 import { Organization } from "../../../organization/domain/entities/Organization";
 import { User } from "../../domain/entities/User";
 
-import { OrganizationStatus } from "../../domain/enums/OrganizationStatus";
+// import { OrganizationStatus } from "../../domain/enums/OrganizationStatus";
 import { UserRole } from "../../domain/enums/UserRole";
 import { AppError } from "../../../../shared/errors/AppError";
 import { VerifySignupOtpDto } from "../dto/VerifySignupOtpDto";
@@ -11,26 +11,19 @@ import { IOtpStore } from "../../domain/interfaces/IOtpStore";
 import { ISignupStore } from "../../domain/interfaces/ISignupStore";
 import { ITokenService } from "../../domain/interfaces/ITokenService";
 import { ITokenStore } from "../../domain/interfaces/ITokenStore";
-import { inject, injectable } from "inversify";
-import { TYPES } from "../../../../config/types";
 import { IVerifySignupOtpUseCase } from "../../domain/interfaces/use-cases/IVerifySignupOtpUseCase";
 import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
 import { ErrorMessages } from "../../../../shared/constant/ErrorMessages";
+import { OrganizationStatus } from "@/modules/organization/domain/enums/organizationStatus.enum";
+// import { OrganizationVerificationStatus } from "@/modules/organization/domain/enums/organizationVerificationStatus.enum";
 
-@injectable()
 export class VerifySignupOtpUseCase implements IVerifySignupOtpUseCase {
   constructor(
-    @inject(TYPES.UserRepository)
     private readonly userRepository: IUserRepository,
-    @inject(TYPES.OrganizationRepository)
     private readonly organizationRepository: IOrganizationRepository,
-    @inject(TYPES.OtpStore)
     private readonly otpStore: IOtpStore,
-    @inject(TYPES.SignupStore)
     private readonly signupStore: ISignupStore,
-    @inject(TYPES.TokenService)
     private readonly tokenService: ITokenService,
-    @inject(TYPES.TokenStore)
     private readonly tokenStore: ITokenStore
   ) { }
 
@@ -57,7 +50,7 @@ export class VerifySignupOtpUseCase implements IVerifySignupOtpUseCase {
       name: signupData.organizationName,
       industry: signupData.industry,
       companySize: signupData.companySize,
-      status: OrganizationStatus.ACTIVE,
+      status: OrganizationStatus.PENDING_PROFILE,
     });
 
     const savedOrganization = await this.organizationRepository.create(organization);
@@ -74,7 +67,7 @@ export class VerifySignupOtpUseCase implements IVerifySignupOtpUseCase {
 
     const payload = {
       userId: savedUser.id!,
-      organizationId: savedUser.organizationId,
+      organizationId: savedUser.organizationId!,
       role: savedUser.role,
     };
 
@@ -92,7 +85,7 @@ export class VerifySignupOtpUseCase implements IVerifySignupOtpUseCase {
         id: savedUser.id!,
         name: savedUser.name,
         email: savedUser.email,
-        organizationId: savedUser.organizationId,
+        organizationId: savedUser.organizationId!,
         role: savedUser.role,
       },
       accessToken,

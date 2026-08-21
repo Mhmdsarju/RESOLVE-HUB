@@ -1,0 +1,50 @@
+import { Container } from "inversify";
+import { TYPES } from "../types";
+
+import { IUserRepository } from "@/modules/auth/domain/repositories/IUserRepository";
+import { PrismaUserRepository } from "@/modules/auth/infrastructure/repositories/PrismaUserRepository";
+
+import { IOrganizationRepository } from "@/modules/organization/domain/repositories/IOrganizationRepository";
+import { PrismaOrganizationRepository } from "@/modules/organization/infrastructure/repositories/PrismaOrganizationRepository";
+import { IOrganizationVerificationRepository } from "@/modules/organization/domain/repositories/IOrganizationVerificationRepository";
+import { PrismaOrganizationVerificationRepository } from "@/modules/organization/infrastructure/repositories/PrismaOrganizationVerificationRepository";
+import { NodemailerOrganizationEmailService } from "@/modules/organization/infrastructure/services/NodemailerOrganizationEmailService";
+import { IOrganizationEmailService } from "@/modules/organization/domain/interfaces/IOrganizationEmailService";
+import { ITeamRepository } from "@/modules/team-management/domain/interfaces/ITeamRepository";
+import { PrismaTeamRepository } from "@/modules/team-management/infrastructure/repositories/PrismaTeamRepository";
+import { ITeamMemberRepository } from "@/modules/team-management/domain/interfaces/ITeamMemberRepository";
+import { PrismaTeamMemberRepository } from "@/modules/team-management/infrastructure/repositories/PrismaTeamMemberRepository";
+import { ITeamInvitationRepository } from "@/modules/team-management/domain/interfaces/ITeamInvitationRepository";
+import { PrismaTeamInvitationRepository } from "@/modules/team-management/infrastructure/repositories/PrismaTeamInvitationRepository";
+import { IIncidentRepository } from "@/modules/incident/domain/interfaces/IIncidentRepository";
+import { PrismaIncidentRepository } from "@/modules/incident/infrastructure/repositories/PrismaIncidentRepository";
+import { ITaskRepository } from "@/modules/task-management/domain/interfaces/ITaskRepository";
+import { PrismaTaskRepository } from "@/modules/task-management/infrastructure/repositories/PrismaTaskRepository";
+import { IIntegrationRepository } from "@/modules/integration/domain/interfaces/IIntegrationRepository";
+import { PrismaIntegrationRepository } from "@/modules/integration/infrastructure/repositories/PrismaIntegrationRepository";
+import { PrismaMonitoringProjectRepository } from "@/modules/monitoring/infrastructure/repositories/PrismaMonitoringProjectRepository";
+import { IMonitoringProjectRepository } from "@/modules/monitoring/domain/interfaces/IMonitoringProjectRepository";
+import { IAlertRepository } from "@/modules/alert/domain/interfaces/IAlertRepository";
+import { PrismaAlertRepository } from "@/modules/alert/infrastructure/repositories/PrismaAlertRepository";
+import { IAlertRuleRepository } from "@/modules/alertRule/domain/interfaces/IAlertRuleRepository";
+import { PrismaAlertRuleRepository } from "@/modules/alertRule/infrastructure/repositories/PrismaAlertRuleRepository";
+import { IAlertRoutingRuleRepository } from "@/modules/alertRoutingRule/domain/interfaces/IAlertRoutingRuleRepository";
+import { PrismaAlertRoutingRuleRepository } from "@/modules/alertRoutingRule/infrastructure/repositories/PrismaAlertRoutingRuleRepository";
+
+export function bindCore(container: Container) {
+
+    container.bind<IUserRepository>(TYPES.UserRepository).to(PrismaUserRepository).inSingletonScope();
+    container.bind<IOrganizationRepository>(TYPES.OrganizationRepository).to(PrismaOrganizationRepository).inSingletonScope();
+    container.bind<IOrganizationVerificationRepository>(TYPES.OrganizationVerificationRepository).to(PrismaOrganizationVerificationRepository).inSingletonScope();
+    container.bind<IOrganizationEmailService>(TYPES.OrganizationEmailService).to(NodemailerOrganizationEmailService).inSingletonScope();
+    container.bind<ITeamRepository>(TYPES.TeamRepository).to(PrismaTeamRepository).inSingletonScope();
+    container.bind<ITeamMemberRepository>(TYPES.TeamMemberRepository).to(PrismaTeamMemberRepository).inSingletonScope();
+    container.bind<ITeamInvitationRepository>(TYPES.TeamInvitationRepository).to(PrismaTeamInvitationRepository).inSingletonScope();
+    container.bind<IIncidentRepository>(TYPES.IncidentRepository).to(PrismaIncidentRepository).inSingletonScope();
+    container.bind<ITaskRepository>(TYPES.TaskRepository).to(PrismaTaskRepository).inSingletonScope();
+    container.bind<IIntegrationRepository>(TYPES.IntegrationRepository).to(PrismaIntegrationRepository).inSingletonScope();
+    container.bind<IMonitoringProjectRepository>(TYPES.MonitoringProjectRepository).to(PrismaMonitoringProjectRepository).inSingletonScope();
+    container.bind<IAlertRepository>(TYPES.AlertRepository).to(PrismaAlertRepository).inSingletonScope();
+    container.bind<IAlertRuleRepository>(TYPES.AlertRuleRepository).to(PrismaAlertRuleRepository).inSingletonScope();
+    container.bind<IAlertRoutingRuleRepository>(TYPES.AlertRoutingRuleRepository).to(PrismaAlertRoutingRuleRepository).inSingletonScope();
+}

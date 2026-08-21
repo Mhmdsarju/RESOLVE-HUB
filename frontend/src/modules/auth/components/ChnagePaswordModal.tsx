@@ -16,10 +16,7 @@ type ChangePasswordForm = ChangePasswordDto & {
   confirmPassword: string;
 };
 
-export function ChangePasswordModal({
-  open,
-  onClose,
-}: ChangePasswordModalProps) {
+export function ChangePasswordModal({ open, onClose }: ChangePasswordModalProps) {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -39,7 +36,7 @@ export function ChangePasswordModal({
   const changePasswordMutation = useChangePassword();
 
   async function onSubmit(data: ChangePasswordForm) {
-    const {...payload } = data;
+    const { ...payload } = data;
 
     try {
       const response = await changePasswordMutation.mutateAsync(payload);
@@ -70,9 +67,7 @@ export function ChangePasswordModal({
         </button>
 
         <div className="border-b border-stone-200 px-6 py-5">
-          <h2 className="text-2xl font-bold text-[#4B3932]">
-            Change Password
-          </h2>
+          <h2 className="text-2xl font-bold text-[#4B3932]">Change Password</h2>
 
           <p className="mt-1 text-sm text-stone-500">
             Update your account password to keep your account secure.
@@ -98,30 +93,20 @@ export function ChangePasswordModal({
 
               <button
                 type="button"
-                onClick={() =>
-                  setShowCurrentPassword(!showCurrentPassword)
-                }
+                onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-500"
               >
-                {showCurrentPassword ? (
-                  <EyeOff size={20} />
-                ) : (
-                  <Eye size={20} />
-                )}
+                {showCurrentPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
 
             {errors.currentPassword && (
-              <p className="mt-1 text-sm text-red-500">
-                {errors.currentPassword.message}
-              </p>
+              <p className="mt-1 text-sm text-red-500">{errors.currentPassword.message}</p>
             )}
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-[#4B3932]">
-              New Password
-            </label>
+            <label className="mb-2 block text-sm font-medium text-[#4B3932]">New Password</label>
 
             <div className="relative">
               <input
@@ -138,18 +123,12 @@ export function ChangePasswordModal({
                 onClick={() => setShowNewPassword(!showNewPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-500"
               >
-                {showNewPassword ? (
-                  <EyeOff size={20} />
-                ) : (
-                  <Eye size={20} />
-                )}
+                {showNewPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
 
             {errors.newPassword && (
-              <p className="mt-1 text-sm text-red-500">
-                {errors.newPassword.message}
-              </p>
+              <p className="mt-1 text-sm text-red-500">{errors.newPassword.message}</p>
             )}
           </div>
 
@@ -164,31 +143,22 @@ export function ChangePasswordModal({
                 placeholder="Confirm new password"
                 {...register("confirmPassword", {
                   required: "Confirm password is required",
-                  validate: (value) =>
-                    value === newPassword || "Passwords do not match",
+                  validate: (value) => value === newPassword || "Passwords do not match",
                 })}
                 className="w-full rounded-xl border border-stone-300 px-4 py-3 pr-12 outline-none transition focus:border-[#4B3932]"
               />
 
               <button
                 type="button"
-                onClick={() =>
-                  setShowConfirmPassword(!showConfirmPassword)
-                }
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-500"
               >
-                {showConfirmPassword ? (
-                  <EyeOff size={20} />
-                ) : (
-                  <Eye size={20} />
-                )}
+                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
 
             {errors.confirmPassword && (
-              <p className="mt-1 text-sm text-red-500">
-                {errors.confirmPassword.message}
-              </p>
+              <p className="mt-1 text-sm text-red-500">{errors.confirmPassword.message}</p>
             )}
           </div>
 
@@ -223,9 +193,7 @@ export function ChangePasswordModal({
               disabled={changePasswordMutation.isPending}
               className="rounded-xl bg-[#4B3932] px-5 py-2.5 font-medium text-white transition hover:bg-[#5A463E] disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {changePasswordMutation.isPending
-                ? "Changing..."
-                : "Change Password"}
+              {changePasswordMutation.isPending ? "Changing..." : "Change Password"}
             </button>
           </div>
         </form>

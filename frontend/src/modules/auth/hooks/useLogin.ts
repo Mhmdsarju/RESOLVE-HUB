@@ -15,9 +15,7 @@ interface ErrorResponse {
 export function useLogin() {
   const setUser = useAuthStore((state) => state.setUser);
 
-  const setAccessToken = useAuthStore(
-    (state) => state.setAccessToken,
-  );
+  const setAccessToken = useAuthStore((state) => state.setAccessToken,);
 
   return useMutation<LoginResponse, AxiosError<ErrorResponse>, LoginDto>({
     mutationFn: login,
@@ -30,10 +28,7 @@ export function useLogin() {
     },
 
     onError: (error) => {
-      const message =
-        error.response?.data?.message ??
-        "Login failed";
-
+      const message = error.response?.data?.message ?? "Login failed";
       toast.error(message);
     },
   });

@@ -4,6 +4,8 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+// npx prisma studio
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,20 +15,66 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model Organization {
-  id          String   @id @default(uuid()) @db.Uuid
-  name        String   
+  id          String             @id @default(uuid()) @db.Uuid
+  name        String
   industry    String?
   companySize String?
-  status      OrganizationStatus @default(ACTIVE)
+  website     String?
+  description String?
+  phone       String?
+  country     String?
+  state       String?
+  city        String?
+  address     String?
+  status      OrganizationStatus @default(PENDING_PROFILE)
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  users       User[]
+  users User[]
+
+  teams           Team[]
+  teamInvitations TeamInvitation[]
+
+  incidents     Incident[]
+  verifications OrganizationVerification[]
+
+  monitoringProjects MonitoringProject[]
+  integrations       Integration[]
+  alertRoutingRules  AlertRoutingRule[]
 
   @@map("organizations")
+}
+
+model OrganizationVerification {
+  id             String  @id @default(cuid())
+  organizationId String  @db.Uuid
+  reviewedBy     String? @db.Uuid
+
+  status          OrganizationVerificationStatus
+  rejectionReason String?
+
+  submittedAt DateTime?
+  reviewedAt  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  reviewer User? @relation("OrganizationVerificationReviewer", fields: [reviewedBy], references: [id])
+
+  @@index([organizationId])
+  @@index([reviewedBy])
+  @@index([status])
+  @@map("organization_verifications")
+}
+
+enum OrganizationVerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 enum UserRole {
@@ -36,31 +84,406 @@ enum UserRole {
 }
 
 model User {
-  id             String   @id @default(uuid()) @db.Uuid
+  id String @id @default(uuid()) @db.Uuid
 
-  organizationId String   @db.Uuid
+  organizationId String?   @db.Uuid
   role           UserRole @default(ENGINEER)
 
-  fullName       String
-  email          String   @unique
-  passwordHash   String
+  fullName     String
+  email        String @unique
+  passwordHash String
 
-  designation    String?
-  department     String?
+  designation String?
+  department  String?
 
-  isActive       Boolean  @default(true)
+  isActive Boolean @default(true)
 
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  organization   Organization @relation(fields: [organizationId], references: [id])
+  organization                    Organization?               @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationVerificationReviews OrganizationVerification[] @relation("OrganizationVerificationReviewer")
+
+  createdTeams       Team[]           @relation("CreatedTeams")
+  teamMemberships    TeamMember[]
+  createdInvitations TeamInvitation[] @relation("CreatedInvitations")
+
+  createdIncidents Incident[] @relation("IncidentCreator")
+
+  assignedTasks Task[] @relation("UserAssignedTasks")
+
+  createdMonitoringProjects MonitoringProject[]
+  createdAlertRoutingRules  AlertRoutingRule[]  @relation("CreatedAlertRoutingRules")
 
   @@index([organizationId])
-
   @@map("users")
 }
 
 enum OrganizationStatus {
+  PENDING_PROFILE
+  PENDING_VERIFICATION
   ACTIVE
-  INACTIVE
+  REJECTED
+  SUSPENDED
+}
+
+model Team {
+  id String @id @default(cuid())
+
+  organizationId String @db.Uuid
+  createdBy      String @db.Uuid
+
+  name String
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  creator      User         @relation("CreatedTeams", fields: [createdBy], references: [id])
+
+  members     TeamMember[]
+  invitations TeamInvitation[]
+
+  incidents         Incident[]
+  alertRoutingRules AlertRoutingRule[]
+
+  @@unique([organizationId, name])
+  @@index([organizationId])
+  @@index([createdBy])
+  @@map("teams")
+}
+
+model TeamMember {
+  id String @id @default(cuid())
+
+  teamId String
+  userId String @db.Uuid
+
+  role TeamRole @default(MEMBER)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, userId])
+  @@index([teamId])
+  @@index([userId])
+  @@map("team_members")
+}
+
+model TeamInvitation {
+  id String @id @default(cuid())
+
+  organizationId String @db.Uuid
+  teamId         String
+
+  invitedEmail String
+
+  role TeamRole @default(MEMBER)
+
+  token String @unique
+
+  status InvitationStatus @default(PENDING)
+
+  expiresAt DateTime
+
+  createdBy String @db.Uuid
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  team         Team         @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  creator      User         @relation("CreatedInvitations", fields: [createdBy], references: [id])
+
+  @@index([organizationId])
+  @@index([teamId])
+  @@index([invitedEmail])
+  @@map("team_invitations")
+}
+
+enum TeamRole {
+  LEAD
+  MEMBER
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  CANCELLED
+  EXPIRED
+}
+
+model Incident {
+  id          String  @id @default(cuid())
+  title       String
+  description String?
+
+  severity IncidentSeverity
+  priority IncidentPriority
+  status   IncidentStatus
+  type     IncidentType
+
+  organizationId     String  @db.Uuid
+  createdBy          String? @db.Uuid
+  assignedTeamId     String?
+  monitoringProjectId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  creator      User?        @relation("IncidentCreator", fields: [createdBy], references: [id])
+
+  assignedTeam Team? @relation(fields: [assignedTeamId], references: [id])
+
+  monitoringProject MonitoringProject @relation(    fields: [monitoringProjectId],    references: [id]  )
+
+  tasks  Task[]
+  alerts Alert[]
+
+  @@index([organizationId])
+  @@index([status])
+  @@index([priority])
+  @@index([assignedTeamId])
+  @@index([monitoringProjectId])
+
+  @@map("incidents")
+}
+
+enum IncidentSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum IncidentPriority {
+  P1
+  P2
+  P3
+  P4
+}
+
+enum IncidentStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum IncidentType {
+  MANUAL
+  AUTOMATED
+}
+
+model Task {
+  id String @id @default(cuid())
+
+  title       String
+  description String?
+
+  incidentId String
+  assignedTo String? @db.Uuid
+
+  type     TaskType     @default(MANUAL)
+  status   TaskStatus   @default(TODO)
+  priority TaskPriority @default(MEDIUM)
+
+  dueDate DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  incident Incident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  assignee User?    @relation("UserAssignedTasks", fields: [assignedTo], references: [id])
+
+  @@index([incidentId])
+  @@index([assignedTo])
+  @@index([status])
+  @@index([type])
+  @@map("tasks")
+}
+
+enum TaskType {
+  MANUAL
+  AUTOMATIC
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+model MonitoringProject {
+  id             String  @id @default(cuid())
+  name           String
+  description    String?
+  organizationId String  @db.Uuid
+  createdBy      String  @db.Uuid
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  creator      User         @relation(fields: [createdBy], references: [id])
+
+  alertRules        AlertRule[]
+  integrations      Integration[]
+  alerts            Alert[]
+  alertRoutingRules AlertRoutingRule[]
+
+  incidents Incident[]
+
+  @@unique([organizationId, name])
+  @@index([organizationId])
+  @@map("monitoring_projects")
+}
+
+model Integration {
+  id                  String @id @default(cuid())
+  monitoringProjectId String
+  organizationId      String @db.Uuid
+
+  type   IntegrationType
+  name   String
+  config Json
+
+  createdAt DateTime @default(now())
+
+  monitoringProject MonitoringProject @relation(fields: [monitoringProjectId], references: [id], onDelete: Cascade)
+  organization      Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  alerts Alert[]
+
+  isActive Boolean @default(true)
+
+  @@index([monitoringProjectId])
+  @@index([organizationId])
+  @@map("integrations")
+}
+
+model AlertRule {
+  id                  String @id @default(cuid())
+  monitoringProjectId String
+  organizationId      String @db.Uuid
+
+  name      String
+  metric    String
+  operator  AlertOperator
+  threshold Float
+  severity  IncidentSeverity
+  priority  IncidentPriority
+
+  autoCreateIncident Boolean @default(true)
+
+  isPredefined Boolean @default(false)
+  isActive     Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  monitoringProject MonitoringProject @relation(fields: [monitoringProjectId], references: [id], onDelete: Cascade)
+
+  alertRoutingRules AlertRoutingRule[]
+  alerts            Alert[]
+
+  @@index([monitoringProjectId])
+  @@index([organizationId])
+  @@index([monitoringProjectId, isActive])
+  @@map("alert_rules")
+}
+
+model Alert {
+  id                  String      @id @default(cuid())
+  organizationId      String      @db.Uuid
+  monitoringProjectId String
+  integrationId       String?
+  alertRuleId         String?
+  createdBy           String?
+  source              AlertSource
+
+  title      String
+  message    String?
+  status     AlertStatus
+  payload    Json
+  incidentId String?
+  createdAt  DateTime    @default(now())
+
+  monitoringProject MonitoringProject @relation(fields: [monitoringProjectId], references: [id], onDelete: Cascade)
+  integration       Integration?      @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+  alertRule         AlertRule?        @relation(fields: [alertRuleId], references: [id], onDelete: SetNull)
+  incident          Incident?         @relation(fields: [incidentId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId])
+  @@index([monitoringProjectId])
+  @@index([integrationId])
+  @@index([alertRuleId])
+  @@index([incidentId])
+  @@index([monitoringProjectId, status])
+  @@map("alerts")
+}
+
+enum AlertSource {
+  MANUAL
+  AUTOMATIC
+}
+
+enum IntegrationType {
+  PROMETHEUS
+  GRAFANA
+  WEBHOOK
+}
+
+enum AlertStatus {
+  FIRING
+  RESOLVED
+}
+
+enum AlertOperator {
+  GT // >
+  LT // <
+  GTE // >=
+  LTE // <=
+  EQ // ==
+}
+
+model AlertRoutingRule {
+  id                  String @id @default(cuid())
+  organizationId      String @db.Uuid
+  monitoringProjectId String
+  alertRuleId         String
+  teamId              String
+  createdBy           String @db.Uuid
+
+  name     String
+  priority Int     @default(100)
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  organization      Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  monitoringProject MonitoringProject @relation(fields: [monitoringProjectId], references: [id], onDelete: Cascade)
+  alertRule         AlertRule         @relation(fields: [alertRuleId], references: [id], onDelete: Cascade)
+  team              Team              @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  creator           User              @relation("CreatedAlertRoutingRules", fields: [createdBy], references: [id])
+
+  @@index([organizationId])
+  @@index([monitoringProjectId])
+  @@index([alertRuleId])
+  @@index([teamId])
+  @@index([createdBy])
+  @@index([monitoringProjectId, isActive, priority])
+  @@map("alert_routing_rules")
 }

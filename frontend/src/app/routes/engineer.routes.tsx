@@ -1,3 +1,36 @@
 import type { RouteObject } from "react-router-dom";
 
-export const engineerRoutes: RouteObject[] = [];
+import ProtectedGuard from "@/shared/guards/ProtectedRoute";
+
+import DashboardLayout from "@/modules/dashboard/layout/DashboardLayout";
+import DashboardPage from "@/modules/dashboard/pages/DashboardPage";
+
+import EngineerTasksPage from "@/modules/task-management/pages/EngineerTasksPage";
+import SettingsPage from "@/modules/user/pages/SettingsPage";
+
+export const engineerRoutes: RouteObject[] = [
+  {
+    element: <ProtectedGuard />,
+    children: [
+      {
+        element: <DashboardLayout />,
+        children: [
+          {
+            path: "/dashboard",
+            element: <DashboardPage />,
+          },
+
+          {
+            path: "/my-tasks",
+            element: <EngineerTasksPage />,
+          },
+
+          {
+            path: "/profile",
+            element: <SettingsPage />,
+          },
+        ],
+      },
+    ],
+  },
+];

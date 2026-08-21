@@ -9,5 +9,12 @@ export const ErrorMessages = {
   SIGNUP_SESSION_EXPIRED: "Signup session expired. Please register again.",
   REFRESH_TOKEN_NOT_FOUND: "Refresh token not found",
   INVALID_EMAIL_OR_PASSWORD: "Invalid email or password",
+  TEAM_NOT_FOUND:"team not found",
+  USER_NOT_IN_ORGANIZATION: "User does not belong to this organization",
+  INVITATION_ALREADY_EXISTS:"Invitation already exists",
+  USER_ALREADY_IN_TEAM:"User already exists in team",
+  INVITATION_EXPIRED:"Invitation expired",
+  INVITATION_ALREADY_ACCEPTED : "Invitation has already been accepted",
+  FORBIDDEN:"You do not have permission to perform this action"
 } as const;
 

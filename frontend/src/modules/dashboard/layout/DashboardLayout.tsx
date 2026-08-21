@@ -5,21 +5,17 @@ import TopNavbar from "../components/navbar/TopNavbar";
 
 export default function DashboardLayout() {
   return (
-    <div className="flex min-h-screen bg-[#FAF6F0]">
-      {/* Sidebar */}
+    <div className="flex h-screen overflow-hidden bg-[#FAF6F0]">
+      <aside className="h-screen shrink-0">
+        <Sidebar />
+      </aside>
 
-      <Sidebar />
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+        <div className="shrink-0">
+          <TopNavbar />
+        </div>
 
-      {/* Main Content */}
-
-      <div className="flex flex-1 flex-col">
-        {/* Navbar */}
-
-        <TopNavbar />
-
-        {/* Page Content */}
-
-        <main className="flex-1 overflow-y-auto p-8">
+        <main className="flex-1 overflow-y-auto p-6 sm:p-8">
           <Outlet />
         </main>
       </div>
