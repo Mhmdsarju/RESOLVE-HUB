@@ -1,8 +1,4 @@
-import { inject, injectable } from "inversify";
 import { NextFunction, Request, Response } from "express";
-
-import { TYPES } from "../../../../config/types";
-
 import { AppError } from "../../../../shared/errors/AppError";
 import { ErrorMessages } from "../../../../shared/constant/ErrorMessages";
 import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
@@ -17,18 +13,12 @@ import { UpdateTeamDto } from "../../application/dto/updateTeamDto";
 import { IUpdateTeamUseCase } from "../../domain/interfaces/use-case/IUpdateTeamUseCase";
 import { IDeleteTeamUseCase } from "../../domain/interfaces/use-case/IDeleteTeamUseCase";
 
-@injectable()
 export class TeamController {
     constructor(
-        @inject(TYPES.CreateTeamUseCase)
         private readonly createTeamUseCase: ICreateTeamUseCase,
-        @inject(TYPES.GetTeamUseCase)
         private readonly getTeamUseCase: IGetTeamUseCase,
-        @inject(TYPES.GetTeamsUseCase)
         private readonly getTeamsUseCase: IGetTeamsUseCase,
-        @inject(TYPES.UpdateTeamUseCase)
         private readonly updateTeamUseCase: IUpdateTeamUseCase,
-        @inject(TYPES.DeleteTeamUseCase)
         private readonly deleteTeamUseCase: IDeleteTeamUseCase
     ) { }
 

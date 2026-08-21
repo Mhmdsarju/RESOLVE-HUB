@@ -1,15 +1,10 @@
-import { inject, injectable } from "inversify";
-import { TYPES } from "@/config/types";
-
 import { IGetIncidentByIdUseCase } from "../../domain/interfaces/use-cases/IGetIncidentByIdUseCase"; 
 import { IIncidentRepository } from "../../domain/interfaces/IIncidentRepository";
 import { AppError } from "@/shared/errors/AppError";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
 
-@injectable()
 export class GetIncidentByIdUseCase implements IGetIncidentByIdUseCase {
   constructor(
-    @inject(TYPES.IncidentRepository)
     private readonly incidentRepository: IIncidentRepository
   ) {}
 

@@ -1,17 +1,11 @@
-import { inject, injectable } from "inversify";
-
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { User } from "../../domain/entities/User";
-
-import { TYPES } from "@/config/types";
 import { AppError } from "@/shared/errors/AppError";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
 import { IGetMeUseCase } from "../../domain/interfaces/use-cases/IGetMeUseCase";
 
-@injectable()
 export class GetMeUseCase implements IGetMeUseCase {
     constructor(
-        @inject(TYPES.UserRepository)
         private readonly userRepository: IUserRepository,
     ) { }
 

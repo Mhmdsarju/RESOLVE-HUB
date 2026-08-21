@@ -1,11 +1,6 @@
-import { inject, injectable } from "inversify";
 import { NextFunction, Request, Response } from "express";
-
-import { TYPES } from "@/config/types";
 import { ResponseHandler } from "@/shared/response/response-handler";
-
 import { BaseController } from "@/shared/base/controllers/BaseController";
-
 import { CreateAlertRuleDTO } from "../../application/dto/createAlertRuleDto";
 import { GetAlertRulesDTO } from "../../application/dto/getAlertRulesDto";
 import { UpdateAlertRuleDTO } from "../../application/dto/updateAlertRuleDto";
@@ -19,28 +14,14 @@ import { IDeleteAlertRuleUseCase } from "../../domain/interfaces/use-case/IDelet
 import { IGetDefaultAlertRulesUseCase } from "../../domain/interfaces/use-case/IGetDefaultAlertRulesUseCase";
 import { IApplyDefaultAlertRuleUseCase } from "../../domain/interfaces/use-case/IApplyDefaultAlertRuleUseCase";
 
-@injectable()
 export class AlertRuleController extends BaseController {
     constructor(
-        @inject(TYPES.CreateAlertRuleUseCase)
         private readonly createAlertRuleUseCase: ICreateAlertRuleUseCase,
-
-        @inject(TYPES.GetAlertRulesUseCase)
         private readonly getAlertRulesUseCase: IGetAlertRulesUseCase,
-
-        @inject(TYPES.GetAlertRuleByIdUseCase)
         private readonly getAlertRuleByIdUseCase: IGetAlertRuleByIdUseCase,
-
-        @inject(TYPES.UpdateAlertRuleUseCase)
         private readonly updateAlertRuleUseCase: IUpdateAlertRuleUseCase,
-
-        @inject(TYPES.DeleteAlertRuleUseCase)
         private readonly deleteAlertRuleUseCase: IDeleteAlertRuleUseCase,
-
-        @inject(TYPES.GetDefaultAlertRulesUseCase)
         private readonly getDefaultAlertRulesUseCase: IGetDefaultAlertRulesUseCase,
-
-        @inject(TYPES.ApplyDefaultAlertRuleUseCase)
         private readonly applyDefaultAlertRuleUseCase: IApplyDefaultAlertRuleUseCase
     ) {
         super();

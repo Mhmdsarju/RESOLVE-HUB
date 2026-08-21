@@ -1,21 +1,13 @@
-import { inject, injectable } from "inversify";
-
-import { TYPES } from "@/config/types";
-
 import { AppError } from "@/shared/errors/AppError";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
-
 import { AlertRoutingRule } from "../../domain/entities/alertRoutingRule.entity";
 import { IAlertRoutingRuleRepository } from "../../domain/interfaces/IAlertRoutingRuleRepository";
 import { IUpdateAlertRoutingRuleUseCase } from "../../domain/interfaces/use-case/IUpdateAlertRoutingRuleUseCase";
 
 import { UpdateAlertRoutingRuleDto } from "../dto/UpdateAlertRoutingRuleDto";
 
-@injectable()
-export class UpdateAlertRoutingRuleUseCase
-    implements IUpdateAlertRoutingRuleUseCase {
+export class UpdateAlertRoutingRuleUseCase    implements IUpdateAlertRoutingRuleUseCase {
     constructor(
-        @inject(TYPES.AlertRoutingRuleRepository)
         private readonly alertRoutingRuleRepository: IAlertRoutingRuleRepository,
     ) { }
 

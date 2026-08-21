@@ -1,69 +1,120 @@
 import { Container } from "inversify";
 import { TYPES } from "../types";
 import { TeamController } from "@/modules/team-management/presentation/controllers/TeamController";
-import { ICreateTeamUseCase } from "@/modules/team-management/domain/interfaces/use-case/ICreateTeamUseCase";
 import { CreateTeamUseCase } from "@/modules/team-management/application/use-cases/CreateTeamUseCase";
 import { ITeamRepository } from "@/modules/team-management/domain/interfaces/ITeamRepository";
-import { PrismaTeamRepository } from "@/modules/team-management/infrastructure/repositories/PrismaTeamRepository";
-import { IGetTeamsUseCase } from "@/modules/team-management/domain/interfaces/use-case/IGetTeamsUseCase";
 import { GetTeamsUseCase } from "@/modules/team-management/application/use-cases/GetTeamsUseCase";
-import { IGetTeamUseCase } from "@/modules/team-management/domain/interfaces/use-case/IGetTeamUseCase";
 import { GetTeamUseCase } from "@/modules/team-management/application/use-cases/GetTeamUseCase";
-import { IUpdateTeamUseCase } from "@/modules/team-management/domain/interfaces/use-case/IUpdateTeamUseCase";
 import { UpdateTeamUseCase } from "@/modules/team-management/application/use-cases/UpdateTeamUseCase";
-import { IDeleteTeamUseCase } from "@/modules/team-management/domain/interfaces/use-case/IDeleteTeamUseCase";
 import { DeleteTeamUseCase } from "@/modules/team-management/application/use-cases/DeleteTeamUseCase";
 import { ITeamMemberRepository } from "@/modules/team-management/domain/interfaces/ITeamMemberRepository";
-import { PrismaTeamMemberRepository } from "@/modules/team-management/infrastructure/repositories/PrismaTeamMemberRepository";
-import { IAddTeamMemberUseCase } from "@/modules/team-management/domain/interfaces/use-case/IAddTeamMemberUseCase";
 import { AddTeamMemberUseCase } from "@/modules/team-management/application/use-cases/AddTeamMemberUseCase";
 import { TeamMemberController } from "@/modules/team-management/presentation/controllers/TeamMemberController";
-import { IGetTeamMembersUseCase } from "@/modules/team-management/domain/interfaces/use-case/IGetTeamMembersUseCase";
 import { GetTeamMembersUseCase } from "@/modules/team-management/application/use-cases/GetTeamMembersUseCase";
-import { IUpdateTeamMemberRoleUseCase } from "@/modules/team-management/domain/interfaces/use-case/IUpdateTeamMemberRoleUseCase";
 import { UpdateTeamMemberRoleUseCase } from "@/modules/team-management/application/use-cases/UpdateTeamMemberRoleUseCase";
-import { IRemoveTeamMemberUseCase } from "@/modules/team-management/domain/interfaces/use-case/IRemoveTeamMemberUseCase";
 import { RemoveTeamMemberUseCase } from "@/modules/team-management/application/use-cases/RemoveTeamMemberUseCase";
 import { ITeamInvitationRepository } from "@/modules/team-management/domain/interfaces/ITeamInvitationRepository";
-import { PrismaTeamInvitationRepository } from "@/modules/team-management/infrastructure/repositories/PrismaTeamInvitationRepository";
-import { ICreateTeamInvitationUseCase } from "@/modules/team-management/domain/interfaces/use-case/ICreateTeamInvitationUseCase";
 import { CreateTeamInvitationUseCase } from "@/modules/team-management/application/use-cases/CreateTeamInvitationUseCase";
 import { TeamInvitationController } from "@/modules/team-management/presentation/controllers/TeamInvitationController";
-import { IAcceptTeamInvitationUseCase } from "@/modules/team-management/domain/interfaces/use-case/IAcceptTeamInvitationUseCase";
 import { AcceptTeamInvitationUseCase } from "@/modules/team-management/application/use-cases/AcceptTeamInvitationUseCase";
 import { GetTeamInvitationUseCase } from "@/modules/team-management/application/use-cases/GetTeamInvitationsUseCase";
-import { IGetTeamInvitationsUseCase } from "@/modules/team-management/domain/interfaces/use-case/IGetTeamInvitationsUseCase";
-import { ICancelTeamInvitationUseCase } from "@/modules/team-management/domain/interfaces/use-case/ICancelTeamInvitationUseCase";
 import { CancelTeamInvitationUseCase } from "@/modules/team-management/application/use-cases/CancelTeamInvitationUseCase";
-import { IGetMyTeamsUseCase } from "@/modules/team-management/domain/interfaces/use-case/IGetMyTeamsUseCase";
 import { GetMyTeamsUseCase } from "@/modules/team-management/application/use-cases/GetMyTeamsUseCase";
+import { IUserRepository } from "@/modules/auth/domain/repositories/IUserRepository";
+import { IPasswordHasher } from "@/modules/auth/domain/interfaces/IPasswordHasher";
+import { ITokenService } from "@/modules/auth/domain/interfaces/ITokenService";
+import { IEmailService } from "@/modules/auth/domain/interfaces/IEmailService";
+import { createTeamRoutes } from "@/modules/team-management/presentation/routes/team.routes";
+import { createTeamMemberRoutes } from "@/modules/team-management/presentation/routes/teamMember.routes";
+import { createTeamInvitationRoutes } from "@/modules/team-management/presentation/routes/teamInvitation.routes";
 
-export function bindTeam(container:Container){
-
-    container.bind<TeamController>(TYPES.TeamController).to(TeamController).inSingletonScope();
-    container.bind<TeamMemberController>(TYPES.TeamMemberController).to(TeamMemberController);
-    container.bind<TeamInvitationController>(TYPES.TeamInvitationController).to(TeamInvitationController);
-
-    container.bind<ITeamRepository>(TYPES.TeamRepository).to(PrismaTeamRepository).inSingletonScope();
-    container.bind<ITeamMemberRepository>(TYPES.TeamMemberRepository).to(PrismaTeamMemberRepository).inSingletonScope();
-    container.bind<ITeamInvitationRepository>(TYPES.TeamInvitationRepository).to(PrismaTeamInvitationRepository).inSingletonScope()
+export function bindTeam(container: Container) {
     
-    container.bind<ICreateTeamUseCase>(TYPES.CreateTeamUseCase).to(CreateTeamUseCase);
-    container.bind<IGetTeamsUseCase>(TYPES.GetTeamsUseCase).to(GetTeamsUseCase);
-    container.bind<IGetTeamUseCase>(TYPES.GetTeamUseCase).to(GetTeamUseCase);
-    container.bind<IUpdateTeamUseCase>(TYPES.UpdateTeamUseCase).to(UpdateTeamUseCase);
-    container.bind<IDeleteTeamUseCase>(TYPES.DeleteTeamUseCase).to(DeleteTeamUseCase)
+    const teamRepository = container.get<ITeamRepository>(TYPES.TeamRepository);
+    const teamMemberRepository = container.get<ITeamMemberRepository>(TYPES.TeamMemberRepository);
+    const teamInvitationRepository = container.get<ITeamInvitationRepository>(TYPES.TeamInvitationRepository,);
+    const userRepository = container.get<IUserRepository>(TYPES.UserRepository);
+    const passwordHasher = container.get<IPasswordHasher>(TYPES.PasswordHasher);
+    const tokenService = container.get<ITokenService>(TYPES.TokenService);
+    const emailService = container.get<IEmailService>(TYPES.EmailService);
 
-    //teamMember
+    const acceptTeamInvitationUseCase = new AcceptTeamInvitationUseCase(
+        teamInvitationRepository,
+        teamMemberRepository,
+        userRepository,
+        passwordHasher,
+        tokenService,
+    );
 
-    container.bind<IAddTeamMemberUseCase>(TYPES.AddTeamMemberUseCase).to(AddTeamMemberUseCase);
-    container.bind<IGetTeamMembersUseCase>(TYPES.GetTeamMembersUseCase).to(GetTeamMembersUseCase);
-    container.bind<IUpdateTeamMemberRoleUseCase>(TYPES.UpdateTeamMemberRoleUseCase).to(UpdateTeamMemberRoleUseCase);
-    container.bind<IRemoveTeamMemberUseCase>(TYPES.RemoveTeamMemberUseCase).to(RemoveTeamMemberUseCase);
-    container.bind<IGetMyTeamsUseCase>(TYPES.GetMyTeamsUseCase).to(GetMyTeamsUseCase);
+    const addTeamMemberUseCase = new AddTeamMemberUseCase(
+        teamRepository,
+        teamMemberRepository,
+        userRepository,
+    );
 
-    container.bind<ICreateTeamInvitationUseCase>(TYPES.CreateTeamInvitationUseCase).to(CreateTeamInvitationUseCase);
-    container.bind<IAcceptTeamInvitationUseCase>(TYPES.AcceptTeamInvitationUseCase).to(AcceptTeamInvitationUseCase);
-    container.bind<ICancelTeamInvitationUseCase>(TYPES.CancelTeamInvitationUseCase).to(CancelTeamInvitationUseCase);
-    container.bind<IGetTeamInvitationsUseCase>(TYPES.GetTeamInvitationsUseCase).to(GetTeamInvitationUseCase);
+    const cancelTeamInvitationUseCase = new CancelTeamInvitationUseCase(
+        teamInvitationRepository,
+    );
+
+    const createTeamInvitationUseCase = new CreateTeamInvitationUseCase(
+        teamInvitationRepository,
+        teamRepository,
+        teamMemberRepository,
+        userRepository,
+        emailService,
+    );
+
+    const createTeamUseCase = new CreateTeamUseCase(teamRepository);
+
+    const deleteTeamUseCase = new DeleteTeamUseCase(teamRepository);
+
+    const getMyTeamsUseCase = new GetMyTeamsUseCase(teamMemberRepository);
+
+    const getTeamInvitationUseCase = new GetTeamInvitationUseCase(teamInvitationRepository);
+
+    const getTeamMembersUseCase = new GetTeamMembersUseCase(teamMemberRepository);
+
+    const getTeamsUseCase = new GetTeamsUseCase(teamRepository);
+
+    const getTeamUseCase = new GetTeamUseCase(teamRepository);
+
+    const removeTeamMemberUseCase = new RemoveTeamMemberUseCase(teamMemberRepository);
+
+    const updateTeamMemberRoleUseCase = new UpdateTeamMemberRoleUseCase(teamMemberRepository);
+
+    const updateTeamUseCase = new UpdateTeamUseCase(teamRepository);
+
+    const teamController = new TeamController(
+        createTeamUseCase,
+        getTeamUseCase,
+        getTeamsUseCase,
+        updateTeamUseCase,
+        deleteTeamUseCase,
+    );
+
+    const teamInvitationController = new TeamInvitationController(
+        createTeamInvitationUseCase,
+        acceptTeamInvitationUseCase,
+        getTeamInvitationUseCase,
+        cancelTeamInvitationUseCase,
+    );
+
+    const teamMemberController = new TeamMemberController(
+        addTeamMemberUseCase,
+        getTeamMembersUseCase,
+        updateTeamMemberRoleUseCase,
+        removeTeamMemberUseCase,
+        getMyTeamsUseCase,
+    );
+
+    const teamRouter = createTeamRoutes(teamController);
+    const teamMemberRouter = createTeamMemberRoutes(teamMemberController);
+    const teamInvitationRouter = createTeamInvitationRoutes(teamInvitationController);
+
+    return {
+        teamRouter,
+        teamMemberRouter,
+        teamInvitationRouter,
+    }
+
 }

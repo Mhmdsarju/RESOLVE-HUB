@@ -1,19 +1,14 @@
 import { ChangePasswordDto } from "../dto/ChangePasswordDto";
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { IPasswordHasher } from "../../domain/interfaces/IPasswordHasher";
-import { injectable, inject } from "inversify";
-import { TYPES } from "../../../../config/types";
 import { IChangePasswordUseCase } from "../../domain/interfaces/use-cases/IChangePasswordUsecase";
 import { AppError } from "../../../../shared/errors/AppError";
 import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
 import { ErrorMessages } from "../../../../shared/constant/ErrorMessages";
 
-@injectable()
 export class ChangePasswordUseCase implements IChangePasswordUseCase {
   constructor(
-    @inject(TYPES.UserRepository)
     private readonly userRepository: IUserRepository,
-    @inject(TYPES.PasswordHasher)
     private readonly passwordHasher: IPasswordHasher
   ) { }
 

@@ -1,7 +1,3 @@
-import { inject, injectable } from "inversify";
-
-import { TYPES } from "@/config/types";
-
 import { AppError } from "@/shared/errors/AppError";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
 
@@ -9,11 +5,8 @@ import { AlertRoutingRule } from "../../domain/entities/alertRoutingRule.entity"
 import { IAlertRoutingRuleRepository } from "../../domain/interfaces/IAlertRoutingRuleRepository";
 import { IGetAlertRoutingRulesUseCase } from "../../domain/interfaces/use-case/IGetAlertRoutingRulesUseCase";
 
-@injectable()
-export class GetAlertRoutingRulesUseCase
-  implements IGetAlertRoutingRulesUseCase {
+export class GetAlertRoutingRulesUseCase  implements IGetAlertRoutingRulesUseCase {
   constructor(
-    @inject(TYPES.AlertRoutingRuleRepository)
     private readonly alertRoutingRuleRepository: IAlertRoutingRuleRepository,
   ) { }
 

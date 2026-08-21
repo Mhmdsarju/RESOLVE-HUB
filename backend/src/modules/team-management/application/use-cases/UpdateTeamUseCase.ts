@@ -1,5 +1,3 @@
-import { inject, injectable } from "inversify";
-import { TYPES } from "@/config/types";
 import { AppError } from "@/shared/errors/AppError";
 import { ErrorMessages } from "@/shared/constant/ErrorMessages";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
@@ -8,10 +6,8 @@ import { ITeamRepository } from "../../domain/interfaces/ITeamRepository";
 import { IUpdateTeamUseCase } from "../../domain/interfaces/use-case/IUpdateTeamUseCase";
 import { UpdateTeamDto } from "../dto/updateTeamDto";
 
-@injectable()
 export class UpdateTeamUseCase implements IUpdateTeamUseCase {
     constructor(
-        @inject(TYPES.TeamRepository)
         private readonly teamRepository: ITeamRepository
     ) { }
 

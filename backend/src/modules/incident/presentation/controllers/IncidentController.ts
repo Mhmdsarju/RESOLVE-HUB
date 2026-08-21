@@ -1,7 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { inject, injectable } from "inversify";
 
-import { TYPES } from "@/config/types";
 import { BaseController } from "@/shared/base/controllers/BaseController";
 import { ResponseHandler } from "@/shared/response/response-handler";
 
@@ -17,20 +15,13 @@ import { Priority } from "../../domain/enums/priority.enum";
 import { Severity } from "../../domain/enums/severity.enum";
 import { IGetIncidentStatsUseCase } from "../../domain/interfaces/use-cases/IGetIncidentStatsUseCase";
 
-@injectable()
 export class IncidentController extends BaseController {
     constructor(
-        @inject(TYPES.CreateIncidentUseCase)
         private readonly createIncidentUseCase: ICreateIncidentUseCase,
-        @inject(TYPES.UpdateIncidentStatusUseCase)
         private readonly updateIncidentStatusUseCase: IUpdateIncidentStatusUseCase,
-        @inject(TYPES.AssignTeamUseCase)
         private readonly assignTeamUseCase: IAssignTeamUseCase,
-        @inject(TYPES.GetIncidentByIdUseCase)
         private readonly getIncidentByIdUseCase: IGetIncidentByIdUseCase,
-        @inject(TYPES.GetIncidentsUseCase)
         private readonly getIncidentsUseCase: IGetIncidentsUseCase,
-        @inject(TYPES.GetIncidentStatsUseCase)
         private readonly getIncidentStatsUseCase: IGetIncidentStatsUseCase
     ) {
         super();

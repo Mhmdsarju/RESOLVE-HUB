@@ -1,48 +1,93 @@
 import { Container } from "inversify";
 import { TYPES } from "../types";
-
-
 import { IOrganizationRepository } from "@/modules/organization/domain/repositories/IOrganizationRepository";
-import { PrismaOrganizationRepository } from "@/modules/organization/infrastructure/repositories/PrismaOrganizationRepository";
-
-import { IGetOrganizationProfileUseCase } from "@/modules/organization/domain/interfaces/IGetOrganizationProfileUseCase";
-import { GetOrganizationProfileUseCase } from "@/modules/organization/application/use-cases/GetOrganizationProfileUseCase";
-
-import { IUpdateOrganizationUseCase } from "@/modules/organization/domain/interfaces/IUpdateOrganizationUseCase";
-import { UpdateOrganizationUseCase } from "@/modules/organization/application/use-cases/UpdateOrganizationUseCase";
-import { OrganizationController } from "@/modules/organization/presentation/controllers/OrganizationController";
-import { ISubmitOrganizationVerificationUseCase } from "@/modules/organization/domain/interfaces/ISubmitOrganizationVerificationUseCase";
-import { SubmitOrganizationVerificationUseCase } from "@/modules/organization/application/use-cases/SubmitOrganizationVerificationUseCase";
-import { IApproveOrganizationVerificationUseCase } from "@/modules/organization/domain/interfaces/IApproveOrganizationVerificationUseCase";
-import { ApproveOrganizationVerificationUseCase } from "@/modules/organization/application/use-cases/ApproveOrganizationVerificationUseCase";
-import { IRejectOrganizationVerificationUseCase } from "@/modules/organization/domain/interfaces/IRejectOrganizationVerificationUseCase";
-import { RejectOrganizationVerificationUseCase } from "@/modules/organization/application/use-cases/RejectOrganizationVerificationUseCase";
-import { SuperAdminOrganizationController } from "@/modules/organization/presentation/controllers/SuperAdminOrganizationController";
+// import { OrganizationController } from "@/modules/organization/presentation/controllers/OrganizationController";
+// import { SuperAdminOrganizationController } from "@/modules/organization/presentation/controllers/SuperAdminOrganizationController";
 import { IOrganizationVerificationRepository } from "@/modules/organization/domain/repositories/IOrganizationVerificationRepository";
-import { PrismaOrganizationVerificationRepository } from "@/modules/organization/infrastructure/repositories/PrismaOrganizationVerificationRepository";
-import { IGetPendingOrganizationVerificationsUseCase } from "@/modules/organization/domain/interfaces/IGetPendingOrganizationVerificationsUseCase";
-import { GetPendingOrganizationVerificationsUseCase } from "@/modules/organization/application/use-cases/GetPendingOrganizationVerificationsUseCase";
-import { IGetOrganizationVerificationUseCase } from "@/modules/organization/domain/interfaces/IGetOrganizationVerificationUseCase";
-import { GetOrganizationVerificationUseCase } from "@/modules/organization/application/use-cases/GetOrganizationVerificationUseCase";
-import { IGetOrganizationVerificationDetailsUseCase } from "@/modules/organization/domain/interfaces/IGetOrganizationVerificationDetailsUseCase";
-import { GetOrganizationVerificationDetailsUseCase } from "@/modules/organization/application/use-cases/GetOrganizationVerificationDetailsUseCase";
 import { IOrganizationEmailService } from "@/modules/organization/domain/interfaces/IOrganizationEmailService";
-import { NodemailerOrganizationEmailService } from "@/modules/organization/infrastructure/services/NodemailerOrganizationEmailService";
+import { IUserRepository } from "@/modules/auth/domain/repositories/IUserRepository";
+import { ApproveOrganizationVerificationUseCase } from "@/modules/organization/application/use-cases/ApproveOrganizationVerificationUseCase";
+import { GetOrganizationProfileUseCase } from "@/modules/organization/application/use-cases/GetOrganizationProfileUseCase";
+import { RejectOrganizationVerificationUseCase } from "@/modules/organization/application/use-cases/RejectOrganizationVerificationUseCase";
+import { GetOrganizationVerificationUseCase } from "@/modules/organization/application/use-cases/GetOrganizationVerificationUseCase";
+import { GetOrganizationVerificationDetailsUseCase } from "@/modules/organization/application/use-cases/GetOrganizationVerificationDetailsUseCase";
+import { SubmitOrganizationVerificationUseCase } from "@/modules/organization/application/use-cases/SubmitOrganizationVerificationUseCase";
+import { UpdateOrganizationUseCase } from "@/modules/organization/application/use-cases/UpdateOrganizationUseCase";
+import { SuperAdminOrganizationController } from "@/modules/organization/presentation/controllers/SuperAdminOrganizationController";
+import { OrganizationController } from "@/modules/organization/presentation/controllers/OrganizationController";
+import { createOrganizationRoutes } from "@/modules/organization/presentation/routes/organization.routes";
+import { createSuperAdminOrganizationRoutes } from "@/modules/organization/presentation/routes/superAdminOrganization.routes";
+import { GetPendingOrganizationVerificationsUseCase } from "@/modules/organization/application/use-cases/GetPendingOrganizationVerificationsUseCase";
 
 
 export function bindOrganization(container: Container) {
 
-    container.bind<IOrganizationRepository>(TYPES.OrganizationRepository).to(PrismaOrganizationRepository).inSingletonScope();
-    container.bind<IOrganizationVerificationRepository>(TYPES.OrganizationVerificationRepository).to(PrismaOrganizationVerificationRepository).inSingletonScope();
-    container.bind<OrganizationController>(TYPES.OrganizationController).to(OrganizationController).inSingletonScope();
-    container.bind<SuperAdminOrganizationController>(TYPES.SuperAdminOrganizationController).to(SuperAdminOrganizationController);
-    container.bind<IGetOrganizationProfileUseCase>(TYPES.GetOrganizationProfileUseCase).to(GetOrganizationProfileUseCase);
-    container.bind<IUpdateOrganizationUseCase>(TYPES.UpdateOrganizationUseCase).to(UpdateOrganizationUseCase);
-    container.bind<ISubmitOrganizationVerificationUseCase>(TYPES.SubmitOrganizationVerificationUseCase).to(SubmitOrganizationVerificationUseCase);
-    container.bind<IApproveOrganizationVerificationUseCase>(TYPES.ApproveOrganizationVerificationUseCase).to(ApproveOrganizationVerificationUseCase);
-    container.bind<IRejectOrganizationVerificationUseCase>(TYPES.RejectOrganizationVerificationUseCase).to(RejectOrganizationVerificationUseCase);
-    container.bind<IGetPendingOrganizationVerificationsUseCase>(TYPES.GetPendingOrganizationVerificationsUseCase).to(GetPendingOrganizationVerificationsUseCase);
-    container.bind<IGetOrganizationVerificationUseCase>(TYPES.GetOrganizationVerificationUseCase).to(GetOrganizationVerificationUseCase);
-    container.bind<IGetOrganizationVerificationDetailsUseCase>(TYPES.GetOrganizationVerificationDetailsUseCase).to(GetOrganizationVerificationDetailsUseCase);
-    container.bind<IOrganizationEmailService>(TYPES.OrganizationEmailService).to(NodemailerOrganizationEmailService).inSingletonScope();
+
+    const organizationRepository = container.get<IOrganizationRepository>(TYPES.OrganizationRepository,);
+    const organizationVerificationRepository = container.get<IOrganizationVerificationRepository>(TYPES.OrganizationVerificationRepository,);
+    const organizationEmailService = container.get<IOrganizationEmailService>(TYPES.OrganizationEmailService,);
+    const userRepository = container.get<IUserRepository>(TYPES.UserRepository);
+
+    const approveOrganizationVerificationUseCase = new ApproveOrganizationVerificationUseCase(
+        organizationRepository,
+        organizationVerificationRepository,
+        userRepository,
+        organizationEmailService,
+    );
+
+    const getOrganizationProfileUseCase = new GetOrganizationProfileUseCase(
+        organizationRepository,
+    );
+
+    const getOrganizationVerificationDetailsUseCase = new GetOrganizationVerificationDetailsUseCase(
+        organizationVerificationRepository,
+    );
+
+    const getOrganizationVerificationUseCase = new GetOrganizationVerificationUseCase(
+        organizationVerificationRepository,
+    );
+
+    const getPendingOrganizationVerificationsUseCase = new GetPendingOrganizationVerificationsUseCase(
+        organizationVerificationRepository,
+    );
+
+    const rejectOrganizationVerificationUseCase = new RejectOrganizationVerificationUseCase(
+        organizationRepository,
+        organizationVerificationRepository,
+        userRepository,
+        organizationEmailService,
+    );
+
+    const submitOrganizationVerificationUseCase = new SubmitOrganizationVerificationUseCase(
+        organizationRepository,
+        organizationVerificationRepository,
+        userRepository,
+        organizationEmailService,
+    );
+
+    const updateOrganizationUseCase = new UpdateOrganizationUseCase(
+        organizationRepository,
+    );
+
+    const organizationController = new OrganizationController(
+        getOrganizationProfileUseCase,
+        updateOrganizationUseCase,
+        submitOrganizationVerificationUseCase,
+        getOrganizationVerificationUseCase,
+    );
+
+    const superAdminOrganizationController = new SuperAdminOrganizationController(
+        approveOrganizationVerificationUseCase,
+        rejectOrganizationVerificationUseCase,
+        getPendingOrganizationVerificationsUseCase,
+        getOrganizationVerificationDetailsUseCase,
+    );
+
+    const organizationRouter = createOrganizationRoutes(organizationController);
+    const superAdminorganizationRouter = createSuperAdminOrganizationRoutes(superAdminOrganizationController);
+
+    return {
+        organizationRouter,
+        superAdminorganizationRouter,
+    }
 }

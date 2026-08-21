@@ -1,16 +1,11 @@
-import { inject, injectable } from "inversify";
-
 import { ITaskRepository } from "../../domain/interfaces/ITaskRepository";
 import { IDeleteTaskUseCase } from "../../domain/interfaces/use-cases/IDeleteTaskUseCase";
 
 import { AppError } from "@/shared/errors/AppError";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
-import { TYPES } from "@/config/types";
 
-@injectable()
 export class DeleteTaskUseCase implements IDeleteTaskUseCase {
   constructor(
-    @inject(TYPES.TaskRepository)
     private readonly taskRepository: ITaskRepository
   ) {}
 

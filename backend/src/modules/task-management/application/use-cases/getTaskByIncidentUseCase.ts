@@ -1,20 +1,12 @@
-import { inject, injectable } from "inversify";
-
 import { ITaskRepository } from "../../domain/interfaces/ITaskRepository";
 import { IGetTasksByIncidentUseCase } from "../../domain/interfaces/use-cases/IGetTasksByIncidentUseCase";
-
 import { Task } from "../../domain/entities/task.entity";
-
 import { AppError } from "@/shared/errors/AppError";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
-import { TYPES } from "@/config/types";
-
 import { GetTasksByIncidentDto } from "../dto/getTaskDto";
-@injectable()
-export class GetTasksByIncidentUseCase implements IGetTasksByIncidentUseCase {
 
+export class GetTasksByIncidentUseCase implements IGetTasksByIncidentUseCase {
     constructor(
-        @inject(TYPES.TaskRepository)
         private readonly taskRepository: ITaskRepository
     ) { }
 

@@ -1,29 +1,16 @@
-import { inject, injectable } from "inversify";
-
 import { ITaskRepository } from "../../domain/interfaces/ITaskRepository";
 import { IUpdateTaskStatusUseCase } from "../../domain/interfaces/use-cases/IUpdateTaskStatusUseCase";
-
 import { Task } from "../../domain/entities/task.entity";
 import { TaskStatus } from "../../domain/enums/taskStatus.enum";
-
 import { AppError } from "@/shared/errors/AppError";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
-import { TYPES } from "@/config/types";
-
 import { IIncidentRepository } from "@/modules/incident/domain/interfaces/IIncidentRepository";
 import { ITeamMemberRepository } from "@/modules/team-management/domain/interfaces/ITeamMemberRepository";
 
-@injectable()
 export class UpdateTaskStatusUseCase implements IUpdateTaskStatusUseCase {
-
     constructor(
-        @inject(TYPES.TaskRepository)
         private readonly taskRepository: ITaskRepository,
-
-        @inject(TYPES.IncidentRepository)
         private readonly incidentRepository: IIncidentRepository,
-
-        @inject(TYPES.TeamMemberRepository)
         private readonly teamMemberRepository: ITeamMemberRepository,
     ) { }
 

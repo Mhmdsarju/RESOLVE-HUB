@@ -1,29 +1,15 @@
-import { inject, injectable } from "inversify";
-
-import { TYPES } from "@/config/types";
-
 import { ITaskRepository } from "../../domain/interfaces/ITaskRepository";
 import { IAssignTaskUseCase } from "../../domain/interfaces/use-cases/IAssignTaskUseCase";
-
 import { Task } from "../../domain/entities/task.entity";
-
 import { AppError } from "@/shared/errors/AppError";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
-
 import { IIncidentRepository } from "@/modules/incident/domain/interfaces/IIncidentRepository";
 import { ITeamMemberRepository } from "@/modules/team-management/domain/interfaces/ITeamMemberRepository";
 
-@injectable()
-export class AssignTaskUseCase
-    implements IAssignTaskUseCase {
+export class AssignTaskUseCase    implements IAssignTaskUseCase {
     constructor(
-        @inject(TYPES.TaskRepository)
         private readonly taskRepository: ITaskRepository,
-
-        @inject(TYPES.IncidentRepository)
         private readonly incidentRepository: IIncidentRepository,
-
-        @inject(TYPES.TeamMemberRepository)
         private readonly teamMemberRepository: ITeamMemberRepository,
     ) { }
 

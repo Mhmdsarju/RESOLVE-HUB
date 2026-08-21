@@ -1,47 +1,88 @@
 import { ITaskRepository } from "@/modules/task-management/domain/interfaces/ITaskRepository";
 import { Container } from "inversify";
 import { TYPES } from "../types";
-import { PrismaTaskRepository } from "@/modules/task-management/infrastructure/repositories/PrismaTaskRepository";
-import { ICreateTaskUseCase } from "@/modules/task-management/domain/interfaces/use-cases/ICreateTaskUseCase";
 import { CreateTaskUseCase } from "@/modules/task-management/application/use-cases/createTaskUseCase";
 import { TaskController } from "@/modules/task-management/presentation/controllers/TaskController";
-import { IGetTasksByIncidentUseCase } from "@/modules/task-management/domain/interfaces/use-cases/IGetTasksByIncidentUseCase";
 import { GetTasksByIncidentUseCase } from "@/modules/task-management/application/use-cases/getTaskByIncidentUseCase";
-// import { IUpdateIncidentStatusUseCase } from "@/modules/incident/domain/interfaces/use-cases/IUpdateIncidentStatusUseCase";
 import { UpdateTaskStatusUseCase } from "@/modules/task-management/application/use-cases/UpdateTaskStatusUseCase";
-import { IUpdateTaskStatusUseCase } from "@/modules/task-management/domain/interfaces/use-cases/IUpdateTaskStatusUseCase";
-import { IAssignTaskUseCase } from "@/modules/task-management/domain/interfaces/use-cases/IAssignTaskUseCase";
 import { AssignTaskUseCase } from "@/modules/task-management/application/use-cases/AssignTaskUseCase";
-import { IDeleteTaskUseCase } from "@/modules/task-management/domain/interfaces/use-cases/IDeleteTaskUseCase";
 import { DeleteTaskUseCase } from "@/modules/task-management/application/use-cases/DeleteTaskUseCase";
-import { IUpdateTaskUseCase } from "@/modules/task-management/domain/interfaces/use-cases/IUpdateTaskUseCase";
 import { UpdateTaskUseCase } from "@/modules/task-management/application/use-cases/UpdateTaskUseCase";
-import { IGetIncidentsUseCase } from "@/modules/incident/domain/interfaces/use-cases/IGetIncidentsUseCase";
-import { GetIncidentsUseCase } from "@/modules/incident/application/use-cases/GetIncidentsUseCase";
-import { IGetIncidentStatsUseCase } from "@/modules/incident/domain/interfaces/use-cases/IGetIncidentStatsUseCase";
-import { GetIncidentStatsUseCase } from "@/modules/incident/application/use-cases/GetIncidentStatsUseCase";
-import { IGetMyTasksUseCase } from "@/modules/task-management/domain/interfaces/use-cases/IGetMyTasksUseCase";
 import { GetMyTasksUseCase } from "@/modules/task-management/application/use-cases/GetMyTasksUseCase";
-import { IGetTeamTasksUseCase } from "@/modules/task-management/domain/interfaces/use-cases/IGetTeamTasksUseCase";
 import { GetTeamTasksUseCase } from "@/modules/task-management/application/use-cases/GetTeamTasksUseCase";
-import { ITakeTaskUseCase } from "@/modules/task-management/domain/interfaces/use-cases/ITakeTaskUseCase";
 import { TakeTaskUseCase } from "@/modules/task-management/application/use-cases/TakeTaskUseCase";
+import { IIncidentRepository } from "@/modules/incident/domain/interfaces/IIncidentRepository";
+import { ITeamMemberRepository } from "@/modules/team-management/domain/interfaces/ITeamMemberRepository";
+import { createTaskRoutes } from "@/modules/task-management/presentation/routes/task.routes";
 
 export function bindTask(container: Container) {
 
-    container.bind<ITaskRepository>(TYPES.TaskRepository).to(PrismaTaskRepository).inSingletonScope();
-    container.bind<TaskController>(TYPES.TaskController).to(TaskController).inSingletonScope();
+    const taskRepository = container.get<ITaskRepository>(TYPES.TaskRepository);
+    const incidentRepository = container.get<IIncidentRepository>(TYPES.IncidentRepository);
+    const teamMemberRepository = container.get<ITeamMemberRepository>(TYPES.TeamMemberRepository);
 
-    container.bind<ICreateTaskUseCase>(TYPES.CreateTaskUseCase).to(CreateTaskUseCase);
-    container.bind<IGetTasksByIncidentUseCase>(TYPES.GetTasksByIncidentUseCase).to(GetTasksByIncidentUseCase);
-    container.bind<IUpdateTaskStatusUseCase>(TYPES.UpdateTaskStatusUseCase).to(UpdateTaskStatusUseCase)
-    container.bind<IAssignTaskUseCase>(TYPES.AssignTaskUseCase).to(AssignTaskUseCase);
-    container.bind<IDeleteTaskUseCase>(TYPES.DeleteTaskUseCase).to(DeleteTaskUseCase);
-    container.bind<IUpdateTaskUseCase>(TYPES.UpdateTaskUseCase).to(UpdateTaskUseCase);
-    container.bind<IGetIncidentsUseCase>(TYPES.GetIncidentsUseCase).to(GetIncidentsUseCase);
-    container.bind<IGetIncidentStatsUseCase>(TYPES.GetIncidentStatsUseCase).to(GetIncidentStatsUseCase);
+    const assignTaskUseCase = new AssignTaskUseCase(
+        taskRepository,
+        incidentRepository,
+        teamMemberRepository,
+    );
 
-    container.bind<IGetMyTasksUseCase>(TYPES.GetMyTasksUseCase).to(GetMyTasksUseCase);
-    container.bind<IGetTeamTasksUseCase>(TYPES.GetTeamTasksUseCase).to(GetTeamTasksUseCase);
-    container.bind<ITakeTaskUseCase>(TYPES.TakeTaskUseCase).to(TakeTaskUseCase);
+    const createTaskUseCase = new CreateTaskUseCase(
+        taskRepository,
+        incidentRepository,
+        teamMemberRepository,
+    );
+
+    const deleteTaskUseCase = new DeleteTaskUseCase(
+        taskRepository,
+    );
+
+    const getMyTasksUseCase = new GetMyTasksUseCase(
+        taskRepository,
+    );
+
+    const getTasksByIncidentUseCase = new GetTasksByIncidentUseCase(
+        taskRepository,
+    );
+
+    const getTeamTasksUseCase = new GetTeamTasksUseCase(
+        taskRepository,
+        teamMemberRepository,
+    );
+
+    const takeTaskUseCase = new TakeTaskUseCase(
+        taskRepository,
+        incidentRepository,
+        teamMemberRepository,
+    );
+
+    const updateTaskStatusUseCase = new UpdateTaskStatusUseCase(
+        taskRepository,
+        incidentRepository,
+        teamMemberRepository,
+    );
+
+    const updateTaskUseCase = new UpdateTaskUseCase(
+        taskRepository,
+        incidentRepository,
+        teamMemberRepository,
+    );
+
+
+    const taskController = new TaskController(
+        createTaskUseCase,
+        getTasksByIncidentUseCase,
+        updateTaskStatusUseCase,
+        assignTaskUseCase,
+        deleteTaskUseCase,
+        updateTaskUseCase,
+        getMyTasksUseCase,
+        getTeamTasksUseCase,
+        takeTaskUseCase,
+    );
+
+    const taskRouter=createTaskRoutes(taskController);
+
+    return {taskRouter,createTaskUseCase};
+
 }

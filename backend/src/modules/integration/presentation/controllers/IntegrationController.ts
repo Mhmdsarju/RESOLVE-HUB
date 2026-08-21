@@ -1,8 +1,5 @@
-import { inject, injectable } from "inversify";
+
 import { NextFunction, Request, Response } from "express";
-
-import { TYPES } from "@/config/types";
-
 import { ResponseHandler } from "@/shared/response/response-handler";
 
 import { CreateIntegrationDTO } from "../../application/dto/createIntegrationDto";
@@ -14,22 +11,13 @@ import { IUpdateIntegrationUseCase } from "../../domain/interfaces/use-cases/IUp
 import { IDeleteIntegrationUseCase } from "../../domain/interfaces/use-cases/IDeleteIntegrationUseCase";
 import { UpdateIntegrationDTO } from "../../application/dto/updateIntegrationDto";
 
-@injectable()
 export class IntegrationController extends BaseController {
     constructor(
-        @inject(TYPES.CreateIntegrationUseCase)
         private readonly createIntegrationUseCase: ICreateIntegrationUseCase,
-        @inject(TYPES.getIntegrationsUseCase)
         private readonly getIntegrationsUseCase: IGetIntegrationsUseCase,
-        @inject(TYPES.GetIntegrationByIdUseCase)
         private readonly getIntegrationByIdUseCase: IGetIntegrationByIdUseCase,
-
-        @inject(TYPES.UpdateIntegrationUseCase)
         private readonly updateIntegrationUseCase: IUpdateIntegrationUseCase,
-
-        @inject(TYPES.DeleteIntegrationUseCase)
         private readonly deleteIntegrationUseCase: IDeleteIntegrationUseCase
-
     ) {
         super();
     }

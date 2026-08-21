@@ -1,24 +1,14 @@
 import { Request, Response, NextFunction } from "express";
-import { inject, injectable } from "inversify";
-
-import { TYPES } from "@/config/types";
 import { BaseController } from "@/shared/base/controllers/BaseController";
 import { ResponseHandler } from "@/shared/response/response-handler";
-
 import { IGetUsersByOrganizationUseCase } from "../../domain/interfaces/use-cases/IGetUsersByOrganizationUseCase";
 import { IGetMeUseCase } from "../../domain/interfaces/use-cases/IGetMeUseCase";
 import { IUpdateMeUseCase } from "../../domain/interfaces/use-cases/IUpdateMeUseCase";
 
-@injectable()
 export class UserController extends BaseController {
   constructor(
-    @inject(TYPES.GetUsersByOrganizationUseCase)
     private readonly getUsersByOrganizationUseCase: IGetUsersByOrganizationUseCase,
-
-    @inject(TYPES.getMeUseCase)
     private readonly getMeUseCase: IGetMeUseCase,
-
-    @inject(TYPES.updateMeUseCase)
     private readonly updateMeUseCase: IUpdateMeUseCase,
   ) {
     super();

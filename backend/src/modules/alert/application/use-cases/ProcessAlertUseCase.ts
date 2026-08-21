@@ -1,7 +1,3 @@
-import { inject, injectable } from "inversify";
-
-import { TYPES } from "@/config/types";
-
 import { Alert } from "../../domain/entities/alert.entity";
 import { AlertSource } from "../../domain/enums/alertSource.enum";
 import { AlertStatus } from "../../domain/enums/alertStatus.enum";
@@ -23,22 +19,12 @@ import { ICreateTaskUseCase } from "@/modules/task-management/domain/interfaces/
 import { TaskType } from "@/modules/task-management/domain/enums/taskType.enum";
 import { TaskPriority } from "@/modules/task-management/domain/enums/taskPriority.enum";
 
-@injectable()
 export class ProcessAlertUseCase implements IProcessAlertUseCase {
     constructor(
-        @inject(TYPES.AlertRepository)
         private readonly alertRepository: IAlertRepository,
-
-        @inject(TYPES.RouteAlertUseCase)
         private readonly routeAlertUseCase: IRouteAlertUseCase,
-
-        @inject(TYPES.CreateIncidentUseCase)
         private readonly createIncidentUseCase: ICreateIncidentUseCase,
-
-        @inject(TYPES.TeamMemberRepository)
         private readonly teamMemberRepository: ITeamMemberRepository,
-
-        @inject(TYPES.CreateTaskUseCase)
         private readonly createTaskUseCase: ICreateTaskUseCase,
     ) { }
 

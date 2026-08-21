@@ -1,7 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import { inject, injectable } from "inversify";
-
-import { TYPES } from "@/config/types";
 import { BaseController } from "@/shared/base/controllers/BaseController";
 import { ResponseHandler } from "@/shared/response/response-handler";
 
@@ -19,33 +16,16 @@ import { TaskStatus } from "../../domain/enums/taskStatus.enum";
 import { TaskPriority } from "../../domain/enums/taskPriority.enum";
 import { TaskType } from "../../domain/enums/taskType.enum";
 
-@injectable()
 export class TaskController extends BaseController {
     constructor(
-        @inject(TYPES.CreateTaskUseCase)
         private readonly createTaskUseCase: ICreateTaskUseCase,
-
-        @inject(TYPES.GetTasksByIncidentUseCase)
         private readonly getTasksByIncidentUseCase: IGetTasksByIncidentUseCase,
-
-        @inject(TYPES.UpdateTaskStatusUseCase)
         private readonly updateTaskStatusUseCase: IUpdateTaskStatusUseCase,
-
-        @inject(TYPES.AssignTaskUseCase)
         private readonly assignTaskUseCase: IAssignTaskUseCase,
-
-        @inject(TYPES.DeleteTaskUseCase)
         private readonly deleteTaskUseCase: IDeleteTaskUseCase,
-
-        @inject(TYPES.UpdateTaskUseCase)
         private readonly updateTaskUseCase: IUpdateTaskUseCase,
-
-        @inject(TYPES.GetMyTasksUseCase)
         private readonly getMyTasksUseCase: IGetMyTasksUseCase,
-
-        @inject(TYPES.GetTeamTasksUseCase)
         private readonly getTeamTasksUseCase: IGetTeamTasksUseCase,
-        @inject(TYPES.TakeTaskUseCase)
         private readonly takeTaskUseCase: ITakeTaskUseCase,
 
     ) {

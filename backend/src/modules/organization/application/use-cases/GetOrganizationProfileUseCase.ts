@@ -4,14 +4,11 @@ import { IOrganizationRepository } from "../../domain/repositories/IOrganization
 import { IGetOrganizationProfileUseCase } from "../../domain/interfaces/IGetOrganizationProfileUseCase";
 import { AppError } from "../../../../shared/errors/AppError";
 import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
-import { injectable,inject } from "inversify";
-import { TYPES } from "../../../../config/types";
+
 import { ErrorMessages } from "../../../../shared/constant/ErrorMessages";
 
-@injectable()
 export class GetOrganizationProfileUseCase implements IGetOrganizationProfileUseCase {
   constructor(
-    @inject(TYPES.OrganizationRepository)
     private readonly organizationRepository: IOrganizationRepository
   ) {}
 

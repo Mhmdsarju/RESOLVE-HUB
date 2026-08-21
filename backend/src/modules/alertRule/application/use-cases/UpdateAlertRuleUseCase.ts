@@ -1,6 +1,3 @@
-import { inject, injectable } from "inversify";
-
-import { TYPES } from "@/config/types";
 import { AppError } from "@/shared/errors/AppError";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
 
@@ -10,10 +7,8 @@ import { IUpdateAlertRuleUseCase } from "../../domain/interfaces/use-case/IUpdat
 
 import { UpdateAlertRuleDTO } from "../dto/updateAlertRuleDto";
 
-@injectable()
 export class UpdateAlertRuleUseCase implements IUpdateAlertRuleUseCase {
     constructor(
-        @inject(TYPES.AlertRuleRepository)
         private readonly alertRuleRepository: IAlertRuleRepository
     ) { }
 

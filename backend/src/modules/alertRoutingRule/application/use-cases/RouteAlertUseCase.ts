@@ -1,16 +1,9 @@
-import { inject, injectable } from "inversify";
-
-import { TYPES } from "@/config/types";
-
 import { Alert } from "@/modules/alert/domain/entities/alert.entity";
-
 import { IAlertRoutingRuleRepository } from "../../domain/interfaces/IAlertRoutingRuleRepository";
 import { IRouteAlertUseCase } from "../../domain/interfaces/use-case/IRouteAlertUseCase";
 
-@injectable()
 export class RouteAlertUseCase implements IRouteAlertUseCase {
     constructor(
-        @inject(TYPES.AlertRoutingRuleRepository)
         private readonly alertRoutingRuleRepository: IAlertRoutingRuleRepository,
     ) { }
 

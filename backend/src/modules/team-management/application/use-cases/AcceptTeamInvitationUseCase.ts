@@ -1,7 +1,3 @@
-import { inject, injectable } from "inversify";
-
-import { TYPES } from "@/config/types";
-
 import {
   IAcceptTeamInvitationUseCase,
   LoginResponseDto,
@@ -26,24 +22,13 @@ import { AcceptTeamInvitationDto } from "../dto/acceptTeamInvitationDto";
 import { User } from "@/modules/auth/domain/entities/User";
 import { UserRole } from "@/modules/auth/domain/enums/UserRole";
 
-@injectable()
-export class AcceptTeamInvitationUseCase
-  implements IAcceptTeamInvitationUseCase {
+export class AcceptTeamInvitationUseCase  implements IAcceptTeamInvitationUseCase {
 
   constructor(
-    @inject(TYPES.TeamInvitationRepository)
     private readonly invitationRepository: ITeamInvitationRepository,
-
-    @inject(TYPES.TeamMemberRepository)
     private readonly teamMemberRepository: ITeamMemberRepository,
-
-    @inject(TYPES.UserRepository)
     private readonly userRepository: IUserRepository,
-
-    @inject(TYPES.PasswordHasher)
     private readonly passwordHasher: IPasswordHasher,
-
-    @inject(TYPES.TokenService)
     private readonly tokenService: ITokenService,
   ) {}
 
@@ -140,7 +125,7 @@ export class AcceptTeamInvitationUseCase
     const accessToken =
       await this.tokenService.generateAccessToken({
         userId: user.id!,
-        organizationId: user.organizationId,
+        organizationId: user.organizationId!,
         role: user.role,
       });
 

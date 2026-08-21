@@ -1,7 +1,3 @@
-import { inject, injectable } from "inversify";
-
-import { TYPES } from "@/config/types";
-
 import { ICancelTeamInvitationUseCase } from "../../domain/interfaces/use-case/ICancelTeamInvitationUseCase";
 import { ITeamInvitationRepository } from "../../domain/interfaces/ITeamInvitationRepository";
 
@@ -11,10 +7,8 @@ import { AppError } from "@/shared/errors/AppError";
 import { ErrorMessages } from "@/shared/constant/ErrorMessages";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
 
-@injectable()
 export class CancelTeamInvitationUseCase implements ICancelTeamInvitationUseCase {
     constructor(
-        @inject(TYPES.TeamInvitationRepository)
         private readonly invitationRepository: ITeamInvitationRepository
     ) { }
 

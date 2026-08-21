@@ -1,7 +1,3 @@
-import { inject, injectable } from "inversify";
-
-import { TYPES } from "@/config/types";
-
 import { AppError } from "@/shared/errors/AppError";
 import { ErrorMessages } from "@/shared/constant/ErrorMessages";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
@@ -17,16 +13,10 @@ import { ITeamRepository } from "../../domain/interfaces/ITeamRepository";
 import { ITeamMemberRepository } from "../../domain/interfaces/ITeamMemberRepository";
 import { IAddTeamMemberUseCase } from "../../domain/interfaces/use-case/IAddTeamMemberUseCase";
 
-@injectable()
 export class AddTeamMemberUseCase implements IAddTeamMemberUseCase {
     constructor(
-        @inject(TYPES.TeamRepository)
         private readonly teamRepository: ITeamRepository,
-
-        @inject(TYPES.TeamMemberRepository)
         private readonly teamMemberRepository: ITeamMemberRepository,
-
-        @inject(TYPES.UserRepository)
         private readonly userRepository: IUserRepository,
     ) { }
 

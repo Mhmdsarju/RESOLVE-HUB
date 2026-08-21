@@ -1,22 +1,16 @@
 import { VerifyOtpDto } from "../dto/VerifyOtpDto";
-
 import { IOtpStore } from "../../domain/interfaces/IOtpStore";
 import { IResetTokenStore } from "../../domain/interfaces/IResetTokenStore";
 import { ITokenService } from "../../domain/interfaces/ITokenService";
-import { inject, injectable } from "inversify";
-import { TYPES } from "../../../../config/types";
 import { IVerifyOtpUseCase } from "../../domain/interfaces/use-cases/IVerifyOtpUseCase";
 import { AppError } from "../../../../shared/errors/AppError";
 import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
 import { ErrorMessages } from "../../../../shared/constant/ErrorMessages";
-@injectable()
+
 export class VerifyOtpUseCase implements IVerifyOtpUseCase {
   constructor(
-    @inject(TYPES.OtpStore)
     private readonly otpStore: IOtpStore,
-    @inject(TYPES.ResetTokenStore)
     private readonly resetTokenStore: IResetTokenStore,
-    @inject(TYPES.TokenService)
     private readonly tokenService: ITokenService
   ) { }
 

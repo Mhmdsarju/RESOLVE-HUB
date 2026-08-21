@@ -1,15 +1,11 @@
-import { TYPES } from "@/config/types";
 import { ErrorMessages } from "@/shared/constant/ErrorMessages";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
 import { AppError } from "@/shared/errors/AppError";
-import {inject,injectable} from "inversify";
 import { IDeleteTeamUseCase } from "../../domain/interfaces/use-case/IDeleteTeamUseCase";
 import { ITeamRepository } from "../../domain/interfaces/ITeamRepository";
 
-@injectable()
 export class DeleteTeamUseCase implements IDeleteTeamUseCase{
     constructor(
-        @inject(TYPES.TeamRepository)
         private readonly teamRepository:ITeamRepository
     ){}
 

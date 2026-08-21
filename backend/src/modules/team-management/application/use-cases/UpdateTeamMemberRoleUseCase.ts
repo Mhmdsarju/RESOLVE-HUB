@@ -1,5 +1,3 @@
-import { inject,injectable } from "inversify";
-import { TYPES } from "@/config/types";
 import { AppError } from "@/shared/errors/AppError";
 // import { ErrorMessages } from "@/shared/constant/ErrorMessages";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
@@ -9,10 +7,8 @@ import { ITeamMemberRepository } from "../../domain/interfaces/ITeamMemberReposi
 import { IUpdateTeamMemberRoleUseCase } from "../../domain/interfaces/use-case/IUpdateTeamMemberRoleUseCase";
 import { UpdateTeamMembersRoleDto } from "../dto/updateTeamMemberRoleDto";
 
-@injectable()
 export class UpdateTeamMemberRoleUseCase implements IUpdateTeamMemberRoleUseCase{
     constructor(
-        @inject(TYPES.TeamMemberRepository)
         private readonly teamMemberRepository:ITeamMemberRepository
     ){}
 

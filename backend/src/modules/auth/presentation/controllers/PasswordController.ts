@@ -1,27 +1,17 @@
 import { Request, Response, NextFunction } from "express";
-import { inject, injectable } from "inversify";
-
 import { IForgotPasswordUseCase } from "../../domain/interfaces/use-cases/IForgotPasswordUseCase";
 import { IResetPasswordUseCase } from "../../domain/interfaces/use-cases/IResetPasswordUseCase";
 import { IChangePasswordUseCase } from "../../domain/interfaces/use-cases/IChangePasswordUsecase";
-
-import { TYPES } from "../../../../config/types";
 import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
 import { AppError } from "../../../../shared/errors/AppError";
 import { ErrorMessages } from "../../../../shared/constant/ErrorMessages";
 import { SuccessMessages } from "../../../../shared/constant/SuccessMessages";
 import { ResponseHandler } from "../../../../shared/response/response-handler";
 
-@injectable()
 export class PasswordController {
     constructor(
-        @inject(TYPES.ForgotPasswordUseCase)
         private readonly forgotPasswordUseCase: IForgotPasswordUseCase,
-
-        @inject(TYPES.ResetPasswordUseCase)
         private readonly resetPasswordUseCase: IResetPasswordUseCase,
-
-        @inject(TYPES.ChangePasswordUseCase)
         private readonly changePasswordUseCase: IChangePasswordUseCase,
     ) { }
 
