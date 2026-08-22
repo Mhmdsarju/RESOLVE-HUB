@@ -12,6 +12,7 @@ export function createTaskRoutes(taskController: TaskController) {
     router.patch("/:taskId/assign", authMiddleware, taskController.assignTask.bind(taskController));
     router.delete("/:taskId", authMiddleware, taskController.deleteTask.bind(taskController));
     router.put("/:taskId", authMiddleware, taskController.updateTask.bind(taskController));
+    router.get("/:taskId",authMiddleware,taskController.getTaskById.bind(taskController));
 
     return router;
 }

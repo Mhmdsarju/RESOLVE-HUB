@@ -7,6 +7,7 @@ import DashboardPage from "@/modules/dashboard/pages/DashboardPage";
 
 import EngineerTasksPage from "@/modules/task-management/pages/EngineerTasksPage";
 import SettingsPage from "@/modules/user/pages/SettingsPage";
+import TaskDetailsPage from "@/modules/task-management/components/TaskDetailsPage";
 
 export const engineerRoutes: RouteObject[] = [
   {
@@ -23,6 +24,11 @@ export const engineerRoutes: RouteObject[] = [
           {
             path: "/my-tasks",
             element: <EngineerTasksPage />,
+          },
+
+          {
+            path:"/tasks/:id",
+            element:<TaskDetailsPage/>
           },
 
           {

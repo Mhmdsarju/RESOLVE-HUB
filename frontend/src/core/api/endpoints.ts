@@ -99,17 +99,13 @@ export const ENDPOINTS = {
   TASK: {
     BASE: "/tasks",
 
-    BY_ID: (id: string) =>
-      `/tasks/${id}`,
+    BY_ID: (id: string) => `/tasks/${id}`,
 
-    BY_INCIDENT: (incidentId: string) =>
-      `/tasks/incident/${incidentId}`,
+    BY_INCIDENT: (incidentId: string) => `/tasks/incident/${incidentId}`,
 
-    STATUS: (id: string) =>
-      `/tasks/${id}/status`,
+    STATUS: (id: string) => `/tasks/${id}/status`,
 
-    ASSIGN: (id: string) =>
-      `/tasks/${id}/assign`,
+    ASSIGN: (id: string) => `/tasks/${id}/assign`,
     MY: "/tasks/my",
   },
 

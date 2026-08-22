@@ -14,6 +14,7 @@ import { TakeTaskUseCase } from "@/modules/task-management/application/use-cases
 import { IIncidentRepository } from "@/modules/incident/domain/interfaces/IIncidentRepository";
 import { ITeamMemberRepository } from "@/modules/team-management/domain/interfaces/ITeamMemberRepository";
 import { createTaskRoutes } from "@/modules/task-management/presentation/routes/task.routes";
+import { GetTaskByIdUseCase } from "@/modules/task-management/application/use-cases/GetTaskByIdUseCase";
 
 export function bindTask(container: Container) {
 
@@ -68,6 +69,10 @@ export function bindTask(container: Container) {
         teamMemberRepository,
     );
 
+    const getTaskByIdUseCase=new GetTaskByIdUseCase(
+        taskRepository
+    );
+
 
     const taskController = new TaskController(
         createTaskUseCase,
@@ -79,6 +84,7 @@ export function bindTask(container: Container) {
         getMyTasksUseCase,
         getTeamTasksUseCase,
         takeTaskUseCase,
+        getTaskByIdUseCase,
     );
 
     const taskRouter=createTaskRoutes(taskController);

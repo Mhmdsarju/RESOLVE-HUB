@@ -12,7 +12,7 @@ import type {
 } from "../types/task.types";
 
 
-export async function getMyTasks(    params: GetTasksParams,): Promise<GetTasksResponse> {
+export async function getMyTasks(params: GetTasksParams,): Promise<GetTasksResponse> {
     const response = await api.get(
         ENDPOINTS.TASK.MY,
         {
@@ -78,4 +78,12 @@ export async function deleteTask(taskId: string,): Promise<void> {
     await api.delete(
         ENDPOINTS.TASK.BY_ID(taskId),
     );
+}
+
+export async function getTaskById(taskId: string): Promise<Task> {
+    const response = await api.get(
+        ENDPOINTS.TASK.BY_ID(taskId)
+    )
+
+    return response.data.data;
 }
