@@ -10,6 +10,7 @@ import { bindAlertRule } from "./bindings/alertRule.bindings";
 import { bindAlert } from "./bindings/alert.bindings";
 import { bindAlertRoutingRule } from "./bindings/alertRoutingRule.bindings";
 import { bindCore } from "./bindings/core.bindings";
+import { bindFile } from "./bindings/file.bindings";
 const container = new Container();
 
 bindCore(container);
@@ -28,5 +29,6 @@ export const alertRoutingRule = bindAlertRoutingRule(container);
 export const alertModule = bindAlert(container,
     alertRoutingRule.routeAlertUseCase, incidentModule.createIncidentUseCase, taskModule.createTaskUseCase);
 
+export const fileModule=bindFile(container);
 
 export default container;

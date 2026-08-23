@@ -86,7 +86,7 @@ enum UserRole {
 model User {
   id String @id @default(uuid()) @db.Uuid
 
-  organizationId String?   @db.Uuid
+  organizationId String?  @db.Uuid
   role           UserRole @default(ENGINEER)
 
   fullName     String
@@ -101,7 +101,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  organization                    Organization?               @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization                    Organization?              @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   organizationVerificationReviews OrganizationVerification[] @relation("OrganizationVerificationReviewer")
 
   createdTeams       Team[]           @relation("CreatedTeams")
@@ -227,9 +227,9 @@ model Incident {
   status   IncidentStatus
   type     IncidentType
 
-  organizationId     String  @db.Uuid
-  createdBy          String? @db.Uuid
-  assignedTeamId     String?
+  organizationId      String  @db.Uuid
+  createdBy           String? @db.Uuid
+  assignedTeamId      String?
   monitoringProjectId String
 
   createdAt DateTime @default(now())
@@ -240,7 +240,7 @@ model Incident {
 
   assignedTeam Team? @relation(fields: [assignedTeamId], references: [id])
 
-  monitoringProject MonitoringProject @relation(    fields: [monitoringProjectId],    references: [id]  )
+  monitoringProject MonitoringProject @relation(fields: [monitoringProjectId], references: [id])
 
   tasks  Task[]
   alerts Alert[]
@@ -250,7 +250,6 @@ model Incident {
   @@index([priority])
   @@index([assignedTeamId])
   @@index([monitoringProjectId])
-
   @@map("incidents")
 }
 
@@ -300,6 +299,8 @@ model Task {
 
   incident Incident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
   assignee User?    @relation("UserAssignedTasks", fields: [assignedTo], references: [id])
+
+  files File[]
 
   @@index([incidentId])
   @@index([assignedTo])
@@ -486,4 +487,23 @@ model AlertRoutingRule {
   @@index([createdBy])
   @@index([monitoringProjectId, isActive, priority])
   @@map("alert_routing_rules")
+}
+
+model File {
+  id         String @id @default(cuid())
+  taskId     String
+  uploadedBy String
+
+  originalName String
+  fileName     String
+  mimeType     String
+  size         Int
+
+  storageUrl String
+  publicId   String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
 }
