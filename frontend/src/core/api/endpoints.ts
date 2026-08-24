@@ -32,10 +32,8 @@ export const ENDPOINTS = {
 
   TEAM: {
     BASE: "/teams",
-    INVITATIONS: (teamId: string) =>
-      `/teams/${teamId}/invitations`,
-    MEMBERS: (teamId: string) =>
-      `/teams/${teamId}/members`,
+    INVITATIONS: (teamId: string) => `/teams/${teamId}/invitations`,
+    MEMBERS: (teamId: string) => `/teams/${teamId}/members`,
   },
 
   TEAM_INVITATION: {
@@ -48,52 +46,41 @@ export const ENDPOINTS = {
   MONITORING_PROJECT: {
     BASE: "/monitoring-projects",
 
-    BY_ID: (id: string) =>
-      `/monitoring-projects/${id}`,
+    BY_ID: (id: string) => `/monitoring-projects/${id}`,
   },
 
   MONITORING: {
     PROJECTS: "/monitoring-projects",
 
     INTEGRATIONS: {
-      BY_PROJECT: (projectId: string) =>
-        `/monitoring-projects/${projectId}/integrations`,
+      BY_PROJECT: (projectId: string) => `/monitoring-projects/${projectId}/integrations`,
 
-      BY_ID: (id: string) =>
-        `/monitoring-projects/integrations/${id}`,
+      BY_ID: (id: string) => `/monitoring-projects/integrations/${id}`,
     },
 
     ALERT_RULES: {
-      BY_PROJECT: (projectId: string) =>
-        `/monitoring-projects/${projectId}/alert-rules`,
+      BY_PROJECT: (projectId: string) => `/monitoring-projects/${projectId}/alert-rules`,
 
-      BY_ID: (id: string) =>
-        `/monitoring-projects/alert-rules/${id}`,
+      BY_ID: (id: string) => `/monitoring-projects/alert-rules/${id}`,
 
-      DEFAULTS:
-        "/monitoring-projects/alert-rules/defaults",
+      DEFAULTS: "/monitoring-projects/alert-rules/defaults",
 
-      APPLY_DEFAULT: (projectId: string) =>
-        `/monitoring-projects/${projectId}/alert-rules/default`,
+      APPLY_DEFAULT: (projectId: string) => `/monitoring-projects/${projectId}/alert-rules/default`,
     },
   },
 
   ALERT: {
-    BY_PROJECT: (projectId: string) =>
-      `/monitoring-projects/${projectId}/alerts`,
+    BY_PROJECT: (projectId: string) => `/monitoring-projects/${projectId}/alerts`,
 
-    BY_ID: (id: string) =>
-      `/alerts/${id}`,
+    BY_ID: (id: string) => `/alerts/${id}`,
 
-    RESOLVE: (id: string) =>
-      `/alerts/${id}/resolve`,
+    RESOLVE: (id: string) => `/alerts/${id}/resolve`,
   },
 
   ALERT_ROUTING_RULE: {
     BASE: "/alert-routing-rules",
 
-    BY_ID: (id: string) =>
-      `/alert-routing-rules/${id}`,
+    BY_ID: (id: string) => `/alert-routing-rules/${id}`,
   },
 
   TASK: {
@@ -107,6 +94,12 @@ export const ENDPOINTS = {
 
     ASSIGN: (id: string) => `/tasks/${id}/assign`,
     MY: "/tasks/my",
+  },
+
+  FILE: {
+    BY_TASK: (taskId: string) => `/tasks/${taskId}/files`,
+    BY_ID: (id: string) => `/files/${id}`,
+    DOWNLOAD: (id: string) => `/files/${id}/download`,
   },
 
 

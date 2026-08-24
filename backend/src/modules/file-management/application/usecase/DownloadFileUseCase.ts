@@ -3,26 +3,24 @@ import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
 
 import { IFileRepository } from "../../domain/interface/IFileRepository";
 import { IFileStorage } from "../../domain/interface/IFileStorage";
-import { IDeleteFileUseCase } from "../../domain/interface/usecase/IDeleteFileUseCase";
+import { IDownloadFileUseCase } from "../../domain/interface/usecase/IDownloadFileUseCase";
 
-export class DeleteFileUseCase implements IDeleteFileUseCase {
+export class DownloadFileUseCase implements IDownloadFileUseCase {
     constructor(
         private readonly fileRepository: IFileRepository,
         private readonly fileStorage: IFileStorage
     ) { }
 
-    async execute(id: string): Promise<void> {
+    async execute(id: string): Promise<Buffer> {
         const file = await this.fileRepository.findById(id);
 
         if (!file) {
             throw new AppError("File not found", HttpStatusCode.NOT_FOUND);
         }
 
-        await this.fileStorage.delete(
+        return this.fileStorage.download(
             file.publicId,
             file.mimeType,
         );
-
-        await this.fileRepository.delete(id);
     }
 }

@@ -1,12 +1,8 @@
-import {
-  Activity,
-  ArrowLeft,
-  CalendarDays,
-  CheckCircle2,
-  Clock3,
-  FileText,
-  UserRound,
-} from "lucide-react";
+import { Activity, CalendarDays, CheckCircle2, Clock3, FileText, UserRound } from "lucide-react";
+
+import FileUpload from "@/modules/file-management/components/FileUpload";
+import FileList from "@/modules/file-management/components/FileList";
+
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { useGetTaskById } from "../hooks/useGetTaskById";
@@ -101,7 +97,6 @@ export default function TaskDetailsPage() {
               hover:shadow-lg
             "
           >
-            <ArrowLeft size={17} />
             Back to Tasks
           </button>
         </div>
@@ -113,34 +108,6 @@ export default function TaskDetailsPage() {
 
   return (
     <div className="space-y-6">
-      <button
-        type="button"
-        onClick={() => navigate("/my-tasks")}
-        className="
-          inline-flex
-          items-center
-          gap-2
-          rounded-xl
-          border
-          border-[#E7DDD3]
-          bg-white
-          px-4
-          py-2.5
-          text-sm
-          font-medium
-          text-[#4B3932]
-          shadow-sm
-          transition-all
-          duration-300
-          hover:-translate-y-0.5
-          hover:bg-[#FAF6F0]
-          hover:shadow-md
-        "
-      >
-        <ArrowLeft size={17} />
-        Back to Tasks
-      </button>
-
       <div
         className="
           relative
@@ -562,6 +529,48 @@ export default function TaskDetailsPage() {
           <p className="text-sm leading-7 text-stone-600">
             {task.description || "No description provided."}
           </p>
+        </div>
+      </div>
+
+      <div
+        className="
+          rounded-2xl
+          border
+          border-[#E7DDD3]
+          bg-white
+          p-6
+          shadow-sm
+        "
+      >
+        <div className="flex items-center gap-3">
+          <div
+            className="
+              flex
+              h-10
+              w-10
+              items-center
+              justify-center
+              rounded-xl
+              bg-[#F0E7D5]
+              text-[#4B3932]
+            "
+          >
+            <FileText size={19} />
+          </div>
+
+          <div>
+            <h2 className="text-lg font-semibold text-[#4B3932]">Related Files</h2>
+
+            <p className="text-xs text-stone-400">Files related to this task</p>
+          </div>
+        </div>
+
+        <div className="mt-5">
+          <FileUpload taskId={task.id} />
+        </div>
+
+        <div className="mt-5">
+          <FileList taskId={task.id} />
         </div>
       </div>
 

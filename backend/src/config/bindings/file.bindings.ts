@@ -8,6 +8,7 @@ import { GetFilesByTaskUseCase } from "@/modules/file-management/application/use
 import { UploadFileUseCase } from "@/modules/file-management/application/usecase/UploadUseCase";
 import { FileController } from "@/modules/file-management/presentation/controller/FileController";
 import { createFileRoutes } from "@/modules/file-management/presentation/routes/file.routes";
+import { DownloadFileUseCase } from "@/modules/file-management/application/usecase/DownloadFileUseCase";
 
 export function bindFile(container:Container){
 
@@ -32,11 +33,17 @@ export function bindFile(container:Container){
         fileStorage
     )
 
+    const downloadUseCase=new DownloadFileUseCase(
+        fileRepository,
+        fileStorage
+    )
+
     const fileController=new FileController(
         uploadFileUseCase,
         getFileByIdUseCase,
         getFilesByTaskUseCase,
-        deleteFileUseCase
+        deleteFileUseCase,
+        downloadUseCase,
     )
 
     const fileRouter=createFileRoutes(

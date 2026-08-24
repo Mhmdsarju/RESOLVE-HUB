@@ -7,7 +7,7 @@ import DashboardPage from "@/modules/dashboard/pages/DashboardPage";
 
 import EngineerTasksPage from "@/modules/task-management/pages/EngineerTasksPage";
 import SettingsPage from "@/modules/user/pages/SettingsPage";
-import TaskDetailsPage from "@/modules/task-management/components/TaskDetailsPage";
+import TaskDetailsPage from "@/modules/task-management/pages/TaskDetailsPage";
 
 export const engineerRoutes: RouteObject[] = [
   {

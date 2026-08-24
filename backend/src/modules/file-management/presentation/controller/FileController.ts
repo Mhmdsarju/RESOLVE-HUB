@@ -7,6 +7,7 @@ import { IUploadFileUseCase } from "../../domain/interface/usecase/IUploadFileUs
 import { IGetFileByIdUseCase } from "../../domain/interface/usecase/IGetFileByIdUseCase";
 import { IGetFilesByTaskUseCase } from "../../domain/interface/usecase/IGetFilesByTaskUseCase";
 import { IDeleteFileUseCase } from "../../domain/interface/usecase/IDeleteFileUseCase";
+import { IDownloadFileUseCase } from "../../domain/interface/usecase/IDownloadFileUseCase";
 
 import { UploadFileDTO } from "../../application/dto/uploadFileDto";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
@@ -17,6 +18,7 @@ export class FileController extends BaseController {
         private readonly getFileByIdUseCase: IGetFileByIdUseCase,
         private readonly getFilesByTaskUseCase: IGetFilesByTaskUseCase,
         private readonly deleteFileUseCase: IDeleteFileUseCase,
+        private readonly downloadFileUseCase: IDownloadFileUseCase,
     ) {
         super();
     }
@@ -39,7 +41,7 @@ export class FileController extends BaseController {
                 uploadedBy: user.userId,
                 file: file.buffer,
                 originalName: file.originalname,
-                fileName: file.filename,
+                fileName: file.originalname,
                 mimeType: file.mimetype,
                 size: file.size,
             };
@@ -98,6 +100,25 @@ export class FileController extends BaseController {
                 res,
                 "File deleted successfully",
             );
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async download(req: Request, res: Response, next: NextFunction,) {
+        try {
+            const file = await this.getFileByIdUseCase.execute(req.params.id,);
+
+            const buffer = await this.downloadFileUseCase.execute(req.params.id,);
+
+            res.setHeader("Content-Type", file.mimeType,);
+
+            res.setHeader(
+                "Content-Disposition",
+                `attachment; filename="${encodeURIComponent(file.originalName)}"`,
+            );
+
+            return res.send(buffer);
         } catch (error) {
             next(error);
         }

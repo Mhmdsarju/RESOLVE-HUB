@@ -20,7 +20,7 @@ export function createFileRoutes(fileController: FileController) {
         );
 
     router.get("/files/:id", authMiddleware, fileController.getById.bind(fileController),);
-
+    router.get("/files/:id/download", authMiddleware, fileController.download.bind(fileController),);
     router.delete("/files/:id", authMiddleware, fileController.delete.bind(fileController),);
 
     return router;
