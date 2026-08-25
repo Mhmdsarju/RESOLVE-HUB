@@ -9,6 +9,9 @@ import EngineerTasksPage from "@/modules/task-management/pages/EngineerTasksPage
 import SettingsPage from "@/modules/user/pages/SettingsPage";
 import TaskDetailsPage from "@/modules/task-management/pages/TaskDetailsPage";
 
+import EngineerWarRoomListPage from "@/modules/war-room/pages/EngineerWarRoomListPage";
+import EngineerWarRoomDetailsPage from "@/modules/war-room/pages/EngineerWarRoomDetailsPage";
+
 export const engineerRoutes: RouteObject[] = [
   {
     element: <ProtectedGuard />,
@@ -27,13 +30,22 @@ export const engineerRoutes: RouteObject[] = [
           },
 
           {
-            path:"/tasks/:id",
-            element:<TaskDetailsPage/>
+            path: "/tasks/:id",
+            element: <TaskDetailsPage />,
           },
 
           {
             path: "/profile",
             element: <SettingsPage />,
+          },
+          {
+            path: "/war-rooms",
+            element: <EngineerWarRoomListPage />,
+          },
+
+          {
+            path: "/war-rooms/:id",
+            element: <EngineerWarRoomDetailsPage />,
           },
         ],
       },

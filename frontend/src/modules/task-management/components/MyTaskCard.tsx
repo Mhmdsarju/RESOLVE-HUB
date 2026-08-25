@@ -59,10 +59,11 @@ export default function MyTaskCard({
   const projectName = task.projectName ?? "No Project";
 
   const handleTaskClick = () => {
-    navigate(`/tasks/${task.id}`,{
-      state:{
-        projectName,assignedUserName
-      }
+    navigate(`/tasks/${task.id}`, {
+      state: {
+        projectName,
+        assignedUserName,
+      },
     });
   };
 

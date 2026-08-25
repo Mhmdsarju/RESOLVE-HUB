@@ -101,6 +101,13 @@ export const ENDPOINTS = {
     BY_ID: (id: string) => `/files/${id}`,
     DOWNLOAD: (id: string) => `/files/${id}/download`,
   },
+  WAR_ROOM: {
+    BASE: "/war-rooms",
+    BY_ID: (id: string) => `/war-rooms/${id}`,
+    CLOSE: (id: string) => `/war-rooms/${id}/close`,
+    JOIN: (id: string) => `/war-rooms/${id}/join`,
+    LEAVE: (id: string) => `/war-rooms/${id}/leave`,
+  },
 
 
 } as const;
