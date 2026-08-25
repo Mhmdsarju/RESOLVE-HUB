@@ -36,7 +36,7 @@ app.use("/api/alert-routing-rules", alertRoutingRule.alertRoutingRuleRouter);
 app.use("/api/users", authModule.userRouter);
 app.use("/api/admin/organizations", organizationModule.superAdminorganizationRouter,);
 app.use("/api",fileModule.fileRouter)
-app.use("/war-rooms",warRoomModule.warRoomRouter);
+app.use("/api/war-rooms",warRoomModule.warRoomRouter);
 
 app.use(errorHandler);
 
