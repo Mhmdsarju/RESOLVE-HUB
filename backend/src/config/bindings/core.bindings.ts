@@ -34,6 +34,8 @@ import { IFileRepository } from "@/modules/file-management/domain/interface/IFil
 import { PrismaFileRepository } from "@/modules/file-management/infrasturcture/repositories/PrismaFileRepository";
 import { IFileStorage } from "@/modules/file-management/domain/interface/IFileStorage";
 import { CloudinaryFileStorage } from "@/modules/file-management/infrasturcture/storage/CloudinaryFileStorage";
+import { IWarRoomRepository } from "@/modules/war-room/domain/interface/IWarRoomRepository";
+import { PrismaWarRoomRepository } from "@/modules/war-room/infrasturcture/repositories/PrismaWarRoomRepository";
 
 export function bindCore(container: Container) {
 
@@ -53,4 +55,5 @@ export function bindCore(container: Container) {
     container.bind<IAlertRoutingRuleRepository>(TYPES.AlertRoutingRuleRepository).to(PrismaAlertRoutingRuleRepository).inSingletonScope();
     container.bind<IFileRepository>(TYPES.fileRepository).to(PrismaFileRepository).inSingletonScope();
     container.bind<IFileStorage>(TYPES.fileStorage  ).to(CloudinaryFileStorage).inSingletonScope();
+    container.bind<IWarRoomRepository>(TYPES.warroomRepository).to(PrismaWarRoomRepository).inSingletonScope();
 }

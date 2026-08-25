@@ -114,6 +114,7 @@ model User {
 
   createdMonitoringProjects MonitoringProject[]
   createdAlertRoutingRules  AlertRoutingRule[]  @relation("CreatedAlertRoutingRules")
+  createdWarRooms WarRoom[] @relation("WarRoomCreator")
 
   @@index([organizationId])
   @@map("users")
@@ -244,6 +245,7 @@ model Incident {
 
   tasks  Task[]
   alerts Alert[]
+  warRoom WarRoom?
 
   @@index([organizationId])
   @@index([status])
@@ -506,4 +508,30 @@ model File {
   updatedAt DateTime @updatedAt
 
   task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+}
+
+
+model WarRoom {
+  id         String   @id @default(cuid())
+
+  incidentId String   @unique
+  createdBy  String   @db.Uuid
+
+  status     WarRoomStatus @default(ACTIVE)
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  closedAt   DateTime?
+
+  incident   Incident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  creator    User     @relation("WarRoomCreator", fields: [createdBy], references: [id])
+
+  @@index([createdBy])
+  @@index([status])
+  @@map("war_rooms")
+}
+
+enum WarRoomStatus {
+  ACTIVE
+  CLOSED
 }
