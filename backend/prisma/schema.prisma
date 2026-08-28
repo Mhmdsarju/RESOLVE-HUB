@@ -113,10 +113,11 @@ model User {
   assignedTasks Task[] @relation("UserAssignedTasks")
 
   createdMonitoringProjects MonitoringProject[]
-  createdAlertRoutingRules  AlertRoutingRule[]  @relation("CreatedAlertRoutingRules")
-  createdWarRooms WarRoom[] @relation("WarRoomCreator")
-  warRoomParticipants WarRoomParticipant[]
-  warRoomMessages WarRoomMessage[]
+  createdAlertRoutingRules  AlertRoutingRule[]   @relation("CreatedAlertRoutingRules")
+  createdWarRooms           WarRoom[]            @relation("WarRoomCreator")
+  warRoomParticipants       WarRoomParticipant[]
+  warRoomMessages           WarRoomMessage[]
+  timelineEvents            TimelineEvent[]      @relation("TimelineEventActor")
 
   @@index([organizationId])
   @@map("users")
@@ -245,9 +246,10 @@ model Incident {
 
   monitoringProject MonitoringProject? @relation(fields: [monitoringProjectId], references: [id])
 
-  tasks  Task[]
-  alerts Alert[]
-  warRoom WarRoom?
+  tasks          Task[]
+  alerts         Alert[]
+  warRoom        WarRoom?
+  timelineEvents TimelineEvent[]
 
   @@index([organizationId])
   @@index([status])
@@ -512,23 +514,22 @@ model File {
   task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
 }
 
-
 model WarRoom {
-  id         String   @id @default(cuid())
+  id String @id @default(cuid())
 
-  incidentId String   @unique
-  createdBy  String?   @db.Uuid
+  incidentId String  @unique
+  createdBy  String? @db.Uuid
 
-  status     WarRoomStatus @default(ACTIVE)
+  status WarRoomStatus @default(ACTIVE)
 
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  closedAt   DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  closedAt  DateTime?
 
-  incident   Incident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
-  creator    User?     @relation("WarRoomCreator", fields: [createdBy], references: [id])
+  incident     Incident             @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  creator      User?                @relation("WarRoomCreator", fields: [createdBy], references: [id])
   participants WarRoomParticipant[]
-  messages WarRoomMessage[]
+  messages     WarRoomMessage[]
 
   @@index([createdBy])
   @@index([status])
@@ -541,25 +542,25 @@ enum WarRoomStatus {
 }
 
 model WarRoomParticipant {
-    id        String   @id @default(cuid())
+  id String @id @default(cuid())
 
-    warRoomId String
-    userId    String  @db.Uuid
+  warRoomId String
+  userId    String @db.Uuid
 
-    joinedAt  DateTime @default(now())
-    leftAt    DateTime?
+  joinedAt DateTime  @default(now())
+  leftAt   DateTime?
 
-    warRoom   WarRoom  @relation(fields: [warRoomId], references: [id])
-    user      User     @relation(fields: [userId], references: [id])
+  warRoom WarRoom @relation(fields: [warRoomId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
 
-    @@unique([warRoomId, userId])
-    @@index([warRoomId])
-    @@index([userId])
+  @@unique([warRoomId, userId])
+  @@index([warRoomId])
+  @@index([userId])
 }
 
 model WarRoomMessage {
   id        String   @id @default(uuid()) @db.Uuid
-  warRoomId String   
+  warRoomId String
   userId    String   @db.Uuid
   content   String
   createdAt DateTime @default(now())
@@ -570,4 +571,47 @@ model WarRoomMessage {
 
   @@index([warRoomId, createdAt])
   @@index([userId])
+}
+
+model TimelineEvent {
+  id String @id @default(cuid())
+
+  incidentId String
+  actorId    String? @db.Uuid
+
+  eventType TimelineEventType
+  message   String
+  metadata  Json?
+
+  createdAt DateTime @default(now())
+
+  incident Incident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  actor    User?    @relation("TimelineEventActor", fields: [actorId], references: [id])
+
+  @@index([incidentId])
+  @@index([actorId])
+  @@index([createdAt])
+  @@map("timeline_events")
+}
+
+enum TimelineEventType {
+  INCIDENT_CREATED
+  INCIDENT_STATUS_CHANGED
+  INCIDENT_UPDATED
+
+  TASK_CREATED
+  TASK_ASSIGNED
+  TASK_STATUS_CHANGED
+  TASK_COMPLETED
+  TASK_UPDATED
+
+  FILE_UPLOADED
+  FILE_DELETED
+
+  WAR_ROOM_CREATED
+  WAR_ROOM_JOINED
+  WAR_ROOM_LEFT
+  WAR_ROOM_CLOSED
+
+  INCIDENT_CREATED_FROM_ALERT
 }
