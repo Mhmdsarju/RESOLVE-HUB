@@ -10,6 +10,8 @@ import { ALERT_TYPES } from "./types/alert.types";
 import { ALERT_ROUTING_RULE_TYPES } from "./types/alertRoutingRule.types";
 import { FILE_TYPES } from "./types/file.types";
 import { WARROOM_TYPES } from "./types/warroom.types";
+import { COLLABORATION_TYPES } from "./types/collaboration.types";
+
 export const TYPES = {
   ...AUTH_TYPES,
   ...ORGANIZATION_TYPES,
@@ -22,5 +24,6 @@ export const TYPES = {
   ...ALERT_TYPES,
   ...ALERT_ROUTING_RULE_TYPES,
   ...FILE_TYPES,
-  ...WARROOM_TYPES
+  ...WARROOM_TYPES,
+  ...COLLABORATION_TYPES
 };

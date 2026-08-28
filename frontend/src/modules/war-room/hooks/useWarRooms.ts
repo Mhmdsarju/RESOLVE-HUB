@@ -12,13 +12,14 @@ export function useWarRooms(params: GetWarRoomsParams,) {
             params.limit,
             params.status,
             params.search,
+            params.teamIds,
         ],
 
         queryFn: () => getWarRooms(params),
 
         refetchOnWindowFocus: true,
         refetchOnReconnect: true,
-        refetchInterval: 10000,
+        refetchInterval: 5000,
         refetchIntervalInBackground: false,
     });
 }

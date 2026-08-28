@@ -13,6 +13,7 @@ export function useCreateWarRoom() {
     const queryClient = useQueryClient();
 
     return useMutation<WarRoom, AxiosError<ErrorResponse>, CreateWarRoomPayload>({
+        
         mutationFn: (data) => createWarRoom(data),
 
         onSuccess: (data) => {

@@ -1,49 +1,75 @@
 export type WarRoomStatus = "ACTIVE" | "CLOSED";
 
 export interface WarRoomIncident {
-    id: string;
-    title: string;
-    description?: string;
-    severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
-    priority?: "P1" | "P2" | "P3" | "P4";
-    status: "OPEN" | "IN_PROGRESS" | "RESOLVED" | "CLOSED";
-    type: "MANUAL" | "AUTOMATED";
-    assignedTeamId?: string;
-    monitoringProjectId?: string;
-    createdAt: string;
-    updatedAt: string;
+  id: string;
+  title: string;
+  description?: string;
+  severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  priority?: "P1" | "P2" | "P3" | "P4";
+  status: "OPEN" | "IN_PROGRESS" | "RESOLVED" | "CLOSED";
+  type: "MANUAL" | "AUTOMATED";
+  assignedTeamId?: string;
+  monitoringProjectId?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface WarRoom {
-    id: string;
-    incidentId: string;
-    createdBy: string;
-    status: WarRoomStatus;
-    createdAt: string;
-    updatedAt: string;
-    closedAt?: string | null;
-    incident?: WarRoomIncident;
+  id: string;
+  incidentId: string;
+  createdBy: string;
+  status: WarRoomStatus;
+  createdAt: string;
+  updatedAt: string;
+  closedAt?: string | null;
+  incident?: WarRoomIncident;
+}
+
+export interface WarRoomMessage {
+  id?: string;
+  warRoomId: string;
+  userId: string;
+  content: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface CreateWarRoomPayload {
-    incidentId: string;
+  incidentId: string;
 }
 
 export interface GetWarRoomsParams {
-    page?: number;
-    limit?: number;
-    status?: WarRoomStatus;
-    search?: string;
+
+  page?: number;
+
+  limit?: number;
+
+  status?: WarRoomStatus;
+
+  search?: string;
+
+  teamIds?: string[];
+
 }
 
 export interface GetWarRoomsResponse {
-    items: WarRoom[];
-    pagination: {
-        page: number;
-        limit: number;
-        total: number;
-        totalPages: number;
-    };
+  items: WarRoom[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+export interface GetWarRoomMessagesResponse {
+  items: WarRoomMessage[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
 }
 
 export interface WarRoomCardProps {
@@ -98,4 +124,53 @@ export interface CreateWarRoomModalProps {
 
 export interface WarRoomDetailsPageProps {
   canClose?: boolean;
+}
+
+export interface WarRoomParticipant {
+    id?: string;
+    warRoomId: string;
+    userId: string;
+    joinedAt?: string;
+    leftAt?: string | null;
+}
+
+export interface WarRoomMessage {
+    id?: string;
+    warRoomId: string;
+    userId: string;
+    content: string;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
+export interface WarRoomChatProps {
+  historyMessages: WarRoomMessage[];
+  realtimeMessages: WarRoomMessage[];
+  onSendMessage: (content: string) => void;
+}
+
+export interface RemoteStream {
+  userId: string;
+  stream: MediaStream;
+}
+
+export interface WarRoomCollaborationProps {
+  participantCount?: number;
+  localStream: MediaStream | null;
+  remoteStreams: RemoteStream[];
+  isMediaReady: boolean;
+  mediaError: string | null;
+}
+
+export interface WarRoomMessageItemProps {
+  message: WarRoomMessage;
+  isOwnMessage: boolean;
+}
+
+export interface WarRoomParticipantItemProps {
+  participant: WarRoomParticipant;
+}
+
+export interface WarRoomParticipantListProps {
+  participants: WarRoomParticipant[];
 }

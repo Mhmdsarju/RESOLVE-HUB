@@ -1,4 +1,4 @@
-import { Bell, Menu,  } from "lucide-react";
+import { Bell,  } from "lucide-react";
 // import {Search} from "lucide-react";
 
 export default function TopNavbar() {
@@ -19,19 +19,9 @@ export default function TopNavbar() {
       {/* Left */}
 
       <div className="flex items-center gap-4">
-        <button
-          className="
-            rounded-lg
-            p-2
-            transition
-            hover:bg-[#F5EFE7]
-            lg:hidden
-          "
-        >
-          <Menu size={22} />
-        </button>
+    
 
-        <h1 className="text-2xl font-bold text-[#4B3932]">Dashboard</h1>
+        
       </div>
 
       {/* Search */}

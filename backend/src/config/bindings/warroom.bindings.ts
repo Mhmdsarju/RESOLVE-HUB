@@ -11,43 +11,57 @@ import { ITeamMemberRepository } from "@/modules/team-management/domain/interfac
 import { LeaveWarRoomUseCase } from "@/modules/war-room/application/usecase/LeaveWarRoomUseCase";
 import { WarRoomController } from "@/modules/war-room/presentation/controller/WarRoomController";
 import { createWarRoomRoutes } from "@/modules/war-room/presentation/routes/WarRoomRoutes";
+import { IWarRoomParticipantRepository } from "@/modules/war-room/domain/interface/IWarRoomParticipantRepository";
+import { GetWarRoomParticipantsUseCase } from "@/modules/war-room/application/usecase/GetWarRoomParticipantsUseCase";
+import { WarRoomParticipantController } from "@/modules/war-room/presentation/controller/WarRoomParticipantController";
+import { createWarRoomParticipantRoutes } from "@/modules/war-room/presentation/routes/WarRoomParticipantRoutes";
+import { IWarRoomMessageRepository } from "@/modules/war-room/domain/interface/IWarRoomMessageRepository";
+import { SendWarRoomMessageUseCase } from "@/modules/war-room/application/usecase/SendWarRoomMessageUseCase";
+import { GetWarRoomMessagesUseCase } from "@/modules/war-room/application/usecase/GetWarRoomMessagesUseCase";
+import { WarRoomMessageController } from "@/modules/war-room/presentation/controller/WarRoomMessageController";
+import { createWarRoomMessageRoutes } from "@/modules/war-room/presentation/routes/WarRoomMessageRoutes";
 
-export function bindWarRoom(container:Container){
+export function bindWarRoom(container: Container) {
 
-    const warRoomRepository=container.get<IWarRoomRepository>(TYPES.warroomRepository);
-    const incidentRepository=container.get<IIncidentRepository>(TYPES.IncidentRepository);
-    const teamMemberRepository=container.get<ITeamMemberRepository>(TYPES.TeamMemberRepository);
+    const warRoomRepository = container.get<IWarRoomRepository>(TYPES.warroomRepository);
+    const incidentRepository = container.get<IIncidentRepository>(TYPES.IncidentRepository);
+    const teamMemberRepository = container.get<ITeamMemberRepository>(TYPES.TeamMemberRepository);
+    const warRoomParticipantsRepository = container.get<IWarRoomParticipantRepository>(TYPES.warroomParticipantsRepository);
+    const warRoomMessageRepository = container.get<IWarRoomMessageRepository>(TYPES.warRoomMessageRepository);
 
-    const closeWarRoomUseCase=new CloseWarRoomUseCase(
+
+    const closeWarRoomUseCase = new CloseWarRoomUseCase(
         warRoomRepository
     )
 
-    const createWarRoomUseCase=new CreateWarRoomUseCase(
+    const createWarRoomUseCase = new CreateWarRoomUseCase(
         warRoomRepository,
         incidentRepository
     )
 
-    const getWarRoomByIdUseCase=new GetWarRoomByIdUseCase(
+    const getWarRoomByIdUseCase = new GetWarRoomByIdUseCase(
         warRoomRepository
     )
 
-    const getWarRoomsUseCase=new GetWarRoomsUseCase(
+    const getWarRoomsUseCase = new GetWarRoomsUseCase(
         warRoomRepository
     )
 
-    const joinWarRoomUseCase=new JoinWarRoomUseCase(
+    const joinWarRoomUseCase = new JoinWarRoomUseCase(
         warRoomRepository,
         teamMemberRepository,
-        incidentRepository
+        incidentRepository,
+        warRoomParticipantsRepository
     )
 
-    const leaveWarRoomUseCase=new LeaveWarRoomUseCase(
+    const leaveWarRoomUseCase = new LeaveWarRoomUseCase(
         warRoomRepository,
         incidentRepository,
         teamMemberRepository,
+        warRoomParticipantsRepository
     )
 
-    const warRoomController=new WarRoomController(
+    const warRoomController = new WarRoomController(
         createWarRoomUseCase,
         getWarRoomsUseCase,
         getWarRoomByIdUseCase,
@@ -56,12 +70,52 @@ export function bindWarRoom(container:Container){
         leaveWarRoomUseCase
     )
 
-    const warRoomRouter=createWarRoomRoutes(
+    const warRoomRouter = createWarRoomRoutes(
         warRoomController
     )
 
+    const getWarRoomParticipantsUseCase = new GetWarRoomParticipantsUseCase(
+        warRoomParticipantsRepository
+    )
+
+    const warRoomParticipantController = new WarRoomParticipantController(
+        getWarRoomParticipantsUseCase
+    )
+
+    const warRoomParticipantsRouter = createWarRoomParticipantRoutes(
+        warRoomParticipantController
+    )
+
+    const sendWarRoomMessageUseCase = new SendWarRoomMessageUseCase(
+        warRoomRepository,
+        warRoomParticipantsRepository,
+        warRoomMessageRepository,
+    );
+
+    const getWarRoomMessagesUseCase = new GetWarRoomMessagesUseCase(
+        warRoomRepository,
+        warRoomParticipantsRepository,
+        warRoomMessageRepository,
+    );
+
+    const warRoomMessageController = new WarRoomMessageController(
+        getWarRoomMessagesUseCase,
+    );
+
+    const warRoomMessageRouter = createWarRoomMessageRoutes(
+        warRoomMessageController,
+    );
+
     return {
-        warRoomRouter
+        warRoomRouter,
+        warRoomParticipantsRouter,
+        joinWarRoomUseCase,
+        leaveWarRoomUseCase,
+        getWarRoomParticipantsUseCase,
+        sendWarRoomMessageUseCase,
+        getWarRoomMessagesUseCase,
+        warRoomMessageRouter,
+        createWarRoomUseCase
     }
 
 }

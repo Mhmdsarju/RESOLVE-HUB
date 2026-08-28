@@ -10,9 +10,11 @@ import type { ErrorResponse } from "@/core/types/error.types";
 
 
 export function useCloseWarRoom() {
+    
     const queryClient = useQueryClient();
 
     return useMutation<WarRoom, AxiosError<ErrorResponse>, string>({
+
         mutationFn: (warRoomId) => closeWarRoom(warRoomId),
 
         onSuccess: (data) => {

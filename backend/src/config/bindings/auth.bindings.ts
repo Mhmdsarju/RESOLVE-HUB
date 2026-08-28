@@ -37,6 +37,7 @@ import { RegisterUseCase } from "@/modules/auth/application/use-cases/RegisterUs
 import { createAuthRoutes } from "@/modules/auth/presentation/routes/auth.routes";
 import { createUserRoutes } from "@/modules/auth/presentation/routes/user.routes";
 import { setTokenService } from "@/app/middlewares/authMiddleware";
+import { GetUserByIdUseCase } from "@/modules/auth/application/use-cases/GetUserByIdUseCase";
 
 
 export function bindAuth(container: Container) {
@@ -147,6 +148,10 @@ export function bindAuth(container: Container) {
         tokenStore,
     );
 
+    const getUserByIdUseCase=new GetUserByIdUseCase(
+        userRepository
+    )
+
     const authController = new AuthController(
         registerUseCase,
         loginUseCase,
@@ -166,10 +171,14 @@ export function bindAuth(container: Container) {
         resetPasswordUseCase,
         changePasswordUseCase
     )
+
+
+
     const userController = new UserController(
         getUsersByOrganizationUseCase,
         getMeUseCase,
-        updateMeUseCase
+        updateMeUseCase,
+        getUserByIdUseCase
     )
 
     const authRouter = createAuthRoutes(
@@ -185,7 +194,8 @@ export function bindAuth(container: Container) {
 
     return {
         authRouter,
-        userRouter
+        userRouter,
+        getUserByIdUseCase
     };
 
 }

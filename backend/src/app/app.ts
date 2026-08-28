@@ -4,7 +4,7 @@ import cors from "cors";
 import {
   authModule, organizationModule, teamModule,
   incidentModule, taskModule, integrationModule, monitoringModule,
-  alertModule,alertRoutingRule,alertRuleModule,fileModule,warRoomModule
+  alertModule, alertRoutingRule, alertRuleModule, fileModule, warRoomModule
 } from "../config/inversify.config";
 
 import { errorHandler } from "./middlewares/errorHandler";
@@ -35,8 +35,10 @@ app.use("/api", alertModule.alertRouter);
 app.use("/api/alert-routing-rules", alertRoutingRule.alertRoutingRuleRouter);
 app.use("/api/users", authModule.userRouter);
 app.use("/api/admin/organizations", organizationModule.superAdminorganizationRouter,);
-app.use("/api",fileModule.fileRouter)
-app.use("/api/war-rooms",warRoomModule.warRoomRouter);
+app.use("/api", fileModule.fileRouter)
+app.use("/api/war-rooms", warRoomModule.warRoomRouter);
+app.use("/api/war-rooms", warRoomModule.warRoomParticipantsRouter,);
+app.use("/api/war-rooms", warRoomModule.warRoomMessageRouter);
 
 app.use(errorHandler);
 

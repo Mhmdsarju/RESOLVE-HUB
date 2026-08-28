@@ -10,6 +10,7 @@ import type { ErrorResponse } from "@/core/types/error.types";
 
 
 export function useJoinWarRoom() {
+    
     const queryClient = useQueryClient();
 
     return useMutation<WarRoom, AxiosError<ErrorResponse>, string>({

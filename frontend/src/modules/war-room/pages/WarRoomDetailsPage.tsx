@@ -1,7 +1,7 @@
 import { ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import WarRoomIncidentCard from "../components/WarRoomIncidentCard";
+import OrgAdminIncidentSection from "../components/OrgAdminIncidentSection";
 import WarRoomActions from "../components/WarRoomActions";
 import WarRoomSkeleton from "../components/WarRoomSkeleton";
 import WarRoomErrorState from "../components/WarRoomErrorState";
@@ -11,7 +11,6 @@ import { useJoinWarRoom } from "../hooks/useJoinWarRoom";
 import { useLeaveWarRoom } from "../hooks/useLeaveWarRoom";
 import { useCloseWarRoom } from "../hooks/useCloseWarRoom";
 import type { WarRoomDetailsPageProps } from "../types/warRoom.types";
-
 
 export default function WarRoomDetailsPage({ canClose = false }: WarRoomDetailsPageProps) {
   const navigate = useNavigate();
@@ -61,8 +60,16 @@ export default function WarRoomDetailsPage({ canClose = false }: WarRoomDetailsP
   }
 
   const handleJoin = () => {
-    joinWarRoomMutation.mutate(warRoom.id);
-  };
+  joinWarRoomMutation.mutate(warRoom.id, {
+    onSuccess: () => {
+      navigate(`/engineer/war-rooms/${warRoom.id}`, {
+        state: {
+          from: "/war-rooms",
+        },
+      },);
+    },
+  });
+};
 
   const handleLeave = () => {
     leaveWarRoomMutation.mutate(warRoom.id);
@@ -77,7 +84,7 @@ export default function WarRoomDetailsPage({ canClose = false }: WarRoomDetailsP
       <div>
         <button
           type="button"
-          onClick={() => navigate(-1)}
+          onClick={() => navigate("/war-rooms",{ replace: true })}
           className="
                         inline-flex
                         items-center
@@ -118,8 +125,6 @@ export default function WarRoomDetailsPage({ canClose = false }: WarRoomDetailsP
         </div>
       </div>
 
-      <WarRoomIncidentCard warRoom={warRoom} />
-
       <WarRoomActions
         warRoom={warRoom}
         canClose={canClose}
@@ -132,23 +137,7 @@ export default function WarRoomDetailsPage({ canClose = false }: WarRoomDetailsP
         onClose={handleClose}
       />
 
-      <div
-        className="
-                    rounded-2xl
-                    border
-                    border-dashed
-                    border-[#D8CBBF]
-                    bg-[#FAF6F0]
-                    p-10
-                    text-center
-                "
-      >
-        <p className="font-semibold text-[#4B3932]">Collaboration Area</p>
-
-        <p className="mt-1 text-sm text-stone-500">
-          Audio, video and real-time collaboration will be available here.
-        </p>
-      </div>
+      <OrgAdminIncidentSection incidentId={warRoom.incidentId} />
     </div>
   );
 }

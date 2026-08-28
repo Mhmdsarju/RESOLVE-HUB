@@ -8,18 +8,20 @@ import { WarRoomStatus } from "../../domain/enums/warRoomStatus.enum";
 
 import { CreateWarRoomDto } from "../dto/createWarRoomDto";
 import { ICreateWarRoomUseCase } from "../../domain/interface/usecase/ICreateWarRoomUseCase";
+import { inject, injectable } from "inversify";
+import { TYPES } from "@/config/types";
 
+@injectable()
 export class CreateWarRoomUseCase implements ICreateWarRoomUseCase {
 
     constructor(
+        @inject(TYPES.warroomRepository)
         private readonly warRoomRepository: IWarRoomRepository,
+        @inject(TYPES.IncidentRepository)
         private readonly incidentRepository: IIncidentRepository,
     ) { }
 
-    async execute(
-        dto: CreateWarRoomDto,
-        createdBy: string,
-    ): Promise<WarRoom> {
+    async execute(dto: CreateWarRoomDto, createdBy?: string,): Promise<WarRoom> {
 
         const incident = await this.incidentRepository.findById(
             dto.incidentId,
@@ -39,7 +41,7 @@ export class CreateWarRoomUseCase implements ICreateWarRoomUseCase {
 
         const warRoom = new WarRoom({
             incidentId: dto.incidentId,
-            createdBy,
+            createdBy: createdBy ?? null,
             status: WarRoomStatus.ACTIVE,
         });
 

@@ -10,9 +10,23 @@ export class WarRoomMapper {
             ...(warRoom.id && {
                 id: warRoom.id,
             }),
-            incidentId: warRoom.incidentId,
-            createdBy: warRoom.createdBy,
+
+            incident: {
+                connect: {
+                    id: warRoom.incidentId,
+                },
+            },
+
+            creator: warRoom.createdBy
+                ? {
+                    connect: {
+                        id: warRoom.createdBy,
+                    },
+                }
+                : undefined,
+
             status: warRoom.status,
+
             ...(warRoom.closedAt && {
                 closedAt: warRoom.closedAt,
             }),

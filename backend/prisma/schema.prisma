@@ -115,6 +115,8 @@ model User {
   createdMonitoringProjects MonitoringProject[]
   createdAlertRoutingRules  AlertRoutingRule[]  @relation("CreatedAlertRoutingRules")
   createdWarRooms WarRoom[] @relation("WarRoomCreator")
+  warRoomParticipants WarRoomParticipant[]
+  warRoomMessages WarRoomMessage[]
 
   @@index([organizationId])
   @@map("users")
@@ -231,7 +233,7 @@ model Incident {
   organizationId      String  @db.Uuid
   createdBy           String? @db.Uuid
   assignedTeamId      String?
-  monitoringProjectId String
+  monitoringProjectId String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -241,7 +243,7 @@ model Incident {
 
   assignedTeam Team? @relation(fields: [assignedTeamId], references: [id])
 
-  monitoringProject MonitoringProject @relation(fields: [monitoringProjectId], references: [id])
+  monitoringProject MonitoringProject? @relation(fields: [monitoringProjectId], references: [id])
 
   tasks  Task[]
   alerts Alert[]
@@ -515,7 +517,7 @@ model WarRoom {
   id         String   @id @default(cuid())
 
   incidentId String   @unique
-  createdBy  String   @db.Uuid
+  createdBy  String?   @db.Uuid
 
   status     WarRoomStatus @default(ACTIVE)
 
@@ -524,7 +526,9 @@ model WarRoom {
   closedAt   DateTime?
 
   incident   Incident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
-  creator    User     @relation("WarRoomCreator", fields: [createdBy], references: [id])
+  creator    User?     @relation("WarRoomCreator", fields: [createdBy], references: [id])
+  participants WarRoomParticipant[]
+  messages WarRoomMessage[]
 
   @@index([createdBy])
   @@index([status])
@@ -534,4 +538,36 @@ model WarRoom {
 enum WarRoomStatus {
   ACTIVE
   CLOSED
+}
+
+model WarRoomParticipant {
+    id        String   @id @default(cuid())
+
+    warRoomId String
+    userId    String  @db.Uuid
+
+    joinedAt  DateTime @default(now())
+    leftAt    DateTime?
+
+    warRoom   WarRoom  @relation(fields: [warRoomId], references: [id])
+    user      User     @relation(fields: [userId], references: [id])
+
+    @@unique([warRoomId, userId])
+    @@index([warRoomId])
+    @@index([userId])
+}
+
+model WarRoomMessage {
+  id        String   @id @default(uuid()) @db.Uuid
+  warRoomId String   
+  userId    String   @db.Uuid
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  warRoom WarRoom @relation(fields: [warRoomId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([warRoomId, createdAt])
+  @@index([userId])
 }

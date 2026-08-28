@@ -3,7 +3,8 @@ import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
 
 import { IWarRoomRepository } from "../../domain/interface/IWarRoomRepository";
 import { IIncidentRepository } from "@/modules/incident/domain/interfaces/IIncidentRepository";
-import { ITeamMemberRepository } from "@/modules/team-management/domain/interfaces/ITeamMemberRepository"; 
+import { ITeamMemberRepository } from "@/modules/team-management/domain/interfaces/ITeamMemberRepository";
+import { IWarRoomParticipantRepository } from "../../domain/interface/IWarRoomParticipantRepository";
 
 import { WarRoomStatus } from "../../domain/enums/warRoomStatus.enum";
 
@@ -15,12 +16,10 @@ export class LeaveWarRoomUseCase implements ILeaveWarRoomUseCase {
         private readonly warRoomRepository: IWarRoomRepository,
         private readonly incidentRepository: IIncidentRepository,
         private readonly teamMemberRepository: ITeamMemberRepository,
+        private readonly warRoomParticipantRepository: IWarRoomParticipantRepository,
     ) { }
 
-    async execute(
-        id: string,
-        userId: string,
-    ): Promise<void> {
+    async execute(id: string, userId: string, userRole: string): Promise<void> {
 
         if (!id?.trim()) {
             throw new AppError(
@@ -70,16 +69,44 @@ export class LeaveWarRoomUseCase implements ILeaveWarRoomUseCase {
             );
         }
 
-        const teamMember = await this.teamMemberRepository.findMember(
-            incident.assignedTeamId,
-            userId,
-        );
+       if (userRole !== "ORG_ADMIN") {
 
-        if (!teamMember) {
+            const teamMember = await this.teamMemberRepository.findMember(
+                incident.assignedTeamId,
+                userId,
+            );
+
+            if (!teamMember) {
+                throw new AppError(
+                    "You are not a member of the assigned team",
+                    HttpStatusCode.FORBIDDEN,
+                );
+            }
+
+        }
+
+        const participant =
+            await this.warRoomParticipantRepository.findByWarRoomAndUser(
+                id,
+                userId,
+            );
+
+        if (!participant) {
             throw new AppError(
-                "You are not a member of the assigned team",
-                HttpStatusCode.FORBIDDEN,
+                "You are not a participant of this war room",
+                HttpStatusCode.BAD_REQUEST,
             );
         }
+
+        if (participant.leftAt) {
+            return;
+        }
+
+        await this.warRoomParticipantRepository.update(
+            participant.id!,
+            {
+                leftAt: new Date(),
+            },
+        );
     }
 }

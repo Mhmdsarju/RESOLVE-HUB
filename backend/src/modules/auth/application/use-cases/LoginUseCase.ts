@@ -24,7 +24,7 @@ export class LoginUseCase implements ILoginUseCase {
     const user = await this.userRepository.findByEmail(dto.email);
 
     if (!user) {
-      throw new AppError(ErrorMessages.UNAUTHORIZED, HttpStatusCode.UNAUTHORIZED);
+      throw new AppError("User not Found ", HttpStatusCode.NOT_FOUND);
     }
 
     const isPasswordValid = await this.passwordHasher.compare(dto.password, user.password);

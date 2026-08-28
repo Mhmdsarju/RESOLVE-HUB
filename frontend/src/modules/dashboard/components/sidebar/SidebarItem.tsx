@@ -4,16 +4,19 @@ import type { SidebarItem as SidebarItemType } from "../../types/sidebar.types";
 
 interface SidebarItemProps {
   item: SidebarItemType;
+  onNavigate?: () => void;
 }
 
 export default function SidebarItem({
   item,
+  onNavigate,
 }: SidebarItemProps) {
   const Icon = item.icon;
 
   return (
     <NavLink
       to={item.path}
+      onClick={onNavigate}
       className={({ isActive }) =>
         `
           group

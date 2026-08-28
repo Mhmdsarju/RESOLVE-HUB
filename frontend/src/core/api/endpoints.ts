@@ -107,6 +107,7 @@ export const ENDPOINTS = {
     CLOSE: (id: string) => `/war-rooms/${id}/close`,
     JOIN: (id: string) => `/war-rooms/${id}/join`,
     LEAVE: (id: string) => `/war-rooms/${id}/leave`,
+    MESSAGES: (warRoomId: string) => `${ENDPOINTS.WAR_ROOM.BASE}/${warRoomId}/messages`,
   },
 
 

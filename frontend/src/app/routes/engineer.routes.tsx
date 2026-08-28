@@ -39,12 +39,12 @@ export const engineerRoutes: RouteObject[] = [
             element: <SettingsPage />,
           },
           {
-            path: "/war-rooms",
+            path: "/engineer/war-rooms",
             element: <EngineerWarRoomListPage />,
           },
 
           {
-            path: "/war-rooms/:id",
+            path: "/engineer/war-rooms/:id",
             element: <EngineerWarRoomDetailsPage />,
           },
         ],

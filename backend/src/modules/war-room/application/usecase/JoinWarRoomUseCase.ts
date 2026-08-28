@@ -9,6 +9,9 @@ import { WarRoomStatus } from "../../domain/enums/warRoomStatus.enum";
 
 import { IJoinWarRoomUseCase } from "../../domain/interface/usecase/IJoinWarRoomUseCase";
 import { IIncidentRepository } from "@/modules/incident/domain/interfaces/IIncidentRepository";
+import { IWarRoomParticipantRepository } from "../../domain/interface/IWarRoomParticipantRepository";
+
+import { WarRoomParticipant } from "../../domain/entity/warRoomParticipant";
 
 export class JoinWarRoomUseCase implements IJoinWarRoomUseCase {
 
@@ -16,9 +19,10 @@ export class JoinWarRoomUseCase implements IJoinWarRoomUseCase {
         private readonly warRoomRepository: IWarRoomRepository,
         private readonly teamMemberRepository: ITeamMemberRepository,
         private readonly incidentRepository: IIncidentRepository,
+        private readonly warRoomParticipantRepository: IWarRoomParticipantRepository
     ) { }
 
-    async execute(id: string, userId: string,): Promise<WarRoom> {
+    async execute(id: string, userId: string,userRole:string): Promise<WarRoom> {
 
         if (!id?.trim()) {
             throw new AppError("War room ID is required", HttpStatusCode.BAD_REQUEST,);
@@ -50,14 +54,54 @@ export class JoinWarRoomUseCase implements IJoinWarRoomUseCase {
             throw new AppError("Incident is not assigned to a team", HttpStatusCode.BAD_REQUEST,);
         }
 
-        const teamMember = await this.teamMemberRepository.findMember(
-            incident.assignedTeamId,
+        if (userRole !== "ORG_ADMIN") {
+
+            const teamMember = await this.teamMemberRepository.findMember(
+                incident.assignedTeamId,
+                userId,
+            );
+
+            if (!teamMember) {
+                throw new AppError(
+                    "You are not a member of the assigned team",
+                    HttpStatusCode.FORBIDDEN,
+                );
+            }
+
+        }
+
+        const participant = await this.warRoomParticipantRepository.findByWarRoomAndUser(
+            id,
             userId,
         );
 
-        if (!teamMember) {
-            throw new AppError("You are not a member of the assigned team", HttpStatusCode.FORBIDDEN,);
+        if (participant) {
+
+            if (!participant.leftAt) {
+                return warRoom;
+            }
+
+            await this.warRoomParticipantRepository.update(
+                participant.id!,
+                {
+                    leftAt: null,
+                    joinedAt: new Date(),
+                },
+            );
+
+            return warRoom;
         }
+
+        const newParticipant = new WarRoomParticipant({
+            warRoomId: id,
+            userId,
+            joinedAt: new Date(),
+            leftAt: null,
+        });
+
+        await this.warRoomParticipantRepository.create(
+            newParticipant,
+        );
 
         return warRoom;
     }

@@ -24,14 +24,37 @@ export class IncidentMapper {
       status: incident.status as PrismaStatus,
       type: incident.type as PrismaType,
 
-      organizationId: incident.organizationId,
-      createdBy: incident.createdBy,
-      assignedTeamId: incident.assignedTeamId,
+      organization: {
+        connect: {
+          id: incident.organizationId,
+        },
+      },
 
-      monitoringProjectId: incident.monitoringProjectId,
+      creator: incident.createdBy
+        ? {
+          connect: {
+            id: incident.createdBy,
+          },
+        }
+        : undefined,
+
+      assignedTeam: incident.assignedTeamId
+        ? {
+          connect: {
+            id: incident.assignedTeamId,
+          },
+        }
+        : undefined,
+
+      monitoringProject: incident.monitoringProjectId
+        ? {
+          connect: {
+            id: incident.monitoringProjectId,
+          },
+        }
+        : undefined,
     };
   }
-
   static fromDb(data: PrismaIncident): Incident {
     return new Incident({
       id: data.id,

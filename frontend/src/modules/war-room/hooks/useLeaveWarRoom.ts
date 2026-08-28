@@ -8,6 +8,7 @@ import type { ErrorResponse } from "@/core/types/error.types";
 
 
 export function useLeaveWarRoom() {
+    
     const queryClient = useQueryClient();
 
     return useMutation<void, AxiosError<ErrorResponse>, string>({

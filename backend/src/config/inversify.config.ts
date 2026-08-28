@@ -12,6 +12,8 @@ import { bindAlertRoutingRule } from "./bindings/alertRoutingRule.bindings";
 import { bindCore } from "./bindings/core.bindings";
 import { bindFile } from "./bindings/file.bindings";
 import { bindWarRoom } from "./bindings/warroom.bindings";
+
+
 const container = new Container();
 
 bindCore(container);
@@ -32,5 +34,7 @@ export const alertModule = bindAlert(container,
 
 export const fileModule=bindFile(container);
 export const warRoomModule=bindWarRoom(container);
+
+
 
 export default container;

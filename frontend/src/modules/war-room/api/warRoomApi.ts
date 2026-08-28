@@ -6,12 +6,11 @@ import type {
     GetWarRoomsParams,
     GetWarRoomsResponse,
     WarRoom,
+    GetWarRoomMessagesResponse,
 } from "../types/warRoom.types";
 
 
-export async function createWarRoom(
-    payload: CreateWarRoomPayload,
-): Promise<WarRoom> {
+export async function createWarRoom(payload: CreateWarRoomPayload,): Promise<WarRoom> {
     const response = await api.post(
         ENDPOINTS.WAR_ROOM.BASE,
         payload,
@@ -21,9 +20,7 @@ export async function createWarRoom(
 }
 
 
-export async function getWarRooms(
-    params: GetWarRoomsParams,
-): Promise<GetWarRoomsResponse> {
+export async function getWarRooms(params: GetWarRoomsParams,): Promise<GetWarRoomsResponse> {
     const response = await api.get(
         ENDPOINTS.WAR_ROOM.BASE,
         {
@@ -35,9 +32,7 @@ export async function getWarRooms(
 }
 
 
-export async function getWarRoomById(
-    warRoomId: string,
-): Promise<WarRoom> {
+export async function getWarRoomById(warRoomId: string,): Promise<WarRoom> {
     const response = await api.get(
         ENDPOINTS.WAR_ROOM.BY_ID(warRoomId),
     );
@@ -46,9 +41,22 @@ export async function getWarRoomById(
 }
 
 
-export async function closeWarRoom(
-    warRoomId: string,
-): Promise<WarRoom> {
+export async function getWarRoomMessages(warRoomId: string, page = 1, limit = 50,): Promise<GetWarRoomMessagesResponse> {
+    const response = await api.get(
+        ENDPOINTS.WAR_ROOM.MESSAGES(warRoomId),
+        {
+            params: {
+                page,
+                limit,
+            },
+        },
+    );
+
+    return response.data.data;
+}
+
+
+export async function closeWarRoom(warRoomId: string,): Promise<WarRoom> {
     const response = await api.patch(
         ENDPOINTS.WAR_ROOM.CLOSE(warRoomId),
     );
@@ -57,9 +65,7 @@ export async function closeWarRoom(
 }
 
 
-export async function joinWarRoom(
-    warRoomId: string,
-): Promise<WarRoom> {
+export async function joinWarRoom(warRoomId: string,): Promise<WarRoom> {
     const response = await api.post(
         ENDPOINTS.WAR_ROOM.JOIN(warRoomId),
     );
@@ -68,9 +74,7 @@ export async function joinWarRoom(
 }
 
 
-export async function leaveWarRoom(
-    warRoomId: string,
-): Promise<void> {
+export async function leaveWarRoom(warRoomId: string,): Promise<void> {
     await api.post(
         ENDPOINTS.WAR_ROOM.LEAVE(warRoomId),
     );

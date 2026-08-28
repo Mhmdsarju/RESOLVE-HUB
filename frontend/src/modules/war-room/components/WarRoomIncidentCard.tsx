@@ -28,45 +28,39 @@ export default function WarRoomIncidentCard({ warRoom }: WarRoomIncidentCardProp
                 border
                 border-[#E7DDD3]
                 bg-white
-                p-6
+                p-5
                 shadow-sm
             "
     >
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex items-start gap-3">
+        <div
+          className="
+                        flex
+                        h-10
+                        w-10
+                        shrink-0
+                        items-center
+                        justify-center
+                        rounded-xl
+                        bg-[#F0E7D5]
+                        text-[#4B3932]
+                    "
+        >
+          <AlertTriangle size={19} />
+        </div>
+
         <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <div
-              className="
-                                flex
-                                h-10
-                                w-10
-                                shrink-0
-                                items-center
-                                justify-center
-                                rounded-xl
-                                bg-[#F0E7D5]
-                                text-[#4B3932]
-                            "
-            >
-              <AlertTriangle size={19} />
-            </div>
+          <p className="text-xs font-semibold uppercase tracking-wide text-stone-400">Incident</p>
 
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-stone-400">
-                Incident
-              </p>
-
-              <h2 className="mt-0.5 text-lg font-bold text-[#4B3932]">{incident.title}</h2>
-            </div>
-          </div>
-
-          {incident.description && (
-            <p className="mt-4 text-sm leading-6 text-stone-500">{incident.description}</p>
-          )}
+          <h2 className="mt-1 text-base font-bold leading-5 text-[#4B3932]">{incident.title}</h2>
         </div>
       </div>
 
-      <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      {incident.description && (
+        <p className="mt-4 text-sm leading-6 text-stone-500">{incident.description}</p>
+      )}
+
+      <div className="mt-5 space-y-3">
         <div
           className="
                         rounded-xl
@@ -144,7 +138,7 @@ export default function WarRoomIncidentCard({ warRoom }: WarRoomIncidentCardProp
           <p className="text-xs font-medium text-stone-400">Team</p>
 
           <div className="mt-2 flex items-center gap-2">
-            <Users size={15} className="text-stone-400" />
+            <Users size={15} className="shrink-0 text-stone-400" />
 
             <p className="truncate text-sm font-semibold text-[#4B3932]">
               {team?.name ?? "Team unavailable"}
@@ -155,11 +149,8 @@ export default function WarRoomIncidentCard({ warRoom }: WarRoomIncidentCardProp
 
       <div
         className="
-                    mt-5
-                    flex
-                    flex-wrap
-                    items-center
-                    gap-5
+                    mt-4
+                    space-y-3
                     border-t
                     border-[#E7DDD3]
                     pt-4
@@ -167,12 +158,16 @@ export default function WarRoomIncidentCard({ warRoom }: WarRoomIncidentCardProp
                     text-stone-500
                 "
       >
-        <span className="inline-flex items-center gap-1.5">
+        <span className="flex items-center gap-1.5">
           <CalendarDays size={14} />
           Created {new Date(incident.createdAt).toLocaleDateString()}
         </span>
 
-        <span>Incident ID: {incident.id}</span>
+        <div>
+          <p className="text-stone-400">Incident ID</p>
+
+          <p className="mt-1 break-all font-medium text-[#4B3932]">{incident.id}</p>
+        </div>
       </div>
     </div>
   );

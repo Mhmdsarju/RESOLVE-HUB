@@ -9,13 +9,16 @@ import { GetIncidentByIdUseCase } from "@/modules/incident/application/use-cases
 import { GetIncidentStatsUseCase } from "@/modules/incident/application/use-cases/GetIncidentStatsUseCase";
 import { GetIncidentsUseCase } from "@/modules/incident/application/use-cases/GetIncidentsUseCase";
 import { createIncidentRoutes } from "@/modules/incident/presentation/routes/incident.routes";
+import { ICreateWarRoomUseCase } from "@/modules/war-room/domain/interface/usecase/ICreateWarRoomUseCase";
 
 
 export function bindIncident(container: Container) {
 
     const incidentRepository = container.get<IIncidentRepository>(TYPES.IncidentRepository);
+    const createWarRoomUseCase=container.get<ICreateWarRoomUseCase>(TYPES.ICreateWarRoomUseCase);
+
     const assignTeamUseCase = new AssignTeamUseCase(incidentRepository);
-    const createIncidentUseCase = new CreateIncidentUseCase(incidentRepository);
+    const createIncidentUseCase = new CreateIncidentUseCase(incidentRepository,createWarRoomUseCase);
     const getIncidentByIdUseCase = new GetIncidentByIdUseCase(incidentRepository);
     const getIncidentStatsUseCase = new GetIncidentStatsUseCase(incidentRepository);
     const getIncidentsUseCase = new GetIncidentsUseCase(incidentRepository);

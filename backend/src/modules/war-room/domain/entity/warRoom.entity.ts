@@ -3,7 +3,7 @@ import { WarRoomStatus } from "../enums/warRoomStatus.enum";
 interface WarRoomProps {
     id?: string;
     incidentId: string;
-    createdBy: string;
+    createdBy: string | null;
     status: WarRoomStatus;
     createdAt?: Date;
     updatedAt?: Date;
@@ -13,7 +13,7 @@ interface WarRoomProps {
 export class WarRoom {
     public readonly id?: string;
     public readonly incidentId: string;
-    public readonly createdBy: string;
+    public readonly createdBy: string | null;;
     public status: WarRoomStatus;
     public readonly createdAt?: Date;
     public updatedAt?: Date;
@@ -22,7 +22,7 @@ export class WarRoom {
     constructor(props: WarRoomProps) {
         this.id = props.id;
         this.incidentId = props.incidentId;
-        this.createdBy = props.createdBy;
+        this.createdBy = props.createdBy ?? null;
         this.status = props.status;
         this.createdAt = props.createdAt;
         this.updatedAt = props.updatedAt;

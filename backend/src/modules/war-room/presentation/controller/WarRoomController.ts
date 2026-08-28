@@ -105,7 +105,7 @@ export class WarRoomController extends BaseController {
         try {
             const currentUser = this.getCurrentUser(req);
 
-            const warRoom = await this.joinWarRoomUseCase.execute(req.params.id, currentUser.userId);
+            const warRoom = await this.joinWarRoomUseCase.execute(req.params.id, currentUser.userId,currentUser.role);
 
             return ResponseHandler.success(
                 res,
@@ -121,7 +121,7 @@ export class WarRoomController extends BaseController {
         try {
             const currentUser = this.getCurrentUser(req);
 
-            await this.leaveWarRoomUseCase.execute(req.params.id, currentUser.userId);
+            await this.leaveWarRoomUseCase.execute(req.params.id, currentUser.userId,currentUser.role);
 
             return ResponseHandler.success(
                 res,

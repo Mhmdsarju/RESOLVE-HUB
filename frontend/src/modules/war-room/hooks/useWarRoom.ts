@@ -5,7 +5,9 @@ import { getWarRoomById } from "../api/warRoomApi";
 import type { WarRoom } from "../types/warRoom.types";
 
 export function useWarRoom(warRoomId: string) {
+    
     return useQuery<WarRoom, Error>({
+
         queryKey: ["war-room", warRoomId],
 
         queryFn: () => getWarRoomById(warRoomId),

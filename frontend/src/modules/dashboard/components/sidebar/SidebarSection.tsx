@@ -4,10 +4,12 @@ import type { SidebarSection as SidebarSectionType } from "../../types/sidebar.t
 
 interface SidebarSectionProps {
   section: SidebarSectionType;
+  onNavigate?: () => void;
 }
 
 export default function SidebarSection({
   section,
+  onNavigate,
 }: SidebarSectionProps) {
   return (
     <div className="space-y-2">
@@ -29,6 +31,7 @@ export default function SidebarSection({
           <SidebarItem
             key={item.path}
             item={item}
+            onNavigate={onNavigate}
           />
         ))}
       </div>

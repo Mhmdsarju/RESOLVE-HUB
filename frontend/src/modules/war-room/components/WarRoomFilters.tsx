@@ -1,4 +1,4 @@
-import { RotateCcw, Search } from "lucide-react";
+import { RotateCcw } from "lucide-react";
 
 import type { WarRoomStatus, WarRoomFiltersProps } from "../types/warRoom.types";
 
@@ -18,7 +18,7 @@ export default function WarRoomFilters({ filters, onChange, onReset }: WarRoomFi
     >
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
         <div className="relative flex-1">
-          <Search
+          {/* <Search
             size={18}
             className="
                             pointer-events-none
@@ -28,9 +28,9 @@ export default function WarRoomFilters({ filters, onChange, onReset }: WarRoomFi
                             -translate-y-1/2
                             text-stone-400
                         "
-          />
+          /> */}
 
-          <input
+          {/* <input
             type="text"
             value={filters.search ?? ""}
             onChange={(event) =>
@@ -58,7 +58,7 @@ export default function WarRoomFilters({ filters, onChange, onReset }: WarRoomFi
                             focus:ring-1
                             focus:ring-[#4B3932]
                         "
-          />
+          /> */}
         </div>
 
         <select

@@ -15,57 +15,44 @@ import { useWarRooms } from "../hooks/useWarRooms";
 import type { GetWarRoomsParams } from "../types/warRoom.types";
 
 const DEFAULT_FILTERS: GetWarRoomsParams = {
-    page: 1,
-    limit: 6,
+  page: 1,
+  limit: 6,
 };
 
 export default function WarRoomListPage() {
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
+  const [filters, setFilters] = useState<GetWarRoomsParams>(DEFAULT_FILTERS);
 
-    const [filters, setFilters] = useState<GetWarRoomsParams>(
-        DEFAULT_FILTERS,
-    );
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const { data, isLoading, isError, refetch } = useWarRooms(filters);
 
-    const {
-        data,
-        isLoading,
-        isError,
-        refetch,
-    } = useWarRooms(filters);
+  const warRooms = data?.items ?? [];
 
-    const warRooms = data?.items ?? [];
+  const handleFilterChange = (newFilters: GetWarRoomsParams) => {
+    setFilters(newFilters);
+  };
 
-    const handleFilterChange = (
-        newFilters: GetWarRoomsParams,
-    ) => {
-        setFilters(newFilters);
-    };
+  const handleResetFilters = () => {
+    setFilters(DEFAULT_FILTERS);
+  };
 
-    const handleResetFilters = () => {
-        setFilters(DEFAULT_FILTERS);
-    };
+  const handlePageChange = (page: number) => {
+    setFilters((current) => ({
+      ...current,
+      page,
+    }));
+  };
 
-    const handlePageChange = (page: number) => {
-        setFilters((current) => ({
-            ...current,
-            page,
-        }));
-    };
+  const handleWarRoomClick = (warRoomId: string) => {
+    navigate(`/war-rooms/${warRoomId}`);
+  };
 
-    const handleWarRoomClick = (
-        warRoomId: string,
-    ) => {
-        navigate(`/war-rooms/${warRoomId}`);
-    };
-
-    return (
-        <div className="space-y-6">
-
-            <div
-                className="
+  return (
+    <div className="space-y-6">
+      <div
+        className="
                     flex
                     flex-col
                     justify-between
@@ -73,23 +60,19 @@ export default function WarRoomListPage() {
                     sm:flex-row
                     sm:items-center
                 "
-            >
-                <div>
+      >
+        <div>
+          <h1 className="text-2xl font-bold text-[#4B3932]">War Rooms</h1>
 
-                    <h1 className="text-2xl font-bold text-[#4B3932]">
-                        War Rooms
-                    </h1>
+          <p className="mt-1 text-sm text-stone-500">
+            Monitor and manage incident response war rooms.
+          </p>
+        </div>
 
-                    <p className="mt-1 text-sm text-stone-500">
-                        Monitor and manage incident response war rooms.
-                    </p>
-
-                </div>
-
-                <button
-                    type="button"
-                    onClick={() => setIsCreateModalOpen(true)}
-                    className="
+        <button
+          type="button"
+          onClick={() => setIsCreateModalOpen(true)}
+          className="
                         inline-flex
                         items-center
                         justify-center
@@ -104,38 +87,31 @@ export default function WarRoomListPage() {
                         transition
                         hover:bg-[#3B2E29]
                     "
-                >
-                    <Plus size={18} />
-                    Create War Room
-                </button>
+        >
+          <Plus size={18} />
+          Create War Room
+        </button>
+      </div>
 
-            </div>
+      <WarRoomFilters
+        filters={filters}
+        onChange={handleFilterChange}
+        onReset={handleResetFilters}
+      />
 
-            <WarRoomFilters
-                filters={filters}
-                onChange={handleFilterChange}
-                onReset={handleResetFilters}
-            />
+      {isLoading && <WarRoomSkeleton />}
 
-            {isLoading && (
-                <WarRoomSkeleton />
-            )}
+      {isError && !isLoading && <WarRoomErrorState onRetry={() => refetch()} />}
 
-            {isError && !isLoading && (
-                <WarRoomErrorState
-                    onRetry={() => refetch()}
-                />
-            )}
-
-            {!isLoading && !isError && warRooms.length === 0 && (
-                <WarRoomEmptyState
-                    title="No war rooms found"
-                    description="There are no war rooms matching the current filters."
-                    action={
-                        <button
-                            type="button"
-                            onClick={() => setIsCreateModalOpen(true)}
-                            className="
+      {!isLoading && !isError && warRooms.length === 0 && (
+        <WarRoomEmptyState
+          title="No war rooms found"
+          description="There are no war rooms matching the current filters."
+          action={
+            <button
+              type="button"
+              onClick={() => setIsCreateModalOpen(true)}
+              className="
                                 inline-flex
                                 items-center
                                 gap-2
@@ -149,47 +125,37 @@ export default function WarRoomListPage() {
                                 transition
                                 hover:bg-[#3B2E29]
                             "
-                        >
-                            <Plus size={16} />
-                            Create War Room
-                        </button>
-                    }
-                />
-            )}
+            >
+              <Plus size={16} />
+              Create War Room
+            </button>
+          }
+        />
+      )}
 
-            {!isLoading && !isError && warRooms.length > 0 && (
-                <>
-                    <div className="grid gap-4">
-                        {warRooms.map((warRoom) => (
-                            <WarRoomCard
-                                key={warRoom.id}
-                                warRoom={warRoom}
-                                onClick={() =>
-                                    handleWarRoomClick(
-                                        warRoom.id,
-                                    )
-                                }
-                            />
-                        ))}
-                    </div>
+      {!isLoading && !isError && warRooms.length > 0 && (
+        <>
+          <div className="grid gap-4">
+            {warRooms.map((warRoom) => (
+              <WarRoomCard
+                key={warRoom.id}
+                warRoom={warRoom}
+                onClick={() => handleWarRoomClick(warRoom.id)}
+              />
+            ))}
+          </div>
 
-                    {data && (
-                        <WarRoomPagination
-                            page={data.pagination.page}
-                            totalPages={data.pagination.totalPages}
-                            onPageChange={handlePageChange}
-                        />
-                    )}
-                </>
-            )}
-
-            <CreateWarRoomModal
-                isOpen={isCreateModalOpen}
-                onClose={() =>
-                    setIsCreateModalOpen(false)
-                }
+          {data && (
+            <WarRoomPagination
+              page={data.pagination.page}
+              totalPages={data.pagination.totalPages}
+              onPageChange={handlePageChange}
             />
+          )}
+        </>
+      )}
 
-        </div>
-    );
+      <CreateWarRoomModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
+    </div>
+  );
 }
