@@ -101,7 +101,7 @@ export default function WarRoomCollaboration({
         <div
           className="
                         grid
-                        min-h-[360px]
+                        min-h-360
                         grid-cols-1
                         gap-3
                         md:grid-cols-2
@@ -111,7 +111,7 @@ export default function WarRoomCollaboration({
             className="
                             relative
                             flex
-                            min-h-[240px]
+                            min-h-240
                             items-center
                             justify-center
                             overflow-hidden
@@ -132,7 +132,7 @@ export default function WarRoomCollaboration({
                                 h-full
                                 w-full
                                 object-cover
-                                [transform:scaleX(-1)]
+                                [transform-scaleX(-1)]
                                 ${isCameraOn ? "opacity-100" : "opacity-0"}
                             `}
             />

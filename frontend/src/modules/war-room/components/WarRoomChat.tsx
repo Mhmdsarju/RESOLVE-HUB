@@ -83,7 +83,7 @@ export default function WarRoomChat({
       <div
         id="war-room-message-container"
         className="
-          h-[300px]
+          h-300
           space-y-3
           overflow-y-auto
           px-4
