@@ -61,13 +61,13 @@ export class IncidentController extends BaseController {
 
         try {
 
-            this.getCurrentUser(req);
+            const currentUser=this.getCurrentUser(req);
 
             const dto = {
                 status: req.body.status
             }
 
-            const incident = await this.updateIncidentStatusUseCase.execute(req.params.id, dto)
+            const incident = await this.updateIncidentStatusUseCase.execute(req.params.id, dto,currentUser.userId)
 
             return ResponseHandler.success(
                 res, "Incident status updated Successfully", incident
@@ -81,7 +81,7 @@ export class IncidentController extends BaseController {
 
     async assignTeam(req: Request, res: Response, next: NextFunction) {
         try {
-            this.getCurrentUser(req);
+            const currentUser=this.getCurrentUser(req);
 
             const dto = {
                 teamId: req.body.teamId,
@@ -89,7 +89,8 @@ export class IncidentController extends BaseController {
 
             const incident = await this.assignTeamUseCase.execute(
                 req.params.id,
-                dto
+                dto,
+                currentUser.userId
             );
 
             return ResponseHandler.success(

@@ -9,15 +9,20 @@ import { UploadFileUseCase } from "@/modules/file-management/application/usecase
 import { FileController } from "@/modules/file-management/presentation/controller/FileController";
 import { createFileRoutes } from "@/modules/file-management/presentation/routes/file.routes";
 import { DownloadFileUseCase } from "@/modules/file-management/application/usecase/DownloadFileUseCase";
+import { ITaskRepository } from "@/modules/task-management/domain/interfaces/ITaskRepository";
+import { ICreateTimelineEventUseCase } from "@/modules/timeline/domain/interfaces/usecases/ICreateTimelineEventUseCase";
 
-export function bindFile(container:Container){
+export function bindFile(container:Container,createTimeLineEventUseCase:ICreateTimelineEventUseCase){
 
     const fileRepository=container.get<IFileRepository>(TYPES.fileRepository);
     const fileStorage=container.get<IFileStorage>(TYPES.fileStorage);
+    const taskRepository=container.get<ITaskRepository>(TYPES.TaskRepository)
 
     const deleteFileUseCase=new DeleteFileUseCase(
         fileRepository,
-        fileStorage
+        fileStorage,
+        taskRepository,
+        createTimeLineEventUseCase
     );
 
     const getFileByIdUseCase=new GetFileByIdUseCase(
@@ -30,7 +35,9 @@ export function bindFile(container:Container){
 
     const uploadFileUseCase=new UploadFileUseCase(
         fileRepository,
-        fileStorage
+        fileStorage,
+        taskRepository,
+        createTimeLineEventUseCase
     )
 
     const downloadUseCase=new DownloadFileUseCase(

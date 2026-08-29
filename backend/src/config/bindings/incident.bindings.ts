@@ -10,19 +10,19 @@ import { GetIncidentStatsUseCase } from "@/modules/incident/application/use-case
 import { GetIncidentsUseCase } from "@/modules/incident/application/use-cases/GetIncidentsUseCase";
 import { createIncidentRoutes } from "@/modules/incident/presentation/routes/incident.routes";
 import { ICreateWarRoomUseCase } from "@/modules/war-room/domain/interface/usecase/ICreateWarRoomUseCase";
+import { ICreateTimelineEventUseCase } from "@/modules/timeline/domain/interfaces/usecases/ICreateTimelineEventUseCase";
 
 
-export function bindIncident(container: Container) {
+export function bindIncident(container: Container,createTimeLineEventUseCase:ICreateTimelineEventUseCase,createWarRoomUseCase:ICreateWarRoomUseCase) {
 
     const incidentRepository = container.get<IIncidentRepository>(TYPES.IncidentRepository);
-    const createWarRoomUseCase=container.get<ICreateWarRoomUseCase>(TYPES.ICreateWarRoomUseCase);
 
-    const assignTeamUseCase = new AssignTeamUseCase(incidentRepository);
-    const createIncidentUseCase = new CreateIncidentUseCase(incidentRepository,createWarRoomUseCase);
+    const assignTeamUseCase = new AssignTeamUseCase(incidentRepository,createTimeLineEventUseCase);
+    const createIncidentUseCase = new CreateIncidentUseCase(incidentRepository,createWarRoomUseCase,createTimeLineEventUseCase);
     const getIncidentByIdUseCase = new GetIncidentByIdUseCase(incidentRepository);
     const getIncidentStatsUseCase = new GetIncidentStatsUseCase(incidentRepository);
     const getIncidentsUseCase = new GetIncidentsUseCase(incidentRepository);
-    const updateIncidentStatusUseCase = new UpdateIncidentStatusUseCase(incidentRepository);
+    const updateIncidentStatusUseCase = new UpdateIncidentStatusUseCase(incidentRepository,createTimeLineEventUseCase);
 
     const incidentController = new IncidentController(
         createIncidentUseCase,

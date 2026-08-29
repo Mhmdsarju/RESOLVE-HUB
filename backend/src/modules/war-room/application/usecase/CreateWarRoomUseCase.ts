@@ -8,20 +8,18 @@ import { WarRoomStatus } from "../../domain/enums/warRoomStatus.enum";
 
 import { CreateWarRoomDto } from "../dto/createWarRoomDto";
 import { ICreateWarRoomUseCase } from "../../domain/interface/usecase/ICreateWarRoomUseCase";
-import { inject, injectable } from "inversify";
-import { TYPES } from "@/config/types";
+import { ICreateTimelineEventUseCase } from "@/modules/timeline/domain/interfaces/usecases/ICreateTimelineEventUseCase";
+import { TimelineEventType } from "@/modules/timeline/domain/enums/timelineEventType.enum";
 
-@injectable()
 export class CreateWarRoomUseCase implements ICreateWarRoomUseCase {
 
     constructor(
-        @inject(TYPES.warroomRepository)
         private readonly warRoomRepository: IWarRoomRepository,
-        @inject(TYPES.IncidentRepository)
         private readonly incidentRepository: IIncidentRepository,
+        private readonly createTimelineEventUseCase: ICreateTimelineEventUseCase,
     ) { }
 
-    async execute(dto: CreateWarRoomDto, createdBy?: string,): Promise<WarRoom> {
+    async execute(dto: CreateWarRoomDto, createdBy?: string | null,): Promise<WarRoom> {
 
         const incident = await this.incidentRepository.findById(
             dto.incidentId,
@@ -45,6 +43,15 @@ export class CreateWarRoomUseCase implements ICreateWarRoomUseCase {
             status: WarRoomStatus.ACTIVE,
         });
 
-        return await this.warRoomRepository.create(warRoom);
+        const createdWarRoom = await this.warRoomRepository.create(warRoom);
+
+        await this.createTimelineEventUseCase.execute(
+            dto.incidentId,
+            TimelineEventType.WAR_ROOM_CREATED,
+            "War room created",
+            createdBy ?? null,
+        );
+
+        return createdWarRoom;
     }
 }

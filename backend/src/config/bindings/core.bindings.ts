@@ -40,8 +40,8 @@ import { IWarRoomParticipantRepository } from "@/modules/war-room/domain/interfa
 import { PrismaWarRoomParticipantRepository } from "@/modules/war-room/infrasturcture/repositories/PrismaWarRoomParticipantRepository";
 import { IWarRoomMessageRepository } from "@/modules/war-room/domain/interface/IWarRoomMessageRepository";
 import { PrismaWarRoomMessageRepository } from "@/modules/war-room/infrasturcture/repositories/PrismaWarRoomMessageRepository";
-import { ICreateWarRoomUseCase } from "@/modules/war-room/domain/interface/usecase/ICreateWarRoomUseCase";
-import { CreateWarRoomUseCase } from "@/modules/war-room/application/usecase/CreateWarRoomUseCase";
+import { ITimelineEventRepository } from "@/modules/timeline/domain/interfaces/ITimelineEventRepository";
+import { PrismaTimelineEventRepository } from "@/modules/timeline/infrastructure/repositories/PrismaTimelineEventRepository";
 
 export function bindCore(container: Container) {
 
@@ -64,5 +64,6 @@ export function bindCore(container: Container) {
     container.bind<IWarRoomRepository>(TYPES.warroomRepository).to(PrismaWarRoomRepository).inSingletonScope();
     container.bind<IWarRoomParticipantRepository>(TYPES.warroomParticipantsRepository).to(PrismaWarRoomParticipantRepository).inSingletonScope();
     container.bind<IWarRoomMessageRepository>(TYPES.warRoomMessageRepository).to(PrismaWarRoomMessageRepository).inSingletonScope();
-    container.bind<ICreateWarRoomUseCase>(TYPES.ICreateWarRoomUseCase).to(CreateWarRoomUseCase).inSingletonScope();
+    container.bind<ITimelineEventRepository>(TYPES.TimeLineRepository).to(PrismaTimelineEventRepository).inSingletonScope();
+
 }
