@@ -6,12 +6,15 @@ import { AppError } from "@/shared/errors/AppError";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
 import { IIncidentRepository } from "@/modules/incident/domain/interfaces/IIncidentRepository";
 import { ITeamMemberRepository } from "@/modules/team-management/domain/interfaces/ITeamMemberRepository";
+import { ICreateTimelineEventUseCase } from "@/modules/timeline/domain/interfaces/usecases/ICreateTimelineEventUseCase";
+import { TimelineEventType } from "@/modules/timeline/domain/enums/timelineEventType.enum";
 
 export class UpdateTaskUseCase implements IUpdateTaskUseCase {
     constructor(
         private readonly taskRepository: ITaskRepository,
         private readonly incidentRepository: IIncidentRepository,
         private readonly teamMemberRepository: ITeamMemberRepository,
+        private readonly createTimelineEventUseCase: ICreateTimelineEventUseCase,
     ) { }
 
     async execute(dto: UpdateTaskDto): Promise<Task> {
@@ -107,7 +110,7 @@ export class UpdateTaskUseCase implements IUpdateTaskUseCase {
             }
         }
 
-        return await this.taskRepository.update(
+        const updated = await this.taskRepository.update(
             dto.taskId,
             {
                 ...(dto.title !== undefined && {
@@ -138,5 +141,14 @@ export class UpdateTaskUseCase implements IUpdateTaskUseCase {
                 updatedAt: new Date(),
             },
         );
+
+        await this.createTimelineEventUseCase.execute(
+            existingTask.incidentId,
+            TimelineEventType.TASK_UPDATED,
+            `Task "${existingTask.title}" was updated`,
+            dto.userId,
+        );
+
+        return updated;
     }
 }

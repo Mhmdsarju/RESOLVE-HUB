@@ -1,38 +1,45 @@
-import { useState } from "react";
 import { X } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { useCreateIncident } from "../hooks/useCreateIncident";
 import { useTeams } from "@/modules/team/hooks/useTeams";
 
-import type {
-  CreateIncidentDto,
-  IncidentPriority,
-  IncidentSeverity,
-  IncidentType,
-} from "../types/incident.types";
+import {
+  createIncidentSchema,
+  type CreateIncidentFormData,
+} from "../validation/createIncidentSchema";
 
 interface CreateIncidentModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const initialForm: CreateIncidentDto = {
+const initialForm: CreateIncidentFormData = {
   title: "",
   description: "",
   severity: "MEDIUM",
   priority: "P2",
   type: "MANUAL",
-  assignedTeamId: undefined,
+  assignedTeamId: "",
 };
 
 export default function CreateIncidentModal({ isOpen, onClose }: CreateIncidentModalProps) {
-  const [form, setForm] = useState<CreateIncidentDto>(initialForm);
-
   const createIncidentMutation = useCreateIncident();
 
   const { data: teamsData, isLoading: isTeamsLoading } = useTeams({
     page: 1,
     limit: 100,
+  });
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<CreateIncidentFormData>({
+    resolver: zodResolver(createIncidentSchema),
+    defaultValues: initialForm,
   });
 
   if (!isOpen) {
@@ -41,62 +48,26 @@ export default function CreateIncidentModal({ isOpen, onClose }: CreateIncidentM
 
   const teams = teamsData?.items ?? [];
 
-  const handleChange = (field: keyof CreateIncidentDto, value: string) => {
-    setForm((current) => {
-      if (field === "title" || field === "description") {
-        return {
-          ...current,
-          [field]: value,
-        };
-      }
-
-      if (field === "priority" || field === "assignedTeamId") {
-        return {
-          ...current,
-          [field]: value || undefined,
-        };
-      }
-
-      return {
-        ...current,
-        [field]: value,
-      };
-    });
-  };
-
   const handleClose = () => {
     if (createIncidentMutation.isPending) {
       return;
     }
 
-    setForm({
-      ...initialForm,
-    });
+    reset(initialForm);
 
     onClose();
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    const title = form.title.trim();
-
-    if (!title) {
-      return;
-    }
-
-    const payload: CreateIncidentDto = {
+  const onSubmit = (form: CreateIncidentFormData) => {
+    const payload = {
       ...form,
-      title,
+      title: form.title.trim(),
       description: form.description?.trim() || undefined,
     };
 
     createIncidentMutation.mutate(payload, {
       onSuccess: () => {
-        setForm({
-          ...initialForm,
-        });
-
+        reset(initialForm);
         onClose();
       },
     });
@@ -130,7 +101,9 @@ export default function CreateIncidentModal({ isOpen, onClose }: CreateIncidentM
       >
         <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-xl font-bold text-[#4B3932]">Create Incident</h2>
+            <h2 className="text-xl font-bold text-[#4B3932]">
+              Create Incident
+            </h2>
 
             <p className="mt-1 text-sm text-stone-500">
               Create a new incident for your organization.
@@ -156,7 +129,7 @@ export default function CreateIncidentModal({ isOpen, onClose }: CreateIncidentM
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-6 space-y-5">
+        <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-5">
           <div>
             <label
               htmlFor="incident-title"
@@ -174,10 +147,9 @@ export default function CreateIncidentModal({ isOpen, onClose }: CreateIncidentM
             <input
               id="incident-title"
               type="text"
-              value={form.title ?? ""}
-              onChange={(event) => handleChange("title", event.target.value)}
               placeholder="Enter incident title"
               disabled={createIncidentMutation.isPending}
+              {...register("title")}
               className="
                 w-full
                 rounded-xl
@@ -193,6 +165,12 @@ export default function CreateIncidentModal({ isOpen, onClose }: CreateIncidentM
                 disabled:opacity-60
               "
             />
+
+            {errors.title && (
+              <p className="mt-1.5 text-xs text-red-500">
+                {errors.title.message}
+              </p>
+            )}
           </div>
 
           <div>
@@ -211,11 +189,10 @@ export default function CreateIncidentModal({ isOpen, onClose }: CreateIncidentM
 
             <textarea
               id="incident-description"
-              value={form.description ?? ""}
-              onChange={(event) => handleChange("description", event.target.value)}
               placeholder="Describe the incident"
               rows={4}
               disabled={createIncidentMutation.isPending}
+              {...register("description")}
               className="
                 w-full
                 resize-none
@@ -232,6 +209,12 @@ export default function CreateIncidentModal({ isOpen, onClose }: CreateIncidentM
                 disabled:opacity-60
               "
             />
+
+            {errors.description && (
+              <p className="mt-1.5 text-xs text-red-500">
+                {errors.description.message}
+              </p>
+            )}
           </div>
 
           <div className="grid gap-5 sm:grid-cols-2">
@@ -251,10 +234,7 @@ export default function CreateIncidentModal({ isOpen, onClose }: CreateIncidentM
 
               <select
                 id="incident-severity"
-                value={form.severity}
-                onChange={(event) =>
-                  handleChange("severity", event.target.value as IncidentSeverity)
-                }
+                {...register("severity")}
                 disabled={createIncidentMutation.isPending}
                 className="
                   w-full
@@ -273,13 +253,16 @@ export default function CreateIncidentModal({ isOpen, onClose }: CreateIncidentM
                 "
               >
                 <option value="LOW">Low</option>
-
                 <option value="MEDIUM">Medium</option>
-
                 <option value="HIGH">High</option>
-
                 <option value="CRITICAL">Critical</option>
               </select>
+
+              {errors.severity && (
+                <p className="mt-1.5 text-xs text-red-500">
+                  {errors.severity.message}
+                </p>
+              )}
             </div>
 
             <div>
@@ -298,10 +281,7 @@ export default function CreateIncidentModal({ isOpen, onClose }: CreateIncidentM
 
               <select
                 id="incident-priority"
-                value={form.priority ?? ""}
-                onChange={(event) =>
-                  handleChange("priority", event.target.value as IncidentPriority)
-                }
+                {...register("priority")}
                 disabled={createIncidentMutation.isPending}
                 className="
                   w-full
@@ -319,13 +299,17 @@ export default function CreateIncidentModal({ isOpen, onClose }: CreateIncidentM
                   disabled:opacity-60
                 "
               >
-                <option value="">No Priority</option>
-
                 <option value="P1">P1</option>
                 <option value="P2">P2</option>
                 <option value="P3">P3</option>
                 <option value="P4">P4</option>
               </select>
+
+              {errors.priority && (
+                <p className="mt-1.5 text-xs text-red-500">
+                  {errors.priority.message}
+                </p>
+              )}
             </div>
           </div>
 
@@ -346,8 +330,7 @@ export default function CreateIncidentModal({ isOpen, onClose }: CreateIncidentM
 
               <select
                 id="incident-type"
-                value={form.type}
-                onChange={(event) => handleChange("type", event.target.value as IncidentType)}
+                {...register("type")}
                 disabled={createIncidentMutation.isPending}
                 className="
                   w-full
@@ -366,9 +349,13 @@ export default function CreateIncidentModal({ isOpen, onClose }: CreateIncidentM
                 "
               >
                 <option value="MANUAL">Manual</option>
-
-                <option value="AUTOMATED">Automated</option>
               </select>
+
+              {errors.type && (
+                <p className="mt-1.5 text-xs text-red-500">
+                  {errors.type.message}
+                </p>
+              )}
             </div>
 
             <div>
@@ -387,8 +374,7 @@ export default function CreateIncidentModal({ isOpen, onClose }: CreateIncidentM
 
               <select
                 id="incident-team"
-                value={form.assignedTeamId ?? ""}
-                onChange={(event) => handleChange("assignedTeamId", event.target.value)}
+                {...register("assignedTeamId")}
                 disabled={createIncidentMutation.isPending || isTeamsLoading}
                 className="
                   w-full
@@ -406,7 +392,9 @@ export default function CreateIncidentModal({ isOpen, onClose }: CreateIncidentM
                   disabled:opacity-60
                 "
               >
-                <option value="">{isTeamsLoading ? "Loading teams..." : "Select team"}</option>
+                <option value="">
+                  {isTeamsLoading ? "Loading teams..." : "Select team"}
+                </option>
 
                 {teams.map((team) => (
                   <option key={team.id} value={team.id}>
@@ -414,6 +402,12 @@ export default function CreateIncidentModal({ isOpen, onClose }: CreateIncidentM
                   </option>
                 ))}
               </select>
+
+              {errors.assignedTeamId && (
+                <p className="mt-1.5 text-xs text-red-500">
+                  {errors.assignedTeamId.message}
+                </p>
+              )}
             </div>
           </div>
 
@@ -442,7 +436,7 @@ export default function CreateIncidentModal({ isOpen, onClose }: CreateIncidentM
 
             <button
               type="submit"
-              disabled={!form.title.trim() || createIncidentMutation.isPending}
+              disabled={createIncidentMutation.isPending}
               className="
                 rounded-xl
                 bg-[#4B3932]
@@ -457,7 +451,9 @@ export default function CreateIncidentModal({ isOpen, onClose }: CreateIncidentM
                 disabled:opacity-50
               "
             >
-              {createIncidentMutation.isPending ? "Creating..." : "Create Incident"}
+              {createIncidentMutation.isPending
+                ? "Creating..."
+                : "Create Incident"}
             </button>
           </div>
         </form>

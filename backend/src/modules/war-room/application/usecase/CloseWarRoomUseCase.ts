@@ -6,11 +6,14 @@ import { WarRoom } from "../../domain/entity/warRoom.entity";
 import { WarRoomStatus } from "../../domain/enums/warRoomStatus.enum";
 
 import { ICloseWarRoomUseCase } from "../../domain/interface/usecase/ICloseWarRoomUseCase";
+import { ICreateTimelineEventUseCase } from "@/modules/timeline/domain/interfaces/usecases/ICreateTimelineEventUseCase";
+import { TimelineEventType } from "@/modules/timeline/domain/enums/timelineEventType.enum";
 
 export class CloseWarRoomUseCase implements ICloseWarRoomUseCase {
 
     constructor(
         private readonly warRoomRepository: IWarRoomRepository,
+        private readonly createTimelineEventUseCase: ICreateTimelineEventUseCase,
     ) { }
 
     async execute(id: string, userId: string,): Promise<WarRoom> {
@@ -39,6 +42,13 @@ export class CloseWarRoomUseCase implements ICloseWarRoomUseCase {
                 status: WarRoomStatus.CLOSED,
                 closedAt: new Date(),
             },
+        );
+
+        await this.createTimelineEventUseCase.execute(
+            warRoom.incidentId,
+            TimelineEventType.WAR_ROOM_CLOSED,
+            "War room closed",
+            userId,
         );
 
         return updatedWarRoom;

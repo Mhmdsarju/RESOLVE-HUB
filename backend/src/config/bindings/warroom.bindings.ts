@@ -20,8 +20,9 @@ import { SendWarRoomMessageUseCase } from "@/modules/war-room/application/usecas
 import { GetWarRoomMessagesUseCase } from "@/modules/war-room/application/usecase/GetWarRoomMessagesUseCase";
 import { WarRoomMessageController } from "@/modules/war-room/presentation/controller/WarRoomMessageController";
 import { createWarRoomMessageRoutes } from "@/modules/war-room/presentation/routes/WarRoomMessageRoutes";
+import { ICreateTimelineEventUseCase } from "@/modules/timeline/domain/interfaces/usecases/ICreateTimelineEventUseCase";
 
-export function bindWarRoom(container: Container) {
+export function bindWarRoom(container: Container,createTimeLineEventUseCase:ICreateTimelineEventUseCase) {
 
     const warRoomRepository = container.get<IWarRoomRepository>(TYPES.warroomRepository);
     const incidentRepository = container.get<IIncidentRepository>(TYPES.IncidentRepository);
@@ -31,12 +32,14 @@ export function bindWarRoom(container: Container) {
 
 
     const closeWarRoomUseCase = new CloseWarRoomUseCase(
-        warRoomRepository
+        warRoomRepository,
+        createTimeLineEventUseCase
     )
 
     const createWarRoomUseCase = new CreateWarRoomUseCase(
         warRoomRepository,
-        incidentRepository
+        incidentRepository,
+        createTimeLineEventUseCase
     )
 
     const getWarRoomByIdUseCase = new GetWarRoomByIdUseCase(
@@ -51,14 +54,16 @@ export function bindWarRoom(container: Container) {
         warRoomRepository,
         teamMemberRepository,
         incidentRepository,
-        warRoomParticipantsRepository
+        warRoomParticipantsRepository,
+        createTimeLineEventUseCase
     )
 
     const leaveWarRoomUseCase = new LeaveWarRoomUseCase(
         warRoomRepository,
         incidentRepository,
         teamMemberRepository,
-        warRoomParticipantsRepository
+        warRoomParticipantsRepository,
+        createTimeLineEventUseCase
     )
 
     const warRoomController = new WarRoomController(

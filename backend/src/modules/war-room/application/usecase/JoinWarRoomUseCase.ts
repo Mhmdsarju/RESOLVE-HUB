@@ -12,6 +12,8 @@ import { IIncidentRepository } from "@/modules/incident/domain/interfaces/IIncid
 import { IWarRoomParticipantRepository } from "../../domain/interface/IWarRoomParticipantRepository";
 
 import { WarRoomParticipant } from "../../domain/entity/warRoomParticipant";
+import { ICreateTimelineEventUseCase } from "@/modules/timeline/domain/interfaces/usecases/ICreateTimelineEventUseCase";
+import { TimelineEventType } from "@/modules/timeline/domain/enums/timelineEventType.enum";
 
 export class JoinWarRoomUseCase implements IJoinWarRoomUseCase {
 
@@ -19,10 +21,11 @@ export class JoinWarRoomUseCase implements IJoinWarRoomUseCase {
         private readonly warRoomRepository: IWarRoomRepository,
         private readonly teamMemberRepository: ITeamMemberRepository,
         private readonly incidentRepository: IIncidentRepository,
-        private readonly warRoomParticipantRepository: IWarRoomParticipantRepository
+        private readonly warRoomParticipantRepository: IWarRoomParticipantRepository,
+        private readonly createTimelineEventUseCase: ICreateTimelineEventUseCase,
     ) { }
 
-    async execute(id: string, userId: string,userRole:string): Promise<WarRoom> {
+    async execute(id: string, userId: string, userRole: string): Promise<WarRoom> {
 
         if (!id?.trim()) {
             throw new AppError("War room ID is required", HttpStatusCode.BAD_REQUEST,);
@@ -89,6 +92,13 @@ export class JoinWarRoomUseCase implements IJoinWarRoomUseCase {
                 },
             );
 
+            await this.createTimelineEventUseCase.execute(
+                warRoom.incidentId,
+                TimelineEventType.WAR_ROOM_JOINED,
+                "User joined the war room",
+                userId,
+            );
+
             return warRoom;
         }
 
@@ -101,6 +111,13 @@ export class JoinWarRoomUseCase implements IJoinWarRoomUseCase {
 
         await this.warRoomParticipantRepository.create(
             newParticipant,
+        );
+
+        await this.createTimelineEventUseCase.execute(
+            warRoom.incidentId,
+            TimelineEventType.WAR_ROOM_JOINED,
+            "User joined the war room",
+            userId,
         );
 
         return warRoom;

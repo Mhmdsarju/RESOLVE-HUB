@@ -110,5 +110,9 @@ export const ENDPOINTS = {
     MESSAGES: (warRoomId: string) => `${ENDPOINTS.WAR_ROOM.BASE}/${warRoomId}/messages`,
   },
 
+  TIMELINE: {
+    BY_INCIDENT: (incidentId: string) => `/timeline/incident/${incidentId}`,
+  },
+
 
 } as const;

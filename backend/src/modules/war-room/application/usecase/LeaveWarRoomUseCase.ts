@@ -9,6 +9,8 @@ import { IWarRoomParticipantRepository } from "../../domain/interface/IWarRoomPa
 import { WarRoomStatus } from "../../domain/enums/warRoomStatus.enum";
 
 import { ILeaveWarRoomUseCase } from "../../domain/interface/usecase/ILeaveWarRoomUseCase";
+import { ICreateTimelineEventUseCase } from "@/modules/timeline/domain/interfaces/usecases/ICreateTimelineEventUseCase";
+import { TimelineEventType } from "@/modules/timeline/domain/enums/timelineEventType.enum";
 
 export class LeaveWarRoomUseCase implements ILeaveWarRoomUseCase {
 
@@ -17,6 +19,7 @@ export class LeaveWarRoomUseCase implements ILeaveWarRoomUseCase {
         private readonly incidentRepository: IIncidentRepository,
         private readonly teamMemberRepository: ITeamMemberRepository,
         private readonly warRoomParticipantRepository: IWarRoomParticipantRepository,
+        private readonly createTimelineEventUseCase: ICreateTimelineEventUseCase,
     ) { }
 
     async execute(id: string, userId: string, userRole: string): Promise<void> {
@@ -69,7 +72,7 @@ export class LeaveWarRoomUseCase implements ILeaveWarRoomUseCase {
             );
         }
 
-       if (userRole !== "ORG_ADMIN") {
+        if (userRole !== "ORG_ADMIN") {
 
             const teamMember = await this.teamMemberRepository.findMember(
                 incident.assignedTeamId,
@@ -107,6 +110,13 @@ export class LeaveWarRoomUseCase implements ILeaveWarRoomUseCase {
             {
                 leftAt: new Date(),
             },
+        );
+
+        await this.createTimelineEventUseCase.execute(
+            warRoom.incidentId,
+            TimelineEventType.WAR_ROOM_LEFT,
+            "User left the war room",
+            userId,
         );
     }
 }

@@ -10,19 +10,21 @@ import { GetIncidentStatsUseCase } from "@/modules/incident/application/use-case
 import { GetIncidentsUseCase } from "@/modules/incident/application/use-cases/GetIncidentsUseCase";
 import { createIncidentRoutes } from "@/modules/incident/presentation/routes/incident.routes";
 import { ICreateWarRoomUseCase } from "@/modules/war-room/domain/interface/usecase/ICreateWarRoomUseCase";
+import { ICreateTimelineEventUseCase } from "@/modules/timeline/domain/interfaces/usecases/ICreateTimelineEventUseCase";
+import { ITeamRepository } from "@/modules/team-management/domain/interfaces/ITeamRepository";
 
 
-export function bindIncident(container: Container) {
+export function bindIncident(container: Container,createTimeLineEventUseCase:ICreateTimelineEventUseCase,createWarRoomUseCase:ICreateWarRoomUseCase) {
 
     const incidentRepository = container.get<IIncidentRepository>(TYPES.IncidentRepository);
-    const createWarRoomUseCase=container.get<ICreateWarRoomUseCase>(TYPES.ICreateWarRoomUseCase);
+    const teamRepository=container.get<ITeamRepository>(TYPES.TeamRepository)
 
-    const assignTeamUseCase = new AssignTeamUseCase(incidentRepository);
-    const createIncidentUseCase = new CreateIncidentUseCase(incidentRepository,createWarRoomUseCase);
+    const assignTeamUseCase = new AssignTeamUseCase(incidentRepository,createTimeLineEventUseCase,teamRepository);
+    const createIncidentUseCase = new CreateIncidentUseCase(incidentRepository,createWarRoomUseCase,createTimeLineEventUseCase);
     const getIncidentByIdUseCase = new GetIncidentByIdUseCase(incidentRepository);
     const getIncidentStatsUseCase = new GetIncidentStatsUseCase(incidentRepository);
     const getIncidentsUseCase = new GetIncidentsUseCase(incidentRepository);
-    const updateIncidentStatusUseCase = new UpdateIncidentStatusUseCase(incidentRepository);
+    const updateIncidentStatusUseCase = new UpdateIncidentStatusUseCase(incidentRepository,createTimeLineEventUseCase);
 
     const incidentController = new IncidentController(
         createIncidentUseCase,

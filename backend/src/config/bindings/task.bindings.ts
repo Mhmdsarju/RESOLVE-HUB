@@ -15,23 +15,29 @@ import { IIncidentRepository } from "@/modules/incident/domain/interfaces/IIncid
 import { ITeamMemberRepository } from "@/modules/team-management/domain/interfaces/ITeamMemberRepository";
 import { createTaskRoutes } from "@/modules/task-management/presentation/routes/task.routes";
 import { GetTaskByIdUseCase } from "@/modules/task-management/application/use-cases/GetTaskByIdUseCase";
+import { ICreateTimelineEventUseCase } from "@/modules/timeline/domain/interfaces/usecases/ICreateTimelineEventUseCase";
+import { IUserRepository } from "@/modules/auth/domain/repositories/IUserRepository";
 
-export function bindTask(container: Container) {
+export function bindTask(container: Container,createTimeLineEventUseCase:ICreateTimelineEventUseCase) {
 
     const taskRepository = container.get<ITaskRepository>(TYPES.TaskRepository);
     const incidentRepository = container.get<IIncidentRepository>(TYPES.IncidentRepository);
     const teamMemberRepository = container.get<ITeamMemberRepository>(TYPES.TeamMemberRepository);
+    const userRepository=container.get<IUserRepository>(TYPES.UserRepository);
 
     const assignTaskUseCase = new AssignTaskUseCase(
         taskRepository,
         incidentRepository,
         teamMemberRepository,
+        createTimeLineEventUseCase,
+        userRepository
     );
 
     const createTaskUseCase = new CreateTaskUseCase(
         taskRepository,
         incidentRepository,
         teamMemberRepository,
+        createTimeLineEventUseCase
     );
 
     const deleteTaskUseCase = new DeleteTaskUseCase(
@@ -61,12 +67,14 @@ export function bindTask(container: Container) {
         taskRepository,
         incidentRepository,
         teamMemberRepository,
+        createTimeLineEventUseCase
     );
 
     const updateTaskUseCase = new UpdateTaskUseCase(
         taskRepository,
         incidentRepository,
         teamMemberRepository,
+        createTimeLineEventUseCase
     );
 
     const getTaskByIdUseCase=new GetTaskByIdUseCase(
