@@ -1,4 +1,7 @@
-import { TimelineEvent as PrismaTimelineEvent } from "@prisma/client";
+import {
+    TimelineEvent as PrismaTimelineEvent,
+    TimelineEventType as PrismaTimelineEventType,
+} from "@prisma/client";
 
 import { TimelineEvent } from "../../domain/entity/timelineEvent.entity";
 import { TimelineEventType } from "../../domain/enums/timelineEventType.enum";
@@ -9,7 +12,7 @@ export class TimelineEventMapper {
         return {
             incidentId: timelineEvent.incidentId,
             actorId: timelineEvent.createdBy,
-            eventType: timelineEvent.eventType,
+            eventType: timelineEvent.eventType as PrismaTimelineEventType,
             message: timelineEvent.message,
         };
     }

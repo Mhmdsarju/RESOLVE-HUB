@@ -16,18 +16,21 @@ import { ITeamMemberRepository } from "@/modules/team-management/domain/interfac
 import { createTaskRoutes } from "@/modules/task-management/presentation/routes/task.routes";
 import { GetTaskByIdUseCase } from "@/modules/task-management/application/use-cases/GetTaskByIdUseCase";
 import { ICreateTimelineEventUseCase } from "@/modules/timeline/domain/interfaces/usecases/ICreateTimelineEventUseCase";
+import { IUserRepository } from "@/modules/auth/domain/repositories/IUserRepository";
 
 export function bindTask(container: Container,createTimeLineEventUseCase:ICreateTimelineEventUseCase) {
 
     const taskRepository = container.get<ITaskRepository>(TYPES.TaskRepository);
     const incidentRepository = container.get<IIncidentRepository>(TYPES.IncidentRepository);
     const teamMemberRepository = container.get<ITeamMemberRepository>(TYPES.TeamMemberRepository);
+    const userRepository=container.get<IUserRepository>(TYPES.UserRepository);
 
     const assignTaskUseCase = new AssignTaskUseCase(
         taskRepository,
         incidentRepository,
         teamMemberRepository,
-        createTimeLineEventUseCase
+        createTimeLineEventUseCase,
+        userRepository
     );
 
     const createTaskUseCase = new CreateTaskUseCase(

@@ -7,13 +7,15 @@ import { IIncidentRepository } from "@/modules/incident/domain/interfaces/IIncid
 import { ITeamMemberRepository } from "@/modules/team-management/domain/interfaces/ITeamMemberRepository";
 import { ICreateTimelineEventUseCase } from "@/modules/timeline/domain/interfaces/usecases/ICreateTimelineEventUseCase";
 import { TimelineEventType } from "@/modules/timeline/domain/enums/timelineEventType.enum";
+import { IUserRepository } from "@/modules/auth/domain/repositories/IUserRepository";
 
-export class AssignTaskUseCase    implements IAssignTaskUseCase {
+export class AssignTaskUseCase implements IAssignTaskUseCase {
     constructor(
         private readonly taskRepository: ITaskRepository,
         private readonly incidentRepository: IIncidentRepository,
         private readonly teamMemberRepository: ITeamMemberRepository,
         private readonly createTimelineEventUseCase: ICreateTimelineEventUseCase,
+        private readonly userRepository: IUserRepository,
     ) { }
 
     async execute(taskId: string, assignedTo: string, assignedBy: string, role: string,): Promise<Task> {
@@ -59,6 +61,11 @@ export class AssignTaskUseCase    implements IAssignTaskUseCase {
             throw new AppError("The selected user is not a member of this team", HttpStatusCode.BAD_REQUEST,);
         }
 
+        const assignee = await this.userRepository.findById(assignedTo);
+        if (!assignee) {
+            throw new AppError("Assignee user not found", HttpStatusCode.NOT_FOUND,);
+        }
+
         if (role === "SUPER_ADMIN" || role === "ORG_ADMIN") {
             const updated = await this.taskRepository.update(
                 taskId,
@@ -70,7 +77,7 @@ export class AssignTaskUseCase    implements IAssignTaskUseCase {
             await this.createTimelineEventUseCase.execute(
                 task.incidentId,
                 TimelineEventType.TASK_ASSIGNED,
-                `Task "${task.title}" was assigned to ${assignedTo}`,
+                `Task "${task.title}" was assigned to ${assignee.name}`,
                 assignedBy,
             );
 
@@ -97,7 +104,7 @@ export class AssignTaskUseCase    implements IAssignTaskUseCase {
         await this.createTimelineEventUseCase.execute(
             task.incidentId,
             TimelineEventType.TASK_ASSIGNED,
-            `Task "${task.title}" was assigned to ${assignedTo}`,
+            `Task "${task.title}" was assigned to ${assignee.name}`,
             assignedBy,
         );
 

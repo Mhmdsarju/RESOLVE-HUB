@@ -79,7 +79,7 @@ export class PrismaIncidentRepository implements IIncidentRepository {
   async update(id: string, data: Partial<Incident>): Promise<Incident> {
     const updated = await prisma.incident.update({
       where: { id },
-      data: IncidentMapper.toDb(data as Incident),
+      data: IncidentMapper.toUpdateDb(data),
     });
 
     return IncidentMapper.fromDb(updated);
