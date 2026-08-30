@@ -65,36 +65,24 @@ export class AssignTaskUseCase implements IAssignTaskUseCase {
         }
 
         const assignee = await this.userRepository.findById(assignedTo);
+
         if (!assignee) {
             throw new AppError("Assignee user not found", HttpStatusCode.NOT_FOUND,);
         }
 
-        if (role === "SUPER_ADMIN" || role === "ORG_ADMIN") {
-            const updated = await this.taskRepository.update(
-                taskId,
-                {
-                    assignedTo,
-                },
-            );
-
-            await this.createTimelineEventUseCase.execute(
-                task.incidentId,
-                TimelineEventType.TASK_ASSIGNED,
-                `Task "${task.title}" was assigned to ${assignee.name}`,
+        if (role !== "SUPER_ADMIN" && role !== "ORG_ADMIN") {
+            const assigningMember = await this.teamMemberRepository.findMember(
+                incident.assignedTeamId,
                 assignedBy,
             );
 
-            return updated;
-        }
+            if (!assigningMember) {
+                throw new AppError("You are not a member of the assigned team", HttpStatusCode.FORBIDDEN,);
+            }
 
-        const assigningMember = await this.teamMemberRepository.findMember(incident.assignedTeamId, assignedBy,);
-
-        if (!assigningMember) {
-            throw new AppError("You are not a member of the assigned team", HttpStatusCode.FORBIDDEN,);
-        }
-
-        if (assigningMember.role !== "LEAD") {
-            throw new AppError("Only the team lead can assign tasks", HttpStatusCode.FORBIDDEN,);
+            if (assigningMember.role !== "LEAD") {
+                throw new AppError("Only the team lead can assign tasks", HttpStatusCode.FORBIDDEN,);
+            }
         }
 
         const updated = await this.taskRepository.update(
