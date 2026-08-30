@@ -70,6 +70,7 @@ export function bindTask(container: Container,createTimeLineEventUseCase:ICreate
         incidentRepository,
         teamMemberRepository,
         createTimeLineEventUseCase,
+        userRepository,
         createNotificationUseCase
     );
 

@@ -8,6 +8,7 @@ import { IIncidentRepository } from "@/modules/incident/domain/interfaces/IIncid
 import { ITeamMemberRepository } from "@/modules/team-management/domain/interfaces/ITeamMemberRepository";
 import { ICreateTimelineEventUseCase } from "@/modules/timeline/domain/interfaces/usecases/ICreateTimelineEventUseCase";
 import { TimelineEventType } from "@/modules/timeline/domain/enums/timelineEventType.enum";
+import { IUserRepository } from "@/modules/auth/domain/repositories/IUserRepository";
 import { ICreateNotificationUseCase } from "@/modules/notification/domain/interface/use-case/ICreateNotificationUseCase";
 import { NotificationType } from "@/modules/notification/domain/enums/NotificationType";
 
@@ -17,6 +18,7 @@ export class UpdateTaskStatusUseCase implements IUpdateTaskStatusUseCase {
         private readonly incidentRepository: IIncidentRepository,
         private readonly teamMemberRepository: ITeamMemberRepository,
         private readonly createTimelineEventUseCase: ICreateTimelineEventUseCase,
+        private readonly userRepository: IUserRepository,
         private readonly createNotificationUseCase: ICreateNotificationUseCase,
     ) { }
 
@@ -131,9 +133,11 @@ export class UpdateTaskStatusUseCase implements IUpdateTaskStatusUseCase {
                 userId,
             );
 
-            if (existingTask.assignedTo && existingTask.assignedTo !== userId) {
+            const organizationAdmin = await this.userRepository.findOrganizationAdminByOrganizationId(incident.organizationId,);
+
+            if (organizationAdmin) {
                 await this.createNotificationUseCase.execute({
-                    userId: existingTask.assignedTo,
+                    userId: organizationAdmin.id!,
                     type: NotificationType.TASK,
                     title: status === TaskStatus.DONE
                         ? "Task Completed"
