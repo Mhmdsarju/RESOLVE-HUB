@@ -114,5 +114,9 @@ export const ENDPOINTS = {
     BY_INCIDENT: (incidentId: string) => `/timeline/incident/${incidentId}`,
   },
 
+  AUDIT_LOG: {
+    BASE: "/audit-logs",
+  },
+
 
 } as const;

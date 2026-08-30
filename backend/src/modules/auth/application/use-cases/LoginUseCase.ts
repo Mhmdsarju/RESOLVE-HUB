@@ -10,13 +10,17 @@ import { AppError } from "../../../../shared/errors/AppError";
 import { ILoginUseCase } from "../../domain/interfaces/use-cases/ILoginUseCase";
 import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
 import { ErrorMessages } from "../../../../shared/constant/ErrorMessages";
+import { ICreateAuditLogUseCase } from "@/modules/audit-log/domain/interface/usecase/ICreateAuditLogUseCase";
+import { AuditAction } from "@/modules/audit-log/domain/enums/auditLog.enum";
+import { AuditEntityType } from "@/modules/audit-log/domain/enums/auditLog.enum";
 
 export class LoginUseCase implements ILoginUseCase {
   constructor(
     private readonly userRepository: IUserRepository,
     private readonly passwordHasher: IPasswordHasher,
     private readonly tokenService: ITokenService,
-    private readonly tokenStore: ITokenStore
+    private readonly tokenStore: ITokenStore,
+    private readonly createAuditLogUseCase: ICreateAuditLogUseCase,
   ) { }
 
   async execute(dto: LoginDto) {
@@ -56,6 +60,14 @@ export class LoginUseCase implements ILoginUseCase {
     const refreshToken = await this.tokenService.generateRefreshToken(payload);
 
     await this.tokenStore.saveRefreshToken(user.id!, refreshToken);
+
+    await this.createAuditLogUseCase.execute({
+      organizationId: user.organizationId!,
+      action: AuditAction.LOGIN,
+      entityType: AuditEntityType.AUTH,
+      description: `${user.name} logged in`,
+      actorId: user.id!,
+    });
 
     return {
       user: {

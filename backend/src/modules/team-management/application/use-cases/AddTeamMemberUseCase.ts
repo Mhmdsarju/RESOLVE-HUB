@@ -12,15 +12,18 @@ import { CreateTeamMemberDto } from "../dto/createTeamMemberDto";
 import { ITeamRepository } from "../../domain/interfaces/ITeamRepository";
 import { ITeamMemberRepository } from "../../domain/interfaces/ITeamMemberRepository";
 import { IAddTeamMemberUseCase } from "../../domain/interfaces/use-case/IAddTeamMemberUseCase";
+import { ICreateAuditLogUseCase } from "@/modules/audit-log/domain/interface/usecase/ICreateAuditLogUseCase";
+import { AuditAction, AuditEntityType } from "@/modules/audit-log/domain/enums/auditLog.enum";
 
 export class AddTeamMemberUseCase implements IAddTeamMemberUseCase {
     constructor(
         private readonly teamRepository: ITeamRepository,
         private readonly teamMemberRepository: ITeamMemberRepository,
         private readonly userRepository: IUserRepository,
+        private readonly createAuditLogUseCase: ICreateAuditLogUseCase,
     ) { }
 
-    async execute(dto: CreateTeamMemberDto): Promise<TeamMember> {
+    async execute(dto: CreateTeamMemberDto, actorId: string,): Promise<TeamMember> {
 
         const team = await this.teamRepository.findById(dto.teamId);
 
@@ -53,6 +56,22 @@ export class AddTeamMemberUseCase implements IAddTeamMemberUseCase {
             role: dto.role ?? TeamRole.MEMBER,
         });
 
-        return this.teamMemberRepository.create(teamMember);
+        const createdMember = await this.teamMemberRepository.create(teamMember);
+
+        await this.createAuditLogUseCase.execute({
+            organizationId: team.organizationId,
+            action: AuditAction.USER_ADDED_TO_TEAM,
+            entityType: AuditEntityType.USER,
+            entityId: user.id,
+            description: `User ${user.name} was added to team ${team.name}`,
+            actorId,
+            metadata: {
+                teamId: team.id,
+                teamName: team.name,
+                role: dto.role ?? TeamRole.MEMBER,
+            },
+        });
+
+        return createdMember;
     }
 }

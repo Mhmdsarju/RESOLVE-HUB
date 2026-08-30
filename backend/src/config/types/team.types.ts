@@ -4,6 +4,6 @@ export const TEAM_TYPES = {
     TeamMemberRepository: Symbol.for("TeamMemberRepository"),
     TeamInvitationRepository: Symbol.for("TeamInvitationRepository"),
     TimeLineRepository:Symbol.for("TimelineRepository"),
-    CreateTimelineEventUseCase:Symbol.for("CreateTimelineEventUseCase")
+    AuditlogRepository:Symbol.for("AuditlogRepository")
 
 }   

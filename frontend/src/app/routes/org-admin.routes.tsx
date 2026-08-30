@@ -29,6 +29,7 @@ import AlertRoutingRuleDetailsPage from "@/modules/alertRouting/pages/AlertRouti
 
 import WarRoomListPage from "@/modules/war-room/pages/WarRoomListPage";
 import WarRoomDetailsPage from "@/modules/war-room/pages/WarRoomDetailsPage";
+import AuditLogPage from "@/modules/audit/pages/AuditLogPage";
 
 export const orgAdminRoutes: RouteObject[] = [
   {
@@ -118,12 +119,16 @@ export const orgAdminRoutes: RouteObject[] = [
           },
           {
             path: "/war-rooms",
-            element: <WarRoomListPage/>,
+            element: <WarRoomListPage />,
           },
 
           {
             path: "/war-rooms/:id",
             element: <WarRoomDetailsPage canClose />,
+          },
+          {
+            path: "/audit-logs",
+            element: <AuditLogPage />,
           },
         ],
       },

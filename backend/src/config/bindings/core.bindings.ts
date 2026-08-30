@@ -42,6 +42,8 @@ import { IWarRoomMessageRepository } from "@/modules/war-room/domain/interface/I
 import { PrismaWarRoomMessageRepository } from "@/modules/war-room/infrasturcture/repositories/PrismaWarRoomMessageRepository";
 import { ITimelineEventRepository } from "@/modules/timeline/domain/interfaces/ITimelineEventRepository";
 import { PrismaTimelineEventRepository } from "@/modules/timeline/infrastructure/repositories/PrismaTimelineEventRepository";
+import { IAuditLogRepository } from "@/modules/audit-log/domain/interface/IAuditLogRepository";
+import { PrismaAuditLogRepository } from "@/modules/audit-log/infrastructure/repositories/PrismaAuditLogRepository";
 
 export function bindCore(container: Container) {
 
@@ -65,5 +67,6 @@ export function bindCore(container: Container) {
     container.bind<IWarRoomParticipantRepository>(TYPES.warroomParticipantsRepository).to(PrismaWarRoomParticipantRepository).inSingletonScope();
     container.bind<IWarRoomMessageRepository>(TYPES.warRoomMessageRepository).to(PrismaWarRoomMessageRepository).inSingletonScope();
     container.bind<ITimelineEventRepository>(TYPES.TimeLineRepository).to(PrismaTimelineEventRepository).inSingletonScope();
+    container.bind<IAuditLogRepository>(TYPES.AuditlogRepository).to(PrismaAuditLogRepository).inSingletonScope();
 
 }

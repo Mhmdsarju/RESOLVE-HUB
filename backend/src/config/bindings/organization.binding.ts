@@ -18,9 +18,10 @@ import { OrganizationController } from "@/modules/organization/presentation/cont
 import { createOrganizationRoutes } from "@/modules/organization/presentation/routes/organization.routes";
 import { createSuperAdminOrganizationRoutes } from "@/modules/organization/presentation/routes/superAdminOrganization.routes";
 import { GetPendingOrganizationVerificationsUseCase } from "@/modules/organization/application/use-cases/GetPendingOrganizationVerificationsUseCase";
+import { ICreateAuditLogUseCase } from "@/modules/audit-log/domain/interface/usecase/ICreateAuditLogUseCase";
 
 
-export function bindOrganization(container: Container) {
+export function bindOrganization(container: Container, createAuditLogUseCase: ICreateAuditLogUseCase) {
 
 
     const organizationRepository = container.get<IOrganizationRepository>(TYPES.OrganizationRepository,);
@@ -67,6 +68,7 @@ export function bindOrganization(container: Container) {
 
     const updateOrganizationUseCase = new UpdateOrganizationUseCase(
         organizationRepository,
+        createAuditLogUseCase
     );
 
     const organizationController = new OrganizationController(

@@ -43,6 +43,7 @@ model Organization {
   monitoringProjects MonitoringProject[]
   integrations       Integration[]
   alertRoutingRules  AlertRoutingRule[]
+  auditLogs          AuditLog[]
 
   @@map("organizations")
 }
@@ -118,6 +119,7 @@ model User {
   warRoomParticipants       WarRoomParticipant[]
   warRoomMessages           WarRoomMessage[]
   timelineEvents            TimelineEvent[]      @relation("TimelineEventActor")
+  auditLogs                 AuditLog[]           @relation("AuditLogActor")
 
   @@index([organizationId])
   @@map("users")
@@ -599,7 +601,7 @@ enum TimelineEventType {
   INCIDENT_STATUS_CHANGED
   INCIDENT_UPDATED
   INCIDENT_TEAM_ASSIGNED
-  
+
   TASK_CREATED
   TASK_ASSIGNED
   TASK_STATUS_CHANGED
@@ -615,4 +617,55 @@ enum TimelineEventType {
   WAR_ROOM_CLOSED
 
   INCIDENT_CREATED_FROM_ALERT
+}
+
+model AuditLog {
+  id String @id @default(cuid())
+
+  organizationId String  @db.Uuid
+  actorId        String? @db.Uuid
+
+  action     AuditAction
+  entityType AuditEntityType
+  entityId   String?
+
+  description String
+  metadata    Json?
+
+  createdAt DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  actor        User?        @relation("AuditLogActor", fields: [actorId], references: [id])
+
+  @@index([organizationId])
+  @@index([actorId])
+  @@index([action])
+  @@index([entityType])
+  @@index([entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+enum AuditAction {
+  LOGIN
+  LOGOUT
+
+  ORGANIZATION_UPDATED
+
+  ROLE_CHANGED
+
+  USER_CREATED
+  USER_UPDATED
+
+  USER_ADDED_TO_TEAM
+  USER_REMOVED_FROM_TEAM
+}
+
+enum AuditEntityType {
+  AUTH
+  ORGANIZATION
+  USER
+  TEAM
+  INCIDENT
+  TASK
 }

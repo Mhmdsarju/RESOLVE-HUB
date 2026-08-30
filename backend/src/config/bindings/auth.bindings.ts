@@ -38,9 +38,10 @@ import { createAuthRoutes } from "@/modules/auth/presentation/routes/auth.routes
 import { createUserRoutes } from "@/modules/auth/presentation/routes/user.routes";
 import { setTokenService } from "@/app/middlewares/authMiddleware";
 import { GetUserByIdUseCase } from "@/modules/auth/application/use-cases/GetUserByIdUseCase";
+import { ICreateAuditLogUseCase } from "@/modules/audit-log/domain/interface/usecase/ICreateAuditLogUseCase";
 
 
-export function bindAuth(container: Container) {
+export function bindAuth(container: Container, createAuditLogUseCase: ICreateAuditLogUseCase) {
 
     container.bind<IPasswordHasher>(TYPES.PasswordHasher).to(BcryptPasswordHasher).inSingletonScope();
     container.bind<IEmailService>(TYPES.EmailService).to(NodemailerEmailService).inSingletonScope();
@@ -98,11 +99,14 @@ export function bindAuth(container: Container) {
         passwordHasher,
         tokenService,
         tokenStore,
+        createAuditLogUseCase
     );
 
     const logoutUseCase = new LogoutUseCase(
         tokenService,
         tokenStore,
+        userRepository,
+        createAuditLogUseCase,
     );
 
     const refreshUseCase = new RefreshUseCase(
@@ -131,6 +135,7 @@ export function bindAuth(container: Container) {
 
     const updateMeUseCase = new UpdateMeUseCase(
         userRepository,
+        createAuditLogUseCase
     );
 
     const verifyOtpUseCase = new VerifyOtpUseCase(
@@ -148,7 +153,7 @@ export function bindAuth(container: Container) {
         tokenStore,
     );
 
-    const getUserByIdUseCase=new GetUserByIdUseCase(
+    const getUserByIdUseCase = new GetUserByIdUseCase(
         userRepository
     )
 
