@@ -11,6 +11,8 @@ import { UpdateTeamMembersRoleDto } from "../dto/updateTeamMemberRoleDto";
 
 import { ICreateAuditLogUseCase } from "@/modules/audit-log/domain/interface/usecase/ICreateAuditLogUseCase";
 import { AuditAction, AuditEntityType } from "@/modules/audit-log/domain/enums/auditLog.enum";
+import { ICreateNotificationUseCase } from "@/modules/notification/domain/interface/use-case/ICreateNotificationUseCase";
+import { NotificationType } from "@/modules/notification/domain/enums/NotificationType"; 
 
 export class UpdateTeamMemberRoleUseCase implements IUpdateTeamMemberRoleUseCase {
     constructor(
@@ -18,6 +20,7 @@ export class UpdateTeamMemberRoleUseCase implements IUpdateTeamMemberRoleUseCase
         private readonly teamRepository: ITeamRepository,
         private readonly userRepository: IUserRepository,
         private readonly createAuditLogUseCase: ICreateAuditLogUseCase,
+        private readonly createNotificationUseCase: ICreateNotificationUseCase,
     ) { }
 
     async execute(memberId: string, dto: UpdateTeamMembersRoleDto, actorId: string,): Promise<TeamMember> {
@@ -61,6 +64,13 @@ export class UpdateTeamMemberRoleUseCase implements IUpdateTeamMemberRoleUseCase
                 newRole: dto.role,
                 teamId: member.teamId,
             },
+        });
+
+        await this.createNotificationUseCase.execute({
+            userId: user.id!,
+            type: NotificationType.SYSTEM,
+            title: "Team Role Changed",
+            message: `Your role in ${team.name} was changed from ${oldRole} to ${dto.role}.`,
         });
 
         return updatedMember;

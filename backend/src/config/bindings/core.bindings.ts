@@ -44,6 +44,8 @@ import { ITimelineEventRepository } from "@/modules/timeline/domain/interfaces/I
 import { PrismaTimelineEventRepository } from "@/modules/timeline/infrastructure/repositories/PrismaTimelineEventRepository";
 import { IAuditLogRepository } from "@/modules/audit-log/domain/interface/IAuditLogRepository";
 import { PrismaAuditLogRepository } from "@/modules/audit-log/infrastructure/repositories/PrismaAuditLogRepository";
+import { INotificationRepository } from "@/modules/notification/domain/interface/INotificationRepository";
+import { PrismaNotificationRepository } from "@/modules/notification/infrastructure/repositories/PrismaNotificationRepository";
 
 export function bindCore(container: Container) {
 
@@ -68,5 +70,6 @@ export function bindCore(container: Container) {
     container.bind<IWarRoomMessageRepository>(TYPES.warRoomMessageRepository).to(PrismaWarRoomMessageRepository).inSingletonScope();
     container.bind<ITimelineEventRepository>(TYPES.TimeLineRepository).to(PrismaTimelineEventRepository).inSingletonScope();
     container.bind<IAuditLogRepository>(TYPES.AuditlogRepository).to(PrismaAuditLogRepository).inSingletonScope();
+    container.bind<INotificationRepository>(TYPES.notificationRepository).to(PrismaNotificationRepository).inSingletonScope();
 
 }

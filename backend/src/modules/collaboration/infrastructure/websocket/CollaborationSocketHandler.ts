@@ -31,10 +31,18 @@ export class CollaborationSocketHandler {
             ),
         );
 
-        this.io.on("connection", (socket: Socket) => {
+        this.io.on("connection", async (socket: Socket) => {
 
             console.log(
                 `Socket connected: ${socket.id}`,
+            );
+
+            const userId = socket.data.user.userId;
+
+            await socket.join(`user:${userId}`);
+
+            console.log(
+                `Socket ${socket.id} joined user room user:${userId}`,
             );
 
             socket.on("join_room", async (data) => {

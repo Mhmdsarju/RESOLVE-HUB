@@ -14,6 +14,8 @@ import { ITeamMemberRepository } from "../../domain/interfaces/ITeamMemberReposi
 import { IAddTeamMemberUseCase } from "../../domain/interfaces/use-case/IAddTeamMemberUseCase";
 import { ICreateAuditLogUseCase } from "@/modules/audit-log/domain/interface/usecase/ICreateAuditLogUseCase";
 import { AuditAction, AuditEntityType } from "@/modules/audit-log/domain/enums/auditLog.enum";
+import { ICreateNotificationUseCase } from "@/modules/notification/domain/interface/use-case/ICreateNotificationUseCase";
+import { NotificationType } from "@/modules/notification/domain/enums/NotificationType"; 
 
 export class AddTeamMemberUseCase implements IAddTeamMemberUseCase {
     constructor(
@@ -21,6 +23,7 @@ export class AddTeamMemberUseCase implements IAddTeamMemberUseCase {
         private readonly teamMemberRepository: ITeamMemberRepository,
         private readonly userRepository: IUserRepository,
         private readonly createAuditLogUseCase: ICreateAuditLogUseCase,
+        private readonly createNotificationUseCase: ICreateNotificationUseCase,
     ) { }
 
     async execute(dto: CreateTeamMemberDto, actorId: string,): Promise<TeamMember> {
@@ -70,6 +73,13 @@ export class AddTeamMemberUseCase implements IAddTeamMemberUseCase {
                 teamName: team.name,
                 role: dto.role ?? TeamRole.MEMBER,
             },
+        });
+
+        await this.createNotificationUseCase.execute({
+            userId: user.id!,
+            type: NotificationType.SYSTEM,
+            title: "Added to Team",
+            message: `You were added to ${team.name}.`,
         });
 
         return createdMember;

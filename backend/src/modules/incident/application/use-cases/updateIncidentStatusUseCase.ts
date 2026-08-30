@@ -7,11 +7,14 @@ import { AppError } from "@/shared/errors/AppError";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
 import { ICreateTimelineEventUseCase } from "@/modules/timeline/domain/interfaces/usecases/ICreateTimelineEventUseCase";
 import { TimelineEventType } from "@/modules/timeline/domain/enums/timelineEventType.enum";
+import { ICreateNotificationUseCase } from "@/modules/notification/domain/interface/use-case/ICreateNotificationUseCase";
+import { NotificationType } from "@/modules/notification/domain/enums/NotificationType";
 
 export class UpdateIncidentStatusUseCase implements IUpdateIncidentStatusUseCase {
     constructor(
         private readonly incidentRepository: IIncidentRepository,
         private readonly createTimelineEventUseCase: ICreateTimelineEventUseCase,
+        private readonly createNotificationUseCase: ICreateNotificationUseCase,
     ) { }
 
     async execute(id: string, dto: UpdateIncidentStatusDto, userId?: string | null): Promise<Incident> {
@@ -32,6 +35,15 @@ export class UpdateIncidentStatusUseCase implements IUpdateIncidentStatusUseCase
             `Incident status changed from ${incident.status} to ${updated.status}`,
             userId ?? null,
         );
+
+        if (incident.createdBy) {
+            await this.createNotificationUseCase.execute({
+                userId: incident.createdBy,
+                type: NotificationType.INCIDENT,
+                title: "Incident Status Updated",
+                message: `Incident "${incident.title}" status changed from ${incident.status} to ${updated.status}.`,
+            });
+        }
 
 
         return updated;

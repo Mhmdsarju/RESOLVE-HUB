@@ -8,6 +8,8 @@ import { IIncidentRepository } from "@/modules/incident/domain/interfaces/IIncid
 import { ITeamMemberRepository } from "@/modules/team-management/domain/interfaces/ITeamMemberRepository";
 import { ICreateTimelineEventUseCase } from "@/modules/timeline/domain/interfaces/usecases/ICreateTimelineEventUseCase";
 import { TimelineEventType } from "@/modules/timeline/domain/enums/timelineEventType.enum";
+import { ICreateNotificationUseCase } from "@/modules/notification/domain/interface/use-case/ICreateNotificationUseCase";
+import { NotificationType } from "@/modules/notification/domain/enums/NotificationType";
 
 export class UpdateTaskStatusUseCase implements IUpdateTaskStatusUseCase {
     constructor(
@@ -15,6 +17,7 @@ export class UpdateTaskStatusUseCase implements IUpdateTaskStatusUseCase {
         private readonly incidentRepository: IIncidentRepository,
         private readonly teamMemberRepository: ITeamMemberRepository,
         private readonly createTimelineEventUseCase: ICreateTimelineEventUseCase,
+        private readonly createNotificationUseCase: ICreateNotificationUseCase,
     ) { }
 
     async execute(taskId: string, status: TaskStatus, userId: string, role: string,): Promise<Task> {
@@ -127,6 +130,19 @@ export class UpdateTaskStatusUseCase implements IUpdateTaskStatusUseCase {
                     : `Task "${existingTask.title}" status changed from ${existingTask.status} to ${status}`,
                 userId,
             );
+
+            if (existingTask.assignedTo && existingTask.assignedTo !== userId) {
+                await this.createNotificationUseCase.execute({
+                    userId: existingTask.assignedTo,
+                    type: NotificationType.TASK,
+                    title: status === TaskStatus.DONE
+                        ? "Task Completed"
+                        : "Task Status Updated",
+                    message: status === TaskStatus.DONE
+                        ? `Task "${existingTask.title}" was completed.`
+                        : `Task "${existingTask.title}" status changed from ${existingTask.status} to ${status}.`,
+                });
+            }
 
             return updated;
         }

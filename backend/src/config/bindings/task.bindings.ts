@@ -17,8 +17,9 @@ import { createTaskRoutes } from "@/modules/task-management/presentation/routes/
 import { GetTaskByIdUseCase } from "@/modules/task-management/application/use-cases/GetTaskByIdUseCase";
 import { ICreateTimelineEventUseCase } from "@/modules/timeline/domain/interfaces/usecases/ICreateTimelineEventUseCase";
 import { IUserRepository } from "@/modules/auth/domain/repositories/IUserRepository";
+import { ICreateNotificationUseCase } from "@/modules/notification/domain/interface/use-case/ICreateNotificationUseCase";
 
-export function bindTask(container: Container,createTimeLineEventUseCase:ICreateTimelineEventUseCase) {
+export function bindTask(container: Container,createTimeLineEventUseCase:ICreateTimelineEventUseCase,createNotificationUseCase:ICreateNotificationUseCase) {
 
     const taskRepository = container.get<ITaskRepository>(TYPES.TaskRepository);
     const incidentRepository = container.get<IIncidentRepository>(TYPES.IncidentRepository);
@@ -30,7 +31,8 @@ export function bindTask(container: Container,createTimeLineEventUseCase:ICreate
         incidentRepository,
         teamMemberRepository,
         createTimeLineEventUseCase,
-        userRepository
+        userRepository,
+        createNotificationUseCase
     );
 
     const createTaskUseCase = new CreateTaskUseCase(
@@ -67,7 +69,8 @@ export function bindTask(container: Container,createTimeLineEventUseCase:ICreate
         taskRepository,
         incidentRepository,
         teamMemberRepository,
-        createTimeLineEventUseCase
+        createTimeLineEventUseCase,
+        createNotificationUseCase
     );
 
     const updateTaskUseCase = new UpdateTaskUseCase(

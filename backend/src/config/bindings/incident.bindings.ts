@@ -12,19 +12,29 @@ import { createIncidentRoutes } from "@/modules/incident/presentation/routes/inc
 import { ICreateWarRoomUseCase } from "@/modules/war-room/domain/interface/usecase/ICreateWarRoomUseCase";
 import { ICreateTimelineEventUseCase } from "@/modules/timeline/domain/interfaces/usecases/ICreateTimelineEventUseCase";
 import { ITeamRepository } from "@/modules/team-management/domain/interfaces/ITeamRepository";
+import { ICreateNotificationUseCase } from "@/modules/notification/domain/interface/use-case/ICreateNotificationUseCase";
 
 
-export function bindIncident(container: Container,createTimeLineEventUseCase:ICreateTimelineEventUseCase,createWarRoomUseCase:ICreateWarRoomUseCase) {
+export function bindIncident(
+    container: Container,
+    createTimeLineEventUseCase: ICreateTimelineEventUseCase,
+    createWarRoomUseCase: ICreateWarRoomUseCase,
+    createNotificationUseCase: ICreateNotificationUseCase
+) {
 
     const incidentRepository = container.get<IIncidentRepository>(TYPES.IncidentRepository);
-    const teamRepository=container.get<ITeamRepository>(TYPES.TeamRepository)
+    const teamRepository = container.get<ITeamRepository>(TYPES.TeamRepository)
 
-    const assignTeamUseCase = new AssignTeamUseCase(incidentRepository,createTimeLineEventUseCase,teamRepository);
-    const createIncidentUseCase = new CreateIncidentUseCase(incidentRepository,createWarRoomUseCase,createTimeLineEventUseCase);
+    const assignTeamUseCase = new AssignTeamUseCase(incidentRepository, createTimeLineEventUseCase, teamRepository);
+    const createIncidentUseCase = new CreateIncidentUseCase(incidentRepository, createWarRoomUseCase, createTimeLineEventUseCase);
     const getIncidentByIdUseCase = new GetIncidentByIdUseCase(incidentRepository);
     const getIncidentStatsUseCase = new GetIncidentStatsUseCase(incidentRepository);
     const getIncidentsUseCase = new GetIncidentsUseCase(incidentRepository);
-    const updateIncidentStatusUseCase = new UpdateIncidentStatusUseCase(incidentRepository,createTimeLineEventUseCase);
+    const updateIncidentStatusUseCase = new UpdateIncidentStatusUseCase(
+        incidentRepository,
+        createTimeLineEventUseCase,
+        createNotificationUseCase
+    );
 
     const incidentController = new IncidentController(
         createIncidentUseCase,

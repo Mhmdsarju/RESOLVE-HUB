@@ -8,6 +8,8 @@ import { ITeamMemberRepository } from "@/modules/team-management/domain/interfac
 import { ICreateTimelineEventUseCase } from "@/modules/timeline/domain/interfaces/usecases/ICreateTimelineEventUseCase";
 import { TimelineEventType } from "@/modules/timeline/domain/enums/timelineEventType.enum";
 import { IUserRepository } from "@/modules/auth/domain/repositories/IUserRepository";
+import { ICreateNotificationUseCase } from "@/modules/notification/domain/interface/use-case/ICreateNotificationUseCase";
+import { NotificationType } from "@/modules/notification/domain/enums/NotificationType";
 
 export class AssignTaskUseCase implements IAssignTaskUseCase {
     constructor(
@@ -16,6 +18,7 @@ export class AssignTaskUseCase implements IAssignTaskUseCase {
         private readonly teamMemberRepository: ITeamMemberRepository,
         private readonly createTimelineEventUseCase: ICreateTimelineEventUseCase,
         private readonly userRepository: IUserRepository,
+        private readonly createNotificationUseCase: ICreateNotificationUseCase,
     ) { }
 
     async execute(taskId: string, assignedTo: string, assignedBy: string, role: string,): Promise<Task> {
@@ -107,6 +110,13 @@ export class AssignTaskUseCase implements IAssignTaskUseCase {
             `Task "${task.title}" was assigned to ${assignee.name}`,
             assignedBy,
         );
+
+        await this.createNotificationUseCase.execute({
+            userId: assignedTo,
+            type: NotificationType.TASK,
+            title: "Task Assigned",
+            message: `You have been assigned the task "${task.title}".`,
+        });
 
         return updated;
     }

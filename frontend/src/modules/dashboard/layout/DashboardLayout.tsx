@@ -5,11 +5,15 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "../components/sidebar/Sidebar";
 import TopNavbar from "../components/navbar/TopNavbar";
 
+import NotificationRealtimeListener from "@/modules/notification/components/NotificationRealtimeListener";
+
 export default function DashboardLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#FAF6F0]">
+      <NotificationRealtimeListener />
+
       <Sidebar
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
