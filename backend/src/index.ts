@@ -3,6 +3,7 @@ import "reflect-metadata";
 import { connectRedis } from "./config/redis";
 import { connectDatabase } from "./config/database";
 import { startServer } from "./app/server";
+import { kafkaManager } from "./config/inversify.config";
 
 async function bootstrap() {
   try {
@@ -12,6 +13,8 @@ async function bootstrap() {
     // Connect Database
     await connectDatabase();
 
+    await kafkaManager.connect();
+
     // Start HTTP Server
     const server = startServer();
 
@@ -19,8 +22,10 @@ async function bootstrap() {
       console.log(`\n${signal} received.`);
       console.log("Gracefully shutting down server...");
 
-      server.close(() => {
+      server.close(async () => {
         console.log("HTTP Server closed");
+        await kafkaManager.disconnect();
+        console.log("Kafka connections closed");
         console.log("Application stopped successfully.");
         process.exit(0);
       });

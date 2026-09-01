@@ -1,4 +1,5 @@
 import { CalendarDays, Check, ChevronDown, Clock3, Pencil, Trash2, UserRound } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 import type { TaskCardProps, TaskStatus } from "../types/task.types";
 
@@ -35,6 +36,8 @@ export default function MyTaskCard({
   onDelete,
   isUpdating = false,
 }: TaskCardProps) {
+  const navigate = useNavigate();
+
   const statusLabel = task.status.replace("_", " ");
 
   const assignedUser = users.find((user) => user.id === task.assignedTo);
@@ -55,9 +58,20 @@ export default function MyTaskCard({
 
   const projectName = task.projectName ?? "No Project";
 
+  const handleTaskClick = () => {
+    navigate(`/tasks/${task.id}`, {
+      state: {
+        projectName,
+        assignedUserName,
+      },
+    });
+  };
+
   return (
     <div
+      onClick={handleTaskClick}
       className={`
+        cursor-pointer
         rounded-2xl
         border-2
         ${statusStyles[task.status].border}
@@ -161,7 +175,10 @@ export default function MyTaskCard({
         </div>
 
         {(canEdit || canDelete) && (
-          <div className="flex shrink-0 items-center gap-1">
+          <div
+            className="flex shrink-0 items-center gap-1"
+            onClick={(event) => event.stopPropagation()}
+          >
             {canEdit && onEdit && (
               <button
                 type="button"
@@ -292,7 +309,10 @@ export default function MyTaskCard({
         </div>
       </div>
 
-      <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+      <div
+        className="mt-4 flex flex-col gap-2 sm:flex-row"
+        onClick={(event) => event.stopPropagation()}
+      >
         <div className="relative flex-1">
           <select
             value={task.status}

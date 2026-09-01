@@ -28,7 +28,7 @@ export const engineerSidebar: SidebarSection[] = [
       },
       {
         label: "War Rooms",
-        path: "/war-rooms",
+        path: "/engineer/war-rooms",
         icon: FolderKanban,
       },
     ],

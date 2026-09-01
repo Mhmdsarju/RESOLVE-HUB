@@ -9,11 +9,7 @@ export function setTokenService(service: ITokenService) {
     tokenService = service;
 }
 
-export async function authMiddleware(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-) {
+export async function authMiddleware(req: Request, res: Response, next: NextFunction,) {
     try {
         const authHeader = req.headers.authorization;
 

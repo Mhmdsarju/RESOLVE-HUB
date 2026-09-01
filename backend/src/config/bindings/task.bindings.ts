@@ -14,23 +14,38 @@ import { TakeTaskUseCase } from "@/modules/task-management/application/use-cases
 import { IIncidentRepository } from "@/modules/incident/domain/interfaces/IIncidentRepository";
 import { ITeamMemberRepository } from "@/modules/team-management/domain/interfaces/ITeamMemberRepository";
 import { createTaskRoutes } from "@/modules/task-management/presentation/routes/task.routes";
+import { GetTaskByIdUseCase } from "@/modules/task-management/application/use-cases/GetTaskByIdUseCase";
+import { ICreateTimelineEventUseCase } from "@/modules/timeline/domain/interfaces/usecases/ICreateTimelineEventUseCase";
+import { IUserRepository } from "@/modules/auth/domain/repositories/IUserRepository";
+import { ICreateNotificationUseCase } from "@/modules/notification/domain/interface/use-case/ICreateNotificationUseCase";
+import { KafkaManager } from "@/infrastructure/kafka/kafka.manager";
 
-export function bindTask(container: Container) {
+export function bindTask(container: Container,
+    createTimeLineEventUseCase: ICreateTimelineEventUseCase,
+    createNotificationUseCase: ICreateNotificationUseCase,
+    kafkaManger:KafkaManager,
+) {
 
     const taskRepository = container.get<ITaskRepository>(TYPES.TaskRepository);
     const incidentRepository = container.get<IIncidentRepository>(TYPES.IncidentRepository);
     const teamMemberRepository = container.get<ITeamMemberRepository>(TYPES.TeamMemberRepository);
+    const userRepository = container.get<IUserRepository>(TYPES.UserRepository);
+
 
     const assignTaskUseCase = new AssignTaskUseCase(
         taskRepository,
         incidentRepository,
         teamMemberRepository,
+        createTimeLineEventUseCase,
+        userRepository,
+        createNotificationUseCase
     );
 
     const createTaskUseCase = new CreateTaskUseCase(
         taskRepository,
         incidentRepository,
         teamMemberRepository,
+        createTimeLineEventUseCase
     );
 
     const deleteTaskUseCase = new DeleteTaskUseCase(
@@ -60,12 +75,19 @@ export function bindTask(container: Container) {
         taskRepository,
         incidentRepository,
         teamMemberRepository,
+        createTimeLineEventUseCase,
+        kafkaManger.producer
     );
 
     const updateTaskUseCase = new UpdateTaskUseCase(
         taskRepository,
         incidentRepository,
         teamMemberRepository,
+        createTimeLineEventUseCase
+    );
+
+    const getTaskByIdUseCase = new GetTaskByIdUseCase(
+        taskRepository
     );
 
 
@@ -79,10 +101,11 @@ export function bindTask(container: Container) {
         getMyTasksUseCase,
         getTeamTasksUseCase,
         takeTaskUseCase,
+        getTaskByIdUseCase,
     );
 
-    const taskRouter=createTaskRoutes(taskController);
+    const taskRouter = createTaskRoutes(taskController);
 
-    return {taskRouter,createTaskUseCase};
+    return { taskRouter, createTaskUseCase };
 
 }

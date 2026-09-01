@@ -1,4 +1,5 @@
 import { Check, ChevronDown, Clock3, Pencil, Trash2, UserRound } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 import type { TaskStatus, TaskCardProps } from "../types/task.types";
 
@@ -14,6 +15,8 @@ export default function TaskCard({
   onDelete,
   isUpdating = false,
 }: TaskCardProps) {
+  const navigate = useNavigate();
+
   const statusLabel = task.status.replace("_", " ");
 
   const assignedUser = users.find((user) => user.id === task.assignedTo);
@@ -27,6 +30,15 @@ export default function TaskCard({
   const canAssign = role === "ORG_ADMIN" || (role === "ENGINEER" && isTeamLead);
 
   const canDelete = role === "ORG_ADMIN";
+
+  const handleTaskClick = () => {
+    navigate(`/tasks/${task.id}`, {
+      state: {
+        projectName: task.projectName ?? "No Project",
+        assignedUserName,
+      },
+    });
+  };
 
   const statusBorderClass: Record<TaskStatus, string> = {
     TODO: "border-yellow-300",
@@ -42,7 +54,9 @@ export default function TaskCard({
 
   return (
     <div
+      onClick={handleTaskClick}
       className={`
+        cursor-pointer
         rounded-2xl
         border-2
         ${statusBorderClass[task.status]}
@@ -56,7 +70,7 @@ export default function TaskCard({
       `}
     >
       <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="font-bold text-[#4B3932]">{task.title}</h3>
 
@@ -109,14 +123,12 @@ export default function TaskCard({
           )}
 
           {task.projectName && (
-            <p className="mt-2 text-xs font-semibold text-[#4B3932]">
-              Project: {task.projectName}
-            </p>
+            <p className="mt-2 text-xs font-semibold text-[#4B3932]">Project: {task.projectName}</p>
           )}
         </div>
 
         {(canEdit || canDelete) && (
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1" onClick={(event) => event.stopPropagation()}>
             {canEdit && onEdit && (
               <button
                 type="button"
@@ -217,11 +229,11 @@ export default function TaskCard({
           {assignedUser?.email && !isAssignedToCurrentUser && (
             <p
               className="
-                  mt-0.5
-                  truncate
-                  text-xs
-                  text-stone-400
-                "
+                mt-0.5
+                truncate
+                text-xs
+                text-stone-400
+              "
             >
               {assignedUser.email}
             </p>
@@ -247,7 +259,10 @@ export default function TaskCard({
         </div>
       </div>
 
-      <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+      <div
+        className="mt-4 flex flex-col gap-2 sm:flex-row"
+        onClick={(event) => event.stopPropagation()}
+      >
         <div className="relative flex-1">
           <select
             value={task.status}
@@ -339,6 +354,22 @@ export default function TaskCard({
         >
           <Check size={14} />
           Task completed
+        </div>
+      )}
+
+      {task.type === "AUTOMATIC" && (
+        <div
+          className="
+            mt-3
+            flex
+            items-center
+            gap-2
+            text-xs
+            text-purple-500
+          "
+        >
+          <Clock3 size={14} />
+          Automatically created from monitoring alert
         </div>
       )}
     </div>

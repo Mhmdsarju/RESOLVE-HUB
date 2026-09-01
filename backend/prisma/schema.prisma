@@ -43,6 +43,7 @@ model Organization {
   monitoringProjects MonitoringProject[]
   integrations       Integration[]
   alertRoutingRules  AlertRoutingRule[]
+  auditLogs          AuditLog[]
 
   @@map("organizations")
 }
@@ -86,7 +87,7 @@ enum UserRole {
 model User {
   id String @id @default(uuid()) @db.Uuid
 
-  organizationId String?   @db.Uuid
+  organizationId String?  @db.Uuid
   role           UserRole @default(ENGINEER)
 
   fullName     String
@@ -101,7 +102,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  organization                    Organization?               @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization                    Organization?              @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   organizationVerificationReviews OrganizationVerification[] @relation("OrganizationVerificationReviewer")
 
   createdTeams       Team[]           @relation("CreatedTeams")
@@ -113,7 +114,13 @@ model User {
   assignedTasks Task[] @relation("UserAssignedTasks")
 
   createdMonitoringProjects MonitoringProject[]
-  createdAlertRoutingRules  AlertRoutingRule[]  @relation("CreatedAlertRoutingRules")
+  createdAlertRoutingRules  AlertRoutingRule[]   @relation("CreatedAlertRoutingRules")
+  createdWarRooms           WarRoom[]            @relation("WarRoomCreator")
+  warRoomParticipants       WarRoomParticipant[]
+  warRoomMessages           WarRoomMessage[]
+  timelineEvents            TimelineEvent[]      @relation("TimelineEventActor")
+  auditLogs                 AuditLog[]           @relation("AuditLogActor")
+  notifications Notification[]
 
   @@index([organizationId])
   @@map("users")
@@ -227,10 +234,10 @@ model Incident {
   status   IncidentStatus
   type     IncidentType
 
-  organizationId     String  @db.Uuid
-  createdBy          String? @db.Uuid
-  assignedTeamId     String?
-  monitoringProjectId String
+  organizationId      String  @db.Uuid
+  createdBy           String? @db.Uuid
+  assignedTeamId      String?
+  monitoringProjectId String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -240,17 +247,18 @@ model Incident {
 
   assignedTeam Team? @relation(fields: [assignedTeamId], references: [id])
 
-  monitoringProject MonitoringProject @relation(    fields: [monitoringProjectId],    references: [id]  )
+  monitoringProject MonitoringProject? @relation(fields: [monitoringProjectId], references: [id])
 
-  tasks  Task[]
-  alerts Alert[]
+  tasks          Task[]
+  alerts         Alert[]
+  warRoom        WarRoom?
+  timelineEvents TimelineEvent[]
 
   @@index([organizationId])
   @@index([status])
   @@index([priority])
   @@index([assignedTeamId])
   @@index([monitoringProjectId])
-
   @@map("incidents")
 }
 
@@ -300,6 +308,8 @@ model Task {
 
   incident Incident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
   assignee User?    @relation("UserAssignedTasks", fields: [assignedTo], references: [id])
+
+  files File[]
 
   @@index([incidentId])
   @@index([assignedTo])
@@ -486,4 +496,206 @@ model AlertRoutingRule {
   @@index([createdBy])
   @@index([monitoringProjectId, isActive, priority])
   @@map("alert_routing_rules")
+}
+
+model File {
+  id         String @id @default(cuid())
+  taskId     String
+  uploadedBy String
+
+  originalName String
+  fileName     String
+  mimeType     String
+  size         Int
+
+  storageUrl String
+  publicId   String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+}
+
+model WarRoom {
+  id String @id @default(cuid())
+
+  incidentId String  @unique
+  createdBy  String? @db.Uuid
+
+  status WarRoomStatus @default(ACTIVE)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  closedAt  DateTime?
+
+  incident     Incident             @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  creator      User?                @relation("WarRoomCreator", fields: [createdBy], references: [id])
+  participants WarRoomParticipant[]
+  messages     WarRoomMessage[]
+
+  @@index([createdBy])
+  @@index([status])
+  @@map("war_rooms")
+}
+
+enum WarRoomStatus {
+  ACTIVE
+  CLOSED
+}
+
+model WarRoomParticipant {
+  id String @id @default(cuid())
+
+  warRoomId String
+  userId    String @db.Uuid
+
+  joinedAt DateTime  @default(now())
+  leftAt   DateTime?
+
+  warRoom WarRoom @relation(fields: [warRoomId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+
+  @@unique([warRoomId, userId])
+  @@index([warRoomId])
+  @@index([userId])
+}
+
+model WarRoomMessage {
+  id        String   @id @default(uuid()) @db.Uuid
+  warRoomId String
+  userId    String   @db.Uuid
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  warRoom WarRoom @relation(fields: [warRoomId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([warRoomId, createdAt])
+  @@index([userId])
+}
+
+model TimelineEvent {
+  id String @id @default(cuid())
+
+  incidentId String
+  actorId    String? @db.Uuid
+
+  eventType TimelineEventType
+  message   String
+  metadata  Json?
+
+  createdAt DateTime @default(now())
+
+  incident Incident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  actor    User?    @relation("TimelineEventActor", fields: [actorId], references: [id])
+
+  @@index([incidentId])
+  @@index([actorId])
+  @@index([createdAt])
+  @@map("timeline_events")
+}
+
+enum TimelineEventType {
+  INCIDENT_CREATED
+  INCIDENT_STATUS_CHANGED
+  INCIDENT_UPDATED
+  INCIDENT_TEAM_ASSIGNED
+
+  TASK_CREATED
+  TASK_ASSIGNED
+  TASK_STATUS_CHANGED
+  TASK_COMPLETED
+  TASK_UPDATED
+
+  FILE_UPLOADED
+  FILE_DELETED
+
+  WAR_ROOM_CREATED
+  WAR_ROOM_JOINED
+  WAR_ROOM_LEFT
+  WAR_ROOM_CLOSED
+
+  INCIDENT_CREATED_FROM_ALERT
+}
+
+model AuditLog {
+  id String @id @default(cuid())
+
+  organizationId String  @db.Uuid
+  actorId        String? @db.Uuid
+
+  action     AuditAction
+  entityType AuditEntityType
+  entityId   String?
+
+  description String
+  metadata    Json?
+
+  createdAt DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  actor        User?        @relation("AuditLogActor", fields: [actorId], references: [id])
+
+  @@index([organizationId])
+  @@index([actorId])
+  @@index([action])
+  @@index([entityType])
+  @@index([entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+enum AuditAction {
+  LOGIN
+  LOGOUT
+
+  ORGANIZATION_UPDATED
+
+  ROLE_CHANGED
+
+  USER_CREATED
+  USER_UPDATED
+
+  USER_ADDED_TO_TEAM
+  USER_REMOVED_FROM_TEAM
+}
+
+enum AuditEntityType {
+  AUTH
+  ORGANIZATION
+  USER
+  TEAM
+  INCIDENT
+  TASK
+}
+
+
+model Notification {
+  id String @id @default(cuid())
+
+  userId String @db.Uuid
+
+  type NotificationType
+  title String
+  message String
+
+  isRead Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+enum NotificationType {
+  SYSTEM
+  INCIDENT
+  TASK
 }

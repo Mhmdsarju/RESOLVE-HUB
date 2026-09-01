@@ -22,7 +22,7 @@ export class TeamMemberController extends BaseController {
 
     async addMember(req: Request, res: Response, next: NextFunction) {
         try {
-            this.getCurrentUser(req);
+            const user=this.getCurrentUser(req);
 
             const dto: CreateTeamMemberDto = {
                 teamId: req.params.teamId,
@@ -30,7 +30,7 @@ export class TeamMemberController extends BaseController {
                 role: req.body.role ?? TeamRole.MEMBER,
             };
 
-            const member = await this.addTeamMemberUseCase.execute(dto);
+            const member = await this.addTeamMemberUseCase.execute(dto,user.userId);
 
             return ResponseHandler.success(
                 res,
@@ -68,7 +68,7 @@ export class TeamMemberController extends BaseController {
     async updateRole(req: Request, res: Response, next: NextFunction) {
         try {
 
-            this.getCurrentUser(req);
+            const user=this.getCurrentUser(req);
 
             const dto: UpdateTeamMembersRoleDto = {
                 role: req.body.role,
@@ -76,7 +76,8 @@ export class TeamMemberController extends BaseController {
 
             const member = await this.updateTeamMemberRoleUseCase.execute(
                 req.params.memberId,
-                dto
+                dto,
+                user.userId
             );
 
             return ResponseHandler.success(
@@ -91,10 +92,10 @@ export class TeamMemberController extends BaseController {
 
     async removeMember(req: Request, res: Response, next: NextFunction) {
         try {
-            this.getCurrentUser(req);
+            const user=this.getCurrentUser(req);
 
             await this.removeTeamMemberUseCase.execute(
-                req.params.memberId
+                req.params.memberId,user.userId
             );
 
             return ResponseHandler.success(

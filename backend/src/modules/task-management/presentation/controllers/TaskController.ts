@@ -15,6 +15,7 @@ import { ITakeTaskUseCase } from "../../domain/interfaces/use-cases/ITakeTaskUse
 import { TaskStatus } from "../../domain/enums/taskStatus.enum";
 import { TaskPriority } from "../../domain/enums/taskPriority.enum";
 import { TaskType } from "../../domain/enums/taskType.enum";
+import { IGetTaskByIdUseCase } from "../../domain/interfaces/use-cases/IGetTaskByIdUseCase";
 
 export class TaskController extends BaseController {
     constructor(
@@ -27,6 +28,7 @@ export class TaskController extends BaseController {
         private readonly getMyTasksUseCase: IGetMyTasksUseCase,
         private readonly getTeamTasksUseCase: IGetTeamTasksUseCase,
         private readonly takeTaskUseCase: ITakeTaskUseCase,
+        private readonly getTaskByIdUseCase: IGetTaskByIdUseCase
 
     ) {
         super();
@@ -62,6 +64,26 @@ export class TaskController extends BaseController {
             });
 
             return ResponseHandler.success(res, "Task updated successfully", updatedTask,);
+
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getTaskById(req: Request, res: Response, next: NextFunction) {
+        try {
+
+            const { taskId } = req.params;
+
+            const task = await this.getTaskByIdUseCase.execute(taskId);
+
+            return ResponseHandler.success(
+                res,
+                "Tasks fetched successfully",
+                task,
+            );
+
+
 
         } catch (error) {
             next(error);
@@ -200,6 +222,7 @@ export class TaskController extends BaseController {
             next(error);
         }
     }
+
 
     async takeTask(req: Request, res: Response, next: NextFunction,) {
         try {

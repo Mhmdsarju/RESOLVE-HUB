@@ -1,3 +1,3 @@
 export interface IRemoveTeamMemberUseCase{
-    execute(memberId:string):Promise<void>;
+    execute(memberId:string,actorId: string,):Promise<void>;
 }

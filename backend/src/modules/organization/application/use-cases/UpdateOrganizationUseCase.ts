@@ -5,13 +5,16 @@ import { IOrganizationRepository } from "../../domain/repositories/IOrganization
 import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
 import { IUpdateOrganizationUseCase } from "../../domain/interfaces/IUpdateOrganizationUseCase";
 import { ErrorMessages } from "../../../../shared/constant/ErrorMessages";
+import { ICreateAuditLogUseCase } from "@/modules/audit-log/domain/interface/usecase/ICreateAuditLogUseCase";
+import { AuditAction, AuditEntityType } from "@/modules/audit-log/domain/enums/auditLog.enum";
 
 export class UpdateOrganizationUseCase implements IUpdateOrganizationUseCase {
   constructor(
     private readonly organizationRepository: IOrganizationRepository,
+    private readonly createAuditLogUseCase: ICreateAuditLogUseCase,
   ) { }
 
-  async execute(organizationId: string, dto: UpdateOrganizationDto,): Promise<Organization> {
+  async execute(organizationId: string, dto: UpdateOrganizationDto, userId?: string | null,): Promise<Organization> {
     const organization = await this.organizationRepository.findById(organizationId);
 
     if (!organization) {
@@ -29,7 +32,7 @@ export class UpdateOrganizationUseCase implements IUpdateOrganizationUseCase {
     organization.city = dto.city ?? null;
     organization.address = dto.address ?? null;
 
-    return await this.organizationRepository.update(
+    const updatedOrganization = await this.organizationRepository.update(
       organization.id!,
       {
         name: organization.name,
@@ -44,5 +47,16 @@ export class UpdateOrganizationUseCase implements IUpdateOrganizationUseCase {
         address: organization.address,
       },
     );
+
+    await this.createAuditLogUseCase.execute({
+      organizationId: organization.id!,
+      action: AuditAction.ORGANIZATION_UPDATED,
+      entityType: AuditEntityType.ORGANIZATION,
+      entityId: organization.id!,
+      description: "Organization profile updated ",
+      actorId: userId ?? null,
+    });
+
+    return updatedOrganization;
   }
 }

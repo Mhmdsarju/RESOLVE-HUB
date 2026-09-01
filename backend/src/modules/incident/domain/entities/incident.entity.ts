@@ -19,7 +19,7 @@ interface IncidentProps {
   createdBy?: string | null;
 
   assignedTeamId?: string | null;
-  monitoringProjectId: string;
+    monitoringProjectId?: string | null;
 
   createdAt?: Date;
   updatedAt?: Date;
@@ -41,7 +41,7 @@ export class Incident {
   public createdBy?: string | null;
 
   public assignedTeamId?: string | null;
-  public monitoringProjectId: string;
+  public   monitoringProjectId?: string | null;
 
   public readonly createdAt?: Date;
   public updatedAt?: Date;

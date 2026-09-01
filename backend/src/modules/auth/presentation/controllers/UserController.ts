@@ -4,12 +4,14 @@ import { ResponseHandler } from "@/shared/response/response-handler";
 import { IGetUsersByOrganizationUseCase } from "../../domain/interfaces/use-cases/IGetUsersByOrganizationUseCase";
 import { IGetMeUseCase } from "../../domain/interfaces/use-cases/IGetMeUseCase";
 import { IUpdateMeUseCase } from "../../domain/interfaces/use-cases/IUpdateMeUseCase";
+import { IGetUserByIdUseCase } from "../../domain/interfaces/use-cases/IGetUserByIdUseCase";
 
 export class UserController extends BaseController {
   constructor(
     private readonly getUsersByOrganizationUseCase: IGetUsersByOrganizationUseCase,
     private readonly getMeUseCase: IGetMeUseCase,
     private readonly updateMeUseCase: IUpdateMeUseCase,
+    private readonly getUserByIdUseCase: IGetUserByIdUseCase,
   ) {
     super();
   }
@@ -61,6 +63,25 @@ export class UserController extends BaseController {
         res,
         "User profile updated successfully",
         updatedUser
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getUserById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = this.getCurrentUser(req);
+
+      const result = await this.getUserByIdUseCase.execute(
+        req.params.userId,
+        user.organizationId,
+      );
+
+      return ResponseHandler.success(
+        res,
+        "User fetched successfully",
+        result
       );
     } catch (error) {
       next(error);

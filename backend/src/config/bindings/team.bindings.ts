@@ -27,8 +27,10 @@ import { IEmailService } from "@/modules/auth/domain/interfaces/IEmailService";
 import { createTeamRoutes } from "@/modules/team-management/presentation/routes/team.routes";
 import { createTeamMemberRoutes } from "@/modules/team-management/presentation/routes/teamMember.routes";
 import { createTeamInvitationRoutes } from "@/modules/team-management/presentation/routes/teamInvitation.routes";
+import { ICreateAuditLogUseCase } from "@/modules/audit-log/domain/interface/usecase/ICreateAuditLogUseCase";
+import { ICreateNotificationUseCase } from "@/modules/notification/domain/interface/use-case/ICreateNotificationUseCase";
 
-export function bindTeam(container: Container) {
+export function bindTeam(container: Container,createAuditLogUseCase:ICreateAuditLogUseCase,createNotificationUseCase:ICreateNotificationUseCase) {
     
     const teamRepository = container.get<ITeamRepository>(TYPES.TeamRepository);
     const teamMemberRepository = container.get<ITeamMemberRepository>(TYPES.TeamMemberRepository);
@@ -50,6 +52,8 @@ export function bindTeam(container: Container) {
         teamRepository,
         teamMemberRepository,
         userRepository,
+        createAuditLogUseCase,
+        createNotificationUseCase
     );
 
     const cancelTeamInvitationUseCase = new CancelTeamInvitationUseCase(
@@ -62,6 +66,7 @@ export function bindTeam(container: Container) {
         teamMemberRepository,
         userRepository,
         emailService,
+        createNotificationUseCase
     );
 
     const createTeamUseCase = new CreateTeamUseCase(teamRepository);
@@ -78,9 +83,21 @@ export function bindTeam(container: Container) {
 
     const getTeamUseCase = new GetTeamUseCase(teamRepository);
 
-    const removeTeamMemberUseCase = new RemoveTeamMemberUseCase(teamMemberRepository);
+    const removeTeamMemberUseCase = new RemoveTeamMemberUseCase(
+        teamMemberRepository,
+        teamRepository,
+        userRepository,
+        createAuditLogUseCase,
+        createNotificationUseCase
+    );
 
-    const updateTeamMemberRoleUseCase = new UpdateTeamMemberRoleUseCase(teamMemberRepository);
+    const updateTeamMemberRoleUseCase = new UpdateTeamMemberRoleUseCase(
+        teamMemberRepository,
+        teamRepository,
+        userRepository,
+        createAuditLogUseCase,
+        createNotificationUseCase
+    );
 
     const updateTeamUseCase = new UpdateTeamUseCase(teamRepository);
 

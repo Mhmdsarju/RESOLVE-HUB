@@ -5,7 +5,7 @@ import ProtectedGuard from "@/shared/guards/ProtectedRoute";
 import DashboardLayout from "@/modules/dashboard/layout/DashboardLayout";
 import DashboardPage from "@/modules/dashboard/pages/DashboardPage";
 import OrganizationSettingsPage from "@/modules/organization/pages/OrganizationSettingsPage";
-import CompleteOrganizationProfile from "@/modules/organization/pages/CompleteOrganizationProfile"; 
+import CompleteOrganizationProfile from "@/modules/organization/pages/CompleteOrganizationProfile";
 
 import TeamListPage from "@/modules/team/pages/TeamListPage";
 import TeamDetailsPage from "@/modules/team/pages/TeamDetailsPage";
@@ -26,6 +26,10 @@ import AlertRuleDetailsPage from "@/modules/alertRule/pages/AlertRuleDetailsPage
 
 import AlertRoutingRuleListPage from "@/modules/alertRouting/pages/AlertRoutingRuleListPage";
 import AlertRoutingRuleDetailsPage from "@/modules/alertRouting/pages/AlertRoutingRuleDetailsPage";
+
+import WarRoomListPage from "@/modules/war-room/pages/WarRoomListPage";
+import WarRoomDetailsPage from "@/modules/war-room/pages/WarRoomDetailsPage";
+import AuditLogPage from "@/modules/audit/pages/AuditLogPage";
 
 export const orgAdminRoutes: RouteObject[] = [
   {
@@ -112,6 +116,19 @@ export const orgAdminRoutes: RouteObject[] = [
           {
             path: "/monitoring/:projectId/alert-routing-rules/:id",
             element: <AlertRoutingRuleDetailsPage />,
+          },
+          {
+            path: "/war-rooms",
+            element: <WarRoomListPage />,
+          },
+
+          {
+            path: "/war-rooms/:id",
+            element: <WarRoomDetailsPage canClose />,
+          },
+          {
+            path: "/audit-logs",
+            element: <AuditLogPage />,
           },
         ],
       },

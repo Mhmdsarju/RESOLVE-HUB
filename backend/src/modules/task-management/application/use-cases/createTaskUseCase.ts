@@ -7,12 +7,15 @@ import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
 import { IIncidentRepository } from "@/modules/incident/domain/interfaces/IIncidentRepository";
 import { ITeamMemberRepository } from "@/modules/team-management/domain/interfaces/ITeamMemberRepository";
 import { TaskType } from "../../domain/enums/taskType.enum";
+import { ICreateTimelineEventUseCase } from "@/modules/timeline/domain/interfaces/usecases/ICreateTimelineEventUseCase";
+import { TimelineEventType } from "@/modules/timeline/domain/enums/timelineEventType.enum";
 
 export class CreateTaskUseCase  implements ICreateTaskUseCase {
   constructor(
     private readonly taskRepository: ITaskRepository,
     private readonly incidentRepository: IIncidentRepository,
     private readonly teamMemberRepository: ITeamMemberRepository,
+    private readonly createTimelineEventUseCase: ICreateTimelineEventUseCase,
   ) { }
 
   async execute(dto: CreateTaskDto, userId?: string, role?: string,): Promise<Task> {
@@ -111,6 +114,15 @@ export class CreateTaskUseCase  implements ICreateTaskUseCase {
       dueDate,
     });
 
-    return await this.taskRepository.create(task);
+    const createdTask = await this.taskRepository.create(task);
+
+    await this.createTimelineEventUseCase.execute(
+      createdTask.incidentId,
+      TimelineEventType.TASK_CREATED,
+      `Task "${createdTask.title}" was created`,
+      userId ?? null,
+    );
+
+    return createdTask;
   }
 }

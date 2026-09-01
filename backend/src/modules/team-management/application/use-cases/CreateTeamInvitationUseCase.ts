@@ -1,4 +1,5 @@
 import crypto from "crypto";
+
 import { ICreateTeamInvitationUseCase } from "../../domain/interfaces/use-case/ICreateTeamInvitationUseCase";
 import { ITeamInvitationRepository } from "../../domain/interfaces/ITeamInvitationRepository";
 import { ITeamRepository } from "../../domain/interfaces/ITeamRepository";
@@ -15,6 +16,8 @@ import { AppError } from "@/shared/errors/AppError";
 import { ErrorMessages } from "@/shared/constant/ErrorMessages";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
 import { UserRole } from "@/modules/auth/domain/enums/UserRole";
+import { ICreateNotificationUseCase } from "@/modules/notification/domain/interface/use-case/ICreateNotificationUseCase";
+import { NotificationType } from "@/modules/notification/domain/enums/NotificationType";
 
 export class CreateTeamInvitationUseCase implements ICreateTeamInvitationUseCase {
 
@@ -24,32 +27,41 @@ export class CreateTeamInvitationUseCase implements ICreateTeamInvitationUseCase
         private readonly teamMemberRepository: ITeamMemberRepository,
         private readonly userRepository: IUserRepository,
         private readonly emailService: IEmailService,
+        private readonly createNotificationUseCase: ICreateNotificationUseCase,
     ) { }
 
     async execute(dto: CreateTeamInvitationDto): Promise<TeamInvitation> {
 
         const team = await this.teamRepository.findById(dto.teamId);
+
         if (!team) {
             throw new AppError(ErrorMessages.TEAM_NOT_FOUND, HttpStatusCode.NOT_FOUND)
         }
 
-
-
-        const existingInvitation = await this.invitationRepository.findPendingInvitation(dto.teamId, dto.invitedEmail);
+        const existingInvitation = await this.invitationRepository.findPendingInvitation(
+            dto.teamId,
+            dto.invitedEmail
+        );
 
         if (existingInvitation) {
-            throw new AppError(ErrorMessages.INVITATION_ALREADY_EXISTS, HttpStatusCode.CONFLICT);
+            throw new AppError(
+                ErrorMessages.INVITATION_ALREADY_EXISTS,
+                HttpStatusCode.CONFLICT
+            );
         }
 
-        const existingPendingInvitation = await this.invitationRepository.findPendingInvitationByEmail(dto.invitedEmail);
+        const existingPendingInvitation = await this.invitationRepository.findPendingInvitationByEmail(
+            dto.invitedEmail
+        );
 
         if (existingPendingInvitation) {
-            throw new AppError("Invitation already sent by other team", HttpStatusCode.CONFLICT);
+            throw new AppError(
+                "Invitation already sent by other team",
+                HttpStatusCode.CONFLICT
+            );
         }
 
         const user = await this.userRepository.findByEmail(dto.invitedEmail);
-
-
 
         if (user) {
 
@@ -94,10 +106,20 @@ export class CreateTeamInvitationUseCase implements ICreateTeamInvitationUseCase
 
         const inviteLink = `${process.env.FRONTEND_URL}/accept-invitation/${createdInvitation.token}`;
 
-        await this.emailService.sendTeamInvitationEmail(dto.invitedEmail, inviteLink);
+        await this.emailService.sendTeamInvitationEmail(
+            dto.invitedEmail,
+            inviteLink
+        );
+
+        if (user) {
+            await this.createNotificationUseCase.execute({
+                userId: user.id!,
+                type: NotificationType.SYSTEM,
+                title: "Team Invitation",
+                message: `You have been invited to join ${team.name}.`,
+            });
+        }
 
         return createdInvitation;
-
     }
-
 }

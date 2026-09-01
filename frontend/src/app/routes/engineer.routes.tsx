@@ -7,6 +7,10 @@ import DashboardPage from "@/modules/dashboard/pages/DashboardPage";
 
 import EngineerTasksPage from "@/modules/task-management/pages/EngineerTasksPage";
 import SettingsPage from "@/modules/user/pages/SettingsPage";
+import TaskDetailsPage from "@/modules/task-management/pages/TaskDetailsPage";
+
+import EngineerWarRoomListPage from "@/modules/war-room/pages/EngineerWarRoomListPage";
+import EngineerWarRoomDetailsPage from "@/modules/war-room/pages/EngineerWarRoomDetailsPage";
 
 export const engineerRoutes: RouteObject[] = [
   {
@@ -26,8 +30,22 @@ export const engineerRoutes: RouteObject[] = [
           },
 
           {
+            path: "/tasks/:id",
+            element: <TaskDetailsPage />,
+          },
+
+          {
             path: "/profile",
             element: <SettingsPage />,
+          },
+          {
+            path: "/engineer/war-rooms",
+            element: <EngineerWarRoomListPage />,
+          },
+
+          {
+            path: "/engineer/war-rooms/:id",
+            element: <EngineerWarRoomDetailsPage />,
           },
         ],
       },

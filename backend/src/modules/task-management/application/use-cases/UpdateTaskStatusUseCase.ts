@@ -6,12 +6,18 @@ import { AppError } from "@/shared/errors/AppError";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
 import { IIncidentRepository } from "@/modules/incident/domain/interfaces/IIncidentRepository";
 import { ITeamMemberRepository } from "@/modules/team-management/domain/interfaces/ITeamMemberRepository";
+import { ICreateTimelineEventUseCase } from "@/modules/timeline/domain/interfaces/usecases/ICreateTimelineEventUseCase";
+import { TimelineEventType } from "@/modules/timeline/domain/enums/timelineEventType.enum";
+import { KafkaProducer } from "@/infrastructure/kafka/kafka.producer";
+import { KafkaTopics } from "@/infrastructure/kafka/kafka.topics";
 
 export class UpdateTaskStatusUseCase implements IUpdateTaskStatusUseCase {
     constructor(
         private readonly taskRepository: ITaskRepository,
         private readonly incidentRepository: IIncidentRepository,
         private readonly teamMemberRepository: ITeamMemberRepository,
+        private readonly createTimelineEventUseCase: ICreateTimelineEventUseCase,
+        private readonly kafkaProducer: KafkaProducer
     ) { }
 
     async execute(taskId: string, status: TaskStatus, userId: string, role: string,): Promise<Task> {
@@ -39,12 +45,25 @@ export class UpdateTaskStatusUseCase implements IUpdateTaskStatusUseCase {
         }
 
         if (role === "ORG_ADMIN") {
-            return await this.taskRepository.update(
+            const updated = await this.taskRepository.update(
                 taskId,
                 {
                     status,
                 },
             );
+
+            await this.createTimelineEventUseCase.execute(
+                existingTask.incidentId,
+                status === TaskStatus.DONE
+                    ? TimelineEventType.TASK_COMPLETED
+                    : TimelineEventType.TASK_STATUS_CHANGED,
+                status === TaskStatus.DONE
+                    ? `Task "${existingTask.title}" was completed`
+                    : `Task "${existingTask.title}" status changed from ${existingTask.status} to ${status}`,
+                userId,
+            );
+
+            return updated;
         }
 
         const incident = await this.incidentRepository.findById(existingTask.incidentId,);
@@ -68,12 +87,25 @@ export class UpdateTaskStatusUseCase implements IUpdateTaskStatusUseCase {
                 throw new AppError("You are not the lead of this task's team", HttpStatusCode.FORBIDDEN,);
             }
 
-            return await this.taskRepository.update(
+            const updated = await this.taskRepository.update(
                 taskId,
                 {
                     status,
                 },
             );
+
+            await this.createTimelineEventUseCase.execute(
+                existingTask.incidentId,
+                status === TaskStatus.DONE
+                    ? TimelineEventType.TASK_COMPLETED
+                    : TimelineEventType.TASK_STATUS_CHANGED,
+                status === TaskStatus.DONE
+                    ? `Task "${existingTask.title}" was completed`
+                    : `Task "${existingTask.title}" status changed from ${existingTask.status} to ${status}`,
+                userId,
+            );
+
+            return updated;
         }
 
         if (role === "ENGINEER") {
@@ -81,12 +113,41 @@ export class UpdateTaskStatusUseCase implements IUpdateTaskStatusUseCase {
                 throw new AppError("You can only update the status of tasks assigned to you", HttpStatusCode.FORBIDDEN,);
             }
 
-            return await this.taskRepository.update(
+            const updated = await this.taskRepository.update(
                 taskId,
                 {
                     status,
                 },
             );
+
+
+            await this.createTimelineEventUseCase.execute(
+                existingTask.incidentId,
+                status === TaskStatus.DONE
+                    ? TimelineEventType.TASK_COMPLETED
+                    : TimelineEventType.TASK_STATUS_CHANGED,
+                status === TaskStatus.DONE
+                    ? `Task "${existingTask.title}" was completed`
+                    : `Task "${existingTask.title}" status changed from ${existingTask.status} to ${status}`,
+                userId,
+            );
+
+
+            await this.kafkaProducer.publish(
+                KafkaTopics.TASK_EVENTS,
+                {
+                    event: "TASK_STATUS_UPDATED",
+                    taskId: existingTask.id,
+                    taskTitle: existingTask.title,
+                    incidentId: existingTask.incidentId,
+                    organizationId: incident.organizationId,
+                    previousStatus: existingTask.status,
+                    newStatus: status,
+                    updatedBy: userId,
+                },
+            );
+
+            return updated;
         }
 
         throw new AppError("You are not allowed to update task status", HttpStatusCode.FORBIDDEN,);

@@ -6,6 +6,7 @@ import {
   IncidentPriority as PrismaPriority,
   IncidentStatus as PrismaStatus,
   IncidentType as PrismaType,
+  Prisma
 } from "@prisma/client";
 
 import { IncidentType } from "../../domain/enums/incidentType.enum";
@@ -24,14 +25,37 @@ export class IncidentMapper {
       status: incident.status as PrismaStatus,
       type: incident.type as PrismaType,
 
-      organizationId: incident.organizationId,
-      createdBy: incident.createdBy,
-      assignedTeamId: incident.assignedTeamId,
+      organization: {
+        connect: {
+          id: incident.organizationId,
+        },
+      },
 
-      monitoringProjectId: incident.monitoringProjectId,
+      creator: incident.createdBy
+        ? {
+          connect: {
+            id: incident.createdBy,
+          },
+        }
+        : undefined,
+
+      assignedTeam: incident.assignedTeamId
+        ? {
+          connect: {
+            id: incident.assignedTeamId,
+          },
+        }
+        : undefined,
+
+      monitoringProject: incident.monitoringProjectId
+        ? {
+          connect: {
+            id: incident.monitoringProjectId,
+          },
+        }
+        : undefined,
     };
   }
-
   static fromDb(data: PrismaIncident): Incident {
     return new Incident({
       id: data.id,
@@ -52,5 +76,65 @@ export class IncidentMapper {
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
     });
+  }
+
+  static toUpdateDb(data: Partial<Incident>): Prisma.IncidentUpdateInput {
+    return {
+      ...(data.title !== undefined && {
+        title: data.title,
+      }),
+
+      ...(data.description !== undefined && {
+        description: data.description,
+      }),
+
+      ...(data.severity !== undefined && {
+        severity: data.severity as PrismaSeverity,
+      }),
+
+      ...(data.priority !== undefined && {
+        priority: data.priority as PrismaPriority,
+      }),
+
+      ...(data.status !== undefined && {
+        status: data.status as PrismaStatus,
+      }),
+
+      ...(data.type !== undefined && {
+        type: data.type as PrismaType,
+      }),
+
+      ...(data.organizationId !== undefined && {
+        organization: {
+          connect: {
+            id: data.organizationId,
+          },
+        },
+      }),
+
+      ...(data.assignedTeamId !== undefined && {
+        assignedTeam: data.assignedTeamId
+          ? {
+            connect: {
+              id: data.assignedTeamId,
+            },
+          }
+          : {
+            disconnect: true,
+          },
+      }),
+
+      ...(data.monitoringProjectId !== undefined && {
+        monitoringProject: data.monitoringProjectId
+          ? {
+            connect: {
+              id: data.monitoringProjectId,
+            },
+          }
+          : {
+            disconnect: true,
+          },
+      }),
+    };
   }
 }

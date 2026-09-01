@@ -53,7 +53,7 @@ export class OrganizationController {
         throw new AppError("Organization ID not found for this user", HttpStatusCode.BAD_REQUEST,);
       }
 
-      const result = await this.updateOrganizationUseCase.execute(user.organizationId, req.body,);
+      const result = await this.updateOrganizationUseCase.execute(user.organizationId, req.body,user.userId);
 
       return ResponseHandler.success(
         res,

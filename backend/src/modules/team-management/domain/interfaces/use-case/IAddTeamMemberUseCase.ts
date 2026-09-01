@@ -2,5 +2,5 @@ import { TeamMember } from "../../entities/teamMember.entity";
 import { CreateTeamMemberDto } from "@/modules/team-management/application/dto/createTeamMemberDto"; 
 
 export interface IAddTeamMemberUseCase {
-    execute(dto: CreateTeamMemberDto): Promise<TeamMember>;
+    execute(dto: CreateTeamMemberDto, actorId: string,): Promise<TeamMember>;
 }

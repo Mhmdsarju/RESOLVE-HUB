@@ -1,4 +1,13 @@
-import { AlertCircle, ArrowLeft, ExternalLink, ListChecks, ShieldAlert } from "lucide-react";
+import {
+  AlertCircle,
+  ArrowLeft,
+  Clock3,
+  ExternalLink,
+  ListChecks,
+  ShieldAlert,
+} from "lucide-react";
+
+import IncidentTimeline from "@/modules/timeline/components/IncidentTimeline";
 
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -8,7 +17,7 @@ import TaskSection from "@/modules/task-management/components/TaskSection";
 
 import { useIncident } from "../hooks/useIncident";
 
-type IncidentTab = "details" | "tasks";
+type IncidentTab = "details" | "tasks" | "timeline";
 
 export default function IncidentDetailsPage() {
   const navigate = useNavigate();
@@ -283,10 +292,7 @@ export default function IncidentDetailsPage() {
             <div className="mt-3 flex items-center gap-2 text-sm text-[#E7DDD3]">
               <span>Incident ID:</span>
 
-              <span
-                className="max-w-280px truncate font-medium text-white/80"
-                title={incident.id}
-              >
+              <span className="max-w-280px truncate font-medium text-white/80" title={incident.id}>
                 {incident.id}
               </span>
 
@@ -306,7 +312,7 @@ export default function IncidentDetailsPage() {
           shadow-sm
         "
       >
-        <div className="grid grid-cols-2 gap-1">
+        <div className="grid grid-cols-3 gap-1">
           <button
             type="button"
             onClick={() => setActiveTab("details")}
@@ -358,14 +364,42 @@ export default function IncidentDetailsPage() {
             <ListChecks size={17} />
             Tasks
           </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab("timeline")}
+            className={`
+              flex
+              items-center
+              justify-center
+              gap-2
+              rounded-xl
+              px-4
+              py-3
+              text-sm
+              font-semibold
+              transition-all
+              duration-200
+              ${
+                activeTab === "timeline"
+                  ? "bg-[#4B3932] text-white shadow-sm"
+                  : "text-stone-500 hover:bg-[#FAF6F0] hover:text-[#4B3932]"
+              }
+            `}
+          >
+            <Clock3 size={17} />
+            Timeline
+          </button>
         </div>
       </div>
 
       <div>
         {activeTab === "details" ? (
           <IncidentDetails incident={incident} />
-        ) : (
+        ) : activeTab === "tasks" ? (
           <TaskSection incidentId={incident.id} teamId={incident.assignedTeamId ?? ""} />
+        ) : (
+          <IncidentTimeline incidentId={incident.id} />
         )}
       </div>
     </div>

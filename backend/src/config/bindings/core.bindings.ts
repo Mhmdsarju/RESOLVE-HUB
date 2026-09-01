@@ -30,6 +30,22 @@ import { IAlertRuleRepository } from "@/modules/alertRule/domain/interfaces/IAle
 import { PrismaAlertRuleRepository } from "@/modules/alertRule/infrastructure/repositories/PrismaAlertRuleRepository";
 import { IAlertRoutingRuleRepository } from "@/modules/alertRoutingRule/domain/interfaces/IAlertRoutingRuleRepository";
 import { PrismaAlertRoutingRuleRepository } from "@/modules/alertRoutingRule/infrastructure/repositories/PrismaAlertRoutingRuleRepository";
+import { IFileRepository } from "@/modules/file-management/domain/interface/IFileRepository";
+import { PrismaFileRepository } from "@/modules/file-management/infrasturcture/repositories/PrismaFileRepository";
+import { IFileStorage } from "@/modules/file-management/domain/interface/IFileStorage";
+import { CloudinaryFileStorage } from "@/modules/file-management/infrasturcture/storage/CloudinaryFileStorage";
+import { IWarRoomRepository } from "@/modules/war-room/domain/interface/IWarRoomRepository";
+import { PrismaWarRoomRepository } from "@/modules/war-room/infrasturcture/repositories/PrismaWarRoomRepository";
+import { IWarRoomParticipantRepository } from "@/modules/war-room/domain/interface/IWarRoomParticipantRepository";
+import { PrismaWarRoomParticipantRepository } from "@/modules/war-room/infrasturcture/repositories/PrismaWarRoomParticipantRepository";
+import { IWarRoomMessageRepository } from "@/modules/war-room/domain/interface/IWarRoomMessageRepository";
+import { PrismaWarRoomMessageRepository } from "@/modules/war-room/infrasturcture/repositories/PrismaWarRoomMessageRepository";
+import { ITimelineEventRepository } from "@/modules/timeline/domain/interfaces/ITimelineEventRepository";
+import { PrismaTimelineEventRepository } from "@/modules/timeline/infrastructure/repositories/PrismaTimelineEventRepository";
+import { IAuditLogRepository } from "@/modules/audit-log/domain/interface/IAuditLogRepository";
+import { PrismaAuditLogRepository } from "@/modules/audit-log/infrastructure/repositories/PrismaAuditLogRepository";
+import { INotificationRepository } from "@/modules/notification/domain/interface/INotificationRepository";
+import { PrismaNotificationRepository } from "@/modules/notification/infrastructure/repositories/PrismaNotificationRepository";
 
 export function bindCore(container: Container) {
 
@@ -47,4 +63,12 @@ export function bindCore(container: Container) {
     container.bind<IAlertRepository>(TYPES.AlertRepository).to(PrismaAlertRepository).inSingletonScope();
     container.bind<IAlertRuleRepository>(TYPES.AlertRuleRepository).to(PrismaAlertRuleRepository).inSingletonScope();
     container.bind<IAlertRoutingRuleRepository>(TYPES.AlertRoutingRuleRepository).to(PrismaAlertRoutingRuleRepository).inSingletonScope();
+    container.bind<IFileRepository>(TYPES.fileRepository).to(PrismaFileRepository).inSingletonScope();
+    container.bind<IFileStorage>(TYPES.fileStorage  ).to(CloudinaryFileStorage).inSingletonScope();
+    container.bind<IWarRoomRepository>(TYPES.warroomRepository).to(PrismaWarRoomRepository).inSingletonScope();
+    container.bind<IWarRoomParticipantRepository>(TYPES.warroomParticipantsRepository).to(PrismaWarRoomParticipantRepository).inSingletonScope();
+    container.bind<IWarRoomMessageRepository>(TYPES.warRoomMessageRepository).to(PrismaWarRoomMessageRepository).inSingletonScope();
+    container.bind<ITimelineEventRepository>(TYPES.TimeLineRepository).to(PrismaTimelineEventRepository).inSingletonScope();
+    container.bind<IAuditLogRepository>(TYPES.AuditlogRepository).to(PrismaAuditLogRepository).inSingletonScope();
+    container.bind<INotificationRepository>(TYPES.notificationRepository).to(PrismaNotificationRepository).inSingletonScope();
 }
