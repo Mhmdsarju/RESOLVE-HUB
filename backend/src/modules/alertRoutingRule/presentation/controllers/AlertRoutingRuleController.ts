@@ -34,7 +34,7 @@ export class AlertRoutingRuleController extends BaseController {
                 priority: req.body.priority,
             };
 
-            const rule = await this.createAlertRoutingRuleUseCase.execute(dto, user.organizationId, user.userId,);
+            const rule = await this.createAlertRoutingRuleUseCase.execute(dto, user.organizationId!, user.userId,);
 
             return ResponseHandler.success(
                 res,
@@ -50,7 +50,7 @@ export class AlertRoutingRuleController extends BaseController {
         try {
             const user = this.getCurrentUser(req);
 
-            const rules = await this.getAlertRoutingRulesUseCase.execute(user.organizationId,);
+            const rules = await this.getAlertRoutingRulesUseCase.execute(user.organizationId!,);
 
             return ResponseHandler.success(
                 res,

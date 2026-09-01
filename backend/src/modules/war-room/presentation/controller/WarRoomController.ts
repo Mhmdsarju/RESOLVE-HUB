@@ -52,7 +52,7 @@ export class WarRoomController extends BaseController {
             const dto: GetWarRoomsDto = {
                 page: Number(req.query.page) || 1,
                 limit: Number(req.query.limit) || 6,
-                organizationId: currentUser.organizationId,
+                organizationId: currentUser.organizationId!,
                 status: req.query.status as WarRoomStatus | undefined,
                 search: req.query.search as string | undefined,
             };

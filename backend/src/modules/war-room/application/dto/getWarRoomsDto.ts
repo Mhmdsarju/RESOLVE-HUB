@@ -4,7 +4,7 @@ import { WarRoomStatus } from "../../domain/enums/warRoomStatus.enum";
 
 export interface GetWarRoomsDto extends PaginationDto {
 
-    organizationId: string | null;
+    organizationId: string;
 
     teamIds?: string[];
 

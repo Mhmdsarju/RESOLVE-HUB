@@ -33,7 +33,7 @@ export class TeamController {
 
             const dto: CreateTeamDto = {
                 name: req.body.name,
-                organizationId: user.organizationId,
+                organizationId: user.organizationId!,
                 createdBy: user.userId,
             };
 
@@ -76,7 +76,7 @@ export class TeamController {
             }
 
             const dto: GetTeamsDto = {
-                organizationId: user.organizationId,
+                organizationId: user.organizationId!,
                 page: Math.max(1, Number(req.query.page) || 1),
                 limit: Math.min(100, Math.max(1, Number(req.query.limit) || 10)),
                 search: req.query.search as string,
