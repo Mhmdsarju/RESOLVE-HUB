@@ -18,6 +18,7 @@ import { bindNotification } from "./bindings/notification.bindings";
 import { KafkaManager } from "@/infrastructure/kafka/kafka.manager";
 import { IOrganizationEmailService } from "@/modules/organization/domain/interfaces/IOrganizationEmailService";
 import { TYPES } from "./types";
+import { bindPlan } from "./bindings/plan.bindings";
 
 
 const container = new Container();
@@ -68,6 +69,7 @@ export const alertModule = bindAlert(container,
     alertRoutingRule.routeAlertUseCase, incidentModule.createIncidentUseCase, taskModule.createTaskUseCase);
 
 export const fileModule = bindFile(container, timelineEventModulde.createTimelineEventUseCase);
+export const planModule = bindPlan(container);
 
 
 export default container;

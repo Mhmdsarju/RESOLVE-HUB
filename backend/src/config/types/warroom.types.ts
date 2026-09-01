@@ -5,4 +5,5 @@ export const WARROOM_TYPES={
     notificationRepository:Symbol.for("notificationRepository"),
     KafkaManager: Symbol.for("KafkaManager"),
     KafkaProducer: Symbol.for("KafkaProducer"),
+    planRepository:Symbol.for("planRepository"),
 }
