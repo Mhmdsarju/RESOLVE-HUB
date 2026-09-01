@@ -30,19 +30,12 @@ export interface OrganizationVerificationDetails {
   };
 }
 
-export interface IOrganizationVerificationRepository
-  extends IBaseRepository<OrganizationVerification> {
-  findLatestByOrganizationId(
-    organizationId: string,
-  ): Promise<OrganizationVerification | null>;
+export interface IOrganizationVerificationRepository extends IBaseRepository<OrganizationVerification> {
+  findLatestByOrganizationId(organizationId: string,): Promise<OrganizationVerification | null>;
 
   findPending(): Promise<PendingOrganizationVerification[]>;
 
-  findHistoryByOrganizationId(
-    organizationId: string,
-  ): Promise<OrganizationVerification[]>;
+  findHistoryByOrganizationId(organizationId: string,): Promise<OrganizationVerification[]>;
 
-  findDetailsByOrganizationId(
-    organizationId: string,
-  ): Promise<OrganizationVerificationDetails | null>;
+  findDetailsByOrganizationId(organizationId: string,): Promise<OrganizationVerificationDetails | null>;
 }

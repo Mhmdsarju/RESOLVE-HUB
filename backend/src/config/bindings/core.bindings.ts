@@ -48,6 +48,8 @@ import { INotificationRepository } from "@/modules/notification/domain/interface
 import { PrismaNotificationRepository } from "@/modules/notification/infrastructure/repositories/PrismaNotificationRepository";
 import { IPlanRepository } from "@/modules/plan/domain/interface/IPlanRepository";
 import { PrismaPlanRepository } from "@/modules/plan/infrastructure/repositories/PrismaPlanRepository";
+import { ISubscriptionRepository } from "@/modules/subscription/domain/interface/ISubscriptionRepository";
+import { PrismaSubscriptionRepository } from "@/modules/subscription/infrastructure/repositories/PrismaSubscriptionRepository";
 
 export function bindCore(container: Container) {
 
@@ -74,4 +76,6 @@ export function bindCore(container: Container) {
     container.bind<IAuditLogRepository>(TYPES.AuditlogRepository).to(PrismaAuditLogRepository).inSingletonScope();
     container.bind<INotificationRepository>(TYPES.notificationRepository).to(PrismaNotificationRepository).inSingletonScope();
     container.bind<IPlanRepository>(TYPES.planRepository).to(PrismaPlanRepository).inSingletonScope();
+    container.bind<ISubscriptionRepository>(TYPES.subscriptionRepository).to(PrismaSubscriptionRepository).inSingletonScope();
+
 }

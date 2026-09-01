@@ -19,6 +19,8 @@ import { KafkaManager } from "@/infrastructure/kafka/kafka.manager";
 import { IOrganizationEmailService } from "@/modules/organization/domain/interfaces/IOrganizationEmailService";
 import { TYPES } from "./types";
 import { bindPlan } from "./bindings/plan.bindings";
+import { bindSubscription } from "./bindings/subscription.bindings";
+import { SubscriptionScheduler } from "@/infrastructure/scheduler/subscription.scheduler";
 
 
 const container = new Container();
@@ -40,9 +42,8 @@ export const kafkaManager = new KafkaManager(
 )
 
 export const organizationModule = bindOrganization(container, auditLogModule.createAuditLogUseCase,kafkaManager);
+
 export const timelineEventModulde = bindTimelineEvent(container);
-
-
 
 export const teamModule = bindTeam(container, auditLogModule.createAuditLogUseCase, notificationModule.createNotificationUseCase);
 
@@ -70,6 +71,15 @@ export const alertModule = bindAlert(container,
 
 export const fileModule = bindFile(container, timelineEventModulde.createTimelineEventUseCase);
 export const planModule = bindPlan(container);
+
+export const subscriptionModule = bindSubscription(
+    container,
+    kafkaManager,
+);
+
+export const subscriptionScheduler = new SubscriptionScheduler(
+    subscriptionModule.sendSubscriptionReminderUseCase,
+);
 
 
 export default container;
