@@ -14,7 +14,6 @@ export class KafkaConsumer{
         await this.consumer.connect();
     }
 
-
     async subscribe(topic:string):Promise<void>{
         await this.consumer.subscribe({
             topic,
@@ -22,12 +21,19 @@ export class KafkaConsumer{
         })
     }
 
-    async consume(handler:(message:string)=>Promise<void>):Promise<void>{
+    async consume(handlers:Record<string,(message:string)=>Promise<void>>):Promise<void>{
 
 
         await this.consumer.run({
-            eachMessage:async({message})=>{
+            eachMessage:async({topic,message})=>{
                 if(!message.value){
+                    return;
+                }
+
+                const handler=handlers[topic];
+
+                if(!handler){
+                    console.log(`No handler found for topic: ${topic}`);
                     return;
                 }
 

@@ -1,5 +1,4 @@
 export const KafkaTopics = {
     TASK_EVENTS: "task.events",
-    NOTIFICATION_EVENTS: "notification.events",
-    INCIDENT_EVENTS: "incident.events",
+    EMAIL_EVENTS: "email.events",
 } as const;

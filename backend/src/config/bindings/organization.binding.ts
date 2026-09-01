@@ -4,7 +4,6 @@ import { IOrganizationRepository } from "@/modules/organization/domain/repositor
 // import { OrganizationController } from "@/modules/organization/presentation/controllers/OrganizationController";
 // import { SuperAdminOrganizationController } from "@/modules/organization/presentation/controllers/SuperAdminOrganizationController";
 import { IOrganizationVerificationRepository } from "@/modules/organization/domain/repositories/IOrganizationVerificationRepository";
-import { IOrganizationEmailService } from "@/modules/organization/domain/interfaces/IOrganizationEmailService";
 import { IUserRepository } from "@/modules/auth/domain/repositories/IUserRepository";
 import { ApproveOrganizationVerificationUseCase } from "@/modules/organization/application/use-cases/ApproveOrganizationVerificationUseCase";
 import { GetOrganizationProfileUseCase } from "@/modules/organization/application/use-cases/GetOrganizationProfileUseCase";
@@ -19,22 +18,27 @@ import { createOrganizationRoutes } from "@/modules/organization/presentation/ro
 import { createSuperAdminOrganizationRoutes } from "@/modules/organization/presentation/routes/superAdminOrganization.routes";
 import { GetPendingOrganizationVerificationsUseCase } from "@/modules/organization/application/use-cases/GetPendingOrganizationVerificationsUseCase";
 import { ICreateAuditLogUseCase } from "@/modules/audit-log/domain/interface/usecase/ICreateAuditLogUseCase";
+import { KafkaManager } from "@/infrastructure/kafka/kafka.manager";
 
 
-export function bindOrganization(container: Container, createAuditLogUseCase: ICreateAuditLogUseCase) {
+export function bindOrganization(
+    container: Container,
+    createAuditLogUseCase: ICreateAuditLogUseCase,
+    kafkaManager: KafkaManager,
+) {
 
 
     const organizationRepository = container.get<IOrganizationRepository>(TYPES.OrganizationRepository,);
     const organizationVerificationRepository = container.get<IOrganizationVerificationRepository>(TYPES.OrganizationVerificationRepository,);
-    const organizationEmailService = container.get<IOrganizationEmailService>(TYPES.OrganizationEmailService,);
     const userRepository = container.get<IUserRepository>(TYPES.UserRepository);
 
     const approveOrganizationVerificationUseCase = new ApproveOrganizationVerificationUseCase(
         organizationRepository,
         organizationVerificationRepository,
         userRepository,
-        organizationEmailService,
+        kafkaManager.producer
     );
+
 
     const getOrganizationProfileUseCase = new GetOrganizationProfileUseCase(
         organizationRepository,
@@ -56,14 +60,14 @@ export function bindOrganization(container: Container, createAuditLogUseCase: IC
         organizationRepository,
         organizationVerificationRepository,
         userRepository,
-        organizationEmailService,
+        kafkaManager.producer
     );
 
     const submitOrganizationVerificationUseCase = new SubmitOrganizationVerificationUseCase(
         organizationRepository,
         organizationVerificationRepository,
         userRepository,
-        organizationEmailService,
+        kafkaManager.producer,
     );
 
     const updateOrganizationUseCase = new UpdateOrganizationUseCase(

@@ -6,7 +6,7 @@ async function main() {
   const password = process.env.SUPER_ADMIN_PASSWORD;
 
   if (!email || !password) {
-    throw new Error(      "SUPER_ADMIN_EMAIL and SUPER_ADMIN_PASSWORD are required",    );
+    throw new Error("SUPER_ADMIN_EMAIL and SUPER_ADMIN_PASSWORD are required",);
   }
 
   const passwordHash = await bcrypt.hash(password, 12);
