@@ -21,6 +21,7 @@ import { TYPES } from "./types";
 import { bindPlan } from "./bindings/plan.bindings";
 import { bindSubscription } from "./bindings/subscription.bindings";
 import { SubscriptionScheduler } from "@/infrastructure/scheduler/subscription.scheduler";
+import { bindPayment } from "./bindings/payment.bindings";
 
 
 const container = new Container();
@@ -41,7 +42,7 @@ export const kafkaManager = new KafkaManager(
     organizationEmailService
 )
 
-export const organizationModule = bindOrganization(container, auditLogModule.createAuditLogUseCase,kafkaManager);
+export const organizationModule = bindOrganization(container, auditLogModule.createAuditLogUseCase, kafkaManager);
 
 export const timelineEventModulde = bindTimelineEvent(container);
 
@@ -79,7 +80,10 @@ export const subscriptionModule = bindSubscription(
 
 export const subscriptionScheduler = new SubscriptionScheduler(
     subscriptionModule.sendSubscriptionReminderUseCase,
+    subscriptionModule.processSubscriptionExpiryUseCase
 );
+
+export const paymentModule = bindPayment(container,);
 
 
 export default container;
