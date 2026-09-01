@@ -15,6 +15,9 @@ import { bindWarRoom } from "./bindings/warroom.bindings";
 import { bindTimelineEvent } from "./bindings/timeline.bindings";
 import { bindAuditLog } from "./bindings/auditLog.bindings";
 import { bindNotification } from "./bindings/notification.bindings";
+import { KafkaManager } from "@/infrastructure/kafka/kafka.manager";
+import { IOrganizationEmailService } from "@/modules/organization/domain/interfaces/IOrganizationEmailService";
+import { TYPES } from "./types";
 
 
 const container = new Container();
@@ -22,16 +25,39 @@ const container = new Container();
 bindCore(container);
 
 export const auditLogModule = bindAuditLog(container);
-export const notificationModule=bindNotification(container);
-export const authModule = bindAuth(container,auditLogModule.createAuditLogUseCase);
-export const organizationModule = bindOrganization(container,auditLogModule.createAuditLogUseCase);
+export const notificationModule = bindNotification(container);
+export const authModule = bindAuth(container, auditLogModule.createAuditLogUseCase);
+
+const organizationEmailService = container.get<IOrganizationEmailService>(
+    TYPES.OrganizationEmailService
+);
+
+export const kafkaManager = new KafkaManager(
+    authModule.userRepository,
+    notificationModule.createNotificationUseCase,
+    organizationEmailService
+)
+
+export const organizationModule = bindOrganization(container, auditLogModule.createAuditLogUseCase,kafkaManager);
 export const timelineEventModulde = bindTimelineEvent(container);
-export const teamModule = bindTeam(container,auditLogModule.createAuditLogUseCase,notificationModule.createNotificationUseCase);
+
+
+
+export const teamModule = bindTeam(container, auditLogModule.createAuditLogUseCase, notificationModule.createNotificationUseCase);
+
 export const warRoomModule = bindWarRoom(container, timelineEventModulde.createTimelineEventUseCase);
+
 export const incidentModule = bindIncident(
     container, timelineEventModulde.
-    createTimelineEventUseCase, warRoomModule.createWarRoomUseCase,notificationModule.createNotificationUseCase);
-export const taskModule = bindTask(container, timelineEventModulde.createTimelineEventUseCase,notificationModule.createNotificationUseCase);
+    createTimelineEventUseCase, warRoomModule.createWarRoomUseCase, notificationModule.createNotificationUseCase);
+
+export const taskModule = bindTask(
+    container,
+    timelineEventModulde.createTimelineEventUseCase,
+    notificationModule.createNotificationUseCase,
+    kafkaManager
+);
+
 export const monitoringModule = bindMonitoring(container);
 export const integrationModule = bindIntegration(container);
 
@@ -42,10 +68,6 @@ export const alertModule = bindAlert(container,
     alertRoutingRule.routeAlertUseCase, incidentModule.createIncidentUseCase, taskModule.createTaskUseCase);
 
 export const fileModule = bindFile(container, timelineEventModulde.createTimelineEventUseCase);
-
-
-
-
 
 
 export default container;

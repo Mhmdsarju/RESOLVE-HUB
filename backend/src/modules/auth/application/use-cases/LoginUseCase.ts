@@ -51,7 +51,9 @@ export class LoginUseCase implements ILoginUseCase {
 
     const payload = {
       userId: user.id!,
-      organizationId: user.organizationId!,
+      organizationId: user.role === UserRole.SUPER_ADMIN
+        ? null
+        : user.organizationId!,
       role: user.role,
     };
 
@@ -61,13 +63,15 @@ export class LoginUseCase implements ILoginUseCase {
 
     await this.tokenStore.saveRefreshToken(user.id!, refreshToken);
 
-    await this.createAuditLogUseCase.execute({
-      organizationId: user.organizationId!,
-      action: AuditAction.LOGIN,
-      entityType: AuditEntityType.AUTH,
-      description: `${user.name} logged in`,
-      actorId: user.id!,
-    });
+    if (user.role !== UserRole.SUPER_ADMIN) {
+      await this.createAuditLogUseCase.execute({
+        organizationId: user.organizationId!,
+        action: AuditAction.LOGIN,
+        entityType: AuditEntityType.AUTH,
+        description: `${user.name} logged in`,
+        actorId: user.id!,
+      });
+    }
 
     return {
       user: {

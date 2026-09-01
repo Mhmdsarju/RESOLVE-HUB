@@ -10,14 +10,15 @@ import { IOrganizationVerificationRepository } from "../../domain/repositories/I
 import { IUserRepository } from "@/modules/auth/domain/repositories/IUserRepository";
 
 import { ISubmitOrganizationVerificationUseCase } from "../../domain/interfaces/ISubmitOrganizationVerificationUseCase";
-import { IOrganizationEmailService } from "../../domain/interfaces/IOrganizationEmailService";
+import { KafkaProducer } from "@/infrastructure/kafka/kafka.producer";
+import { KafkaTopics } from "@/infrastructure/kafka/kafka.topics";
 
 export class SubmitOrganizationVerificationUseCase implements ISubmitOrganizationVerificationUseCase {
     constructor(
         private readonly organizationRepository: IOrganizationRepository,
         private readonly verificationRepository: IOrganizationVerificationRepository,
         private readonly userRepository: IUserRepository,
-        private readonly organizationEmailService: IOrganizationEmailService,
+        private readonly kafkaProducer: KafkaProducer,
     ) { }
 
     async execute(organizationId: string,): Promise<OrganizationVerification> {
@@ -77,17 +78,14 @@ export class SubmitOrganizationVerificationUseCase implements ISubmitOrganizatio
             },
         );
 
-        try {
-            await this.organizationEmailService.sendVerificationSubmittedEmail(
-                admin.email,
-                organization.name,
-            );
-        } catch (error) {
-            console.error(
-                "Failed to send verification submitted email:",
-                error,
-            );
-        }
+        await this.kafkaProducer.publish(
+            KafkaTopics.EMAIL_EVENTS,
+            {
+                event: "ORGANIZATION_VERIFICATION_SUBMITTED",
+                email: admin.email,
+                organizationName: organization.name,
+            },
+        );
 
         return createdVerification;
     }

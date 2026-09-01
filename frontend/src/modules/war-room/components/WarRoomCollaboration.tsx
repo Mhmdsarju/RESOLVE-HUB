@@ -6,8 +6,6 @@ import { useMe } from "@/modules/user/hooks/useMe";
 import { useUser } from "@/modules/user/hooks/useUser";
 import type { WarRoomCollaborationProps } from "../types/warRoom.types";
 
-
-
 export default function WarRoomCollaboration({
   participantCount = 0,
   localStream,
@@ -90,36 +88,46 @@ export default function WarRoomCollaboration({
   return (
     <div
       className="
-                overflow-hidden
-                rounded-2xl
-                border
-                border-[#E7DDD3]
-                bg-[#FAF6F0]
-            "
+        flex
+        h-full
+        min-h-0
+        flex-col
+        overflow-hidden
+        rounded-2xl
+        border
+        border-[#E7DDD3]
+        bg-[#FAF6F0]
+      "
     >
-      <div className="p-5">
+      <div
+        className="
+          flex
+          min-h-0
+          flex-1
+          flex-col
+          p-4
+        "
+      >
         <div
           className="
-                        grid
-                        min-h-360
-                        grid-cols-1
-                        gap-3
-                        md:grid-cols-2
-                    "
+            grid
+            min-h-0
+            flex-1
+            grid-cols-1
+            gap-3
+            md:grid-cols-2
+          "
         >
           <div
             className="
-                            relative
-                            flex
-                            min-h-240
-                            items-center
-                            justify-center
-                            overflow-hidden
-                            rounded-2xl
-                            border
-                            border-[#D8CBBF]
-                            bg-[#2F2926]
-                        "
+              relative
+              min-h-0
+              overflow-hidden
+              rounded-2xl
+              border
+              border-[#D8CBBF]
+              bg-[#2F2926]
+            "
           >
             <video
               ref={localVideoRef}
@@ -127,63 +135,65 @@ export default function WarRoomCollaboration({
               muted
               playsInline
               className={`
-                                absolute
-                                inset-0
-                                h-full
-                                w-full
-                                object-cover
-                                [transform-scaleX(-1)]
-                                ${isCameraOn ? "opacity-100" : "opacity-0"}
-                            `}
+                absolute
+                inset-0
+                h-full
+                w-full
+                object-cover
+                [transform:scaleX(-1)]
+                ${isCameraOn ? "opacity-100" : "opacity-0"}
+              `}
             />
 
             {!isCameraOn && (
-              <div className="relative z-10 text-center">
-                <div
-                  className="
-                                        mx-auto
-                                        flex
-                                        h-16
-                                        w-16
-                                        items-center
-                                        justify-center
-                                        rounded-full
-                                        bg-[#5A4A43]
-                                        text-xl
-                                        font-semibold
-                                        text-white
-                                    "
-                >
-                  {currentUser?.name?.charAt(0).toUpperCase() ?? "?"}
+              <div className="relative z-10 flex h-full items-center justify-center text-center">
+                <div>
+                  <div
+                    className="
+                      mx-auto
+                      flex
+                      h-16
+                      w-16
+                      items-center
+                      justify-center
+                      rounded-full
+                      bg-[#5A4A43]
+                      text-xl
+                      font-semibold
+                      text-white
+                    "
+                  >
+                    {currentUser?.name?.charAt(0).toUpperCase() ?? "?"}
+                  </div>
+
+                  <p className="mt-3 text-sm font-medium text-white">
+                    {isMediaReady ? "Camera is off" : "Camera is unavailable"}
+                  </p>
+
+                  <p className="mt-1 text-xs text-stone-400">
+                    {isMediaReady
+                      ? "Turn on your camera to start video"
+                      : "Allow camera and microphone access"}
+                  </p>
                 </div>
-
-                <p className="mt-3 text-sm font-medium text-white">
-                  {isMediaReady ? "Camera is off" : "Camera is unavailable"}
-                </p>
-
-                <p className="mt-1 text-xs text-stone-400">
-                  {isMediaReady
-                    ? "Turn on your camera to start video"
-                    : "Allow camera and microphone access"}
-                </p>
               </div>
             )}
 
             {mediaError && (
               <div
                 className="
-                                    absolute
-                                    inset-x-3
-                                    top-3
-                                    z-20
-                                    rounded-lg
-                                    bg-black/70
-                                    px-3
-                                    py-2
-                                    text-center
-                                    text-xs
-                                    text-white
-                                "
+                  absolute
+                  inset-x-3
+                  top-3
+                  z-20
+                  rounded-lg
+                  bg-black/70
+                  px-3
+                  py-2
+                  text-center
+                  text-xs
+                  text-white
+                "
               >
                 {mediaError}
               </div>
@@ -191,37 +201,37 @@ export default function WarRoomCollaboration({
 
             <div
               className="
-                                absolute
-                                bottom-3
-                                left-3
-                                z-10
-                                rounded-lg
-                                bg-black/50
-                                px-2.5
-                                py-1
-                                text-xs
-                                text-white
-                            "
+                absolute
+                bottom-3
+                left-3
+                z-10
+                rounded-lg
+                bg-black/50
+                px-2.5
+                py-1
+                text-xs
+                text-white
+              "
             >
               You
             </div>
 
             <div
               className="
-                                absolute
-                                bottom-3
-                                right-3
-                                z-10
-                                flex
-                                items-center
-                                gap-1.5
-                                rounded-lg
-                                bg-black/50
-                                px-2.5
-                                py-1
-                                text-xs
-                                text-white
-                            "
+                absolute
+                bottom-3
+                right-3
+                z-10
+                flex
+                items-center
+                gap-1.5
+                rounded-lg
+                bg-black/50
+                px-2.5
+                py-1
+                text-xs
+                text-white
+              "
             >
               {isMicOn ? <Mic size={13} /> : <MicOff size={13} />}
 
@@ -232,54 +242,54 @@ export default function WarRoomCollaboration({
           {remoteStreams.length === 0 ? (
             <div
               className="
-                                relative
-                                flex
-                                min-h-240px
-                                items-center
-                                justify-center
-                                overflow-hidden
-                                rounded-2xl
-                                border
-                                border-[#D8CBBF]
-                                bg-white
-                            "
+                relative
+                min-h-0
+                overflow-hidden
+                rounded-2xl
+                border
+                border-[#D8CBBF]
+                bg-white
+              "
             >
-              <div className="text-center">
-                <div
-                  className="
-                                        mx-auto
-                                        flex
-                                        h-14
-                                        w-14
-                                        items-center
-                                        justify-center
-                                        rounded-full
-                                        bg-[#F0E7D5]
-                                        text-[#4B3932]
-                                    "
-                >
-                  <Users size={22} />
+              <div className="flex h-full items-center justify-center text-center">
+                <div>
+                  <div
+                    className="
+                      mx-auto
+                      flex
+                      h-14
+                      w-14
+                      items-center
+                      justify-center
+                      rounded-full
+                      bg-[#F0E7D5]
+                      text-[#4B3932]
+                    "
+                  >
+                    <Users size={22} />
+                  </div>
+
+                  <p className="mt-3 text-sm font-semibold text-[#4B3932]">
+                    Waiting for participants
+                  </p>
+
+                  <p className="mt-1 text-xs text-stone-400">
+                    {participantCount === 0
+                      ? "No other participants are connected"
+                      : `${participantCount} participant${participantCount > 1 ? "s" : ""} in the war room`}
+                  </p>
                 </div>
-
-                <p className="mt-3 text-sm font-semibold text-[#4B3932]">
-                  Waiting for participants
-                </p>
-
-                <p className="mt-1 text-xs text-stone-400">
-                  {participantCount === 0
-                    ? "No other participants are connected"
-                    : `${participantCount} participant${participantCount > 1 ? "s" : ""} in the war room`}
-                </p>
               </div>
             </div>
           ) : (
             <div
               className="
-                                grid
-                                min-h-240px
-                                gap-3
-                                sm:grid-cols-2
-                            "
+                grid
+                h-full
+                min-h-0
+                gap-3
+                sm:grid-cols-2
+              "
             >
               {remoteStreams.map((remoteStream) => (
                 <RemoteVideo
@@ -294,36 +304,36 @@ export default function WarRoomCollaboration({
 
         <div
           className="
-                        mt-5
-                        flex
-                        flex-wrap
-                        items-center
-                        justify-center
-                        gap-3
-                    "
+            mt-3
+            flex
+            shrink-0
+            items-center
+            justify-center
+            gap-3
+          "
         >
           <button
             type="button"
             onClick={toggleMicrophone}
             disabled={!isMediaReady}
             className={`
-                            flex
-                            h-11
-                            w-11
-                            items-center
-                            justify-center
-                            rounded-full
-                            border
-                            border-[#D8CBBF]
-                            transition
-                            ${
-                              isMicOn
-                                ? "bg-white text-[#4B3932] hover:bg-[#F0E7D5]"
-                                : "bg-[#4B3932] text-white hover:bg-[#3B2E29]"
-                            }
-                            disabled:cursor-not-allowed
-                            disabled:opacity-40
-                        `}
+              flex
+              h-11
+              w-11
+              items-center
+              justify-center
+              rounded-full
+              border
+              border-[#D8CBBF]
+              transition
+              ${
+                isMicOn
+                  ? "bg-white text-[#4B3932] hover:bg-[#F0E7D5]"
+                  : "bg-[#4B3932] text-white hover:bg-[#3B2E29]"
+              }
+              disabled:cursor-not-allowed
+              disabled:opacity-40
+            `}
           >
             {isMicOn ? <Mic size={18} /> : <MicOff size={18} />}
           </button>
@@ -333,23 +343,23 @@ export default function WarRoomCollaboration({
             onClick={toggleCamera}
             disabled={!isMediaReady}
             className={`
-                            flex
-                            h-11
-                            w-11
-                            items-center
-                            justify-center
-                            rounded-full
-                            border
-                            border-[#D8CBBF]
-                            transition
-                            ${
-                              isCameraOn
-                                ? "bg-white text-[#4B3932] hover:bg-[#F0E7D5]"
-                                : "bg-[#4B3932] text-white hover:bg-[#3B2E29]"
-                            }
-                            disabled:cursor-not-allowed
-                            disabled:opacity-40
-                        `}
+              flex
+              h-11
+              w-11
+              items-center
+              justify-center
+              rounded-full
+              border
+              border-[#D8CBBF]
+              transition
+              ${
+                isCameraOn
+                  ? "bg-white text-[#4B3932] hover:bg-[#F0E7D5]"
+                  : "bg-[#4B3932] text-white hover:bg-[#3B2E29]"
+              }
+              disabled:cursor-not-allowed
+              disabled:opacity-40
+            `}
           >
             {isCameraOn ? <Camera size={18} /> : <CameraOff size={18} />}
           </button>
@@ -392,7 +402,8 @@ function RemoteVideo({
     <div
       className="
         relative
-        min-h-240px
+        h-full
+        min-h-0
         overflow-hidden
         rounded-2xl
         border

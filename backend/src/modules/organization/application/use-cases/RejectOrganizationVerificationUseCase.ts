@@ -10,15 +10,16 @@ import { IOrganizationVerificationRepository } from "../../domain/repositories/I
 import { IUserRepository } from "@/modules/auth/domain/repositories/IUserRepository";
 
 import { IRejectOrganizationVerificationUseCase } from "../../domain/interfaces/IRejectOrganizationVerificationUseCase";
-import { IOrganizationEmailService } from "../../domain/interfaces/IOrganizationEmailService";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
+import { KafkaProducer } from "@/infrastructure/kafka/kafka.producer";
+import { KafkaTopics } from "@/infrastructure/kafka/kafka.topics";
 
-export class RejectOrganizationVerificationUseCase  implements IRejectOrganizationVerificationUseCase {
+export class RejectOrganizationVerificationUseCase implements IRejectOrganizationVerificationUseCase {
   constructor(
     private readonly organizationRepository: IOrganizationRepository,
     private readonly verificationRepository: IOrganizationVerificationRepository,
     private readonly userRepository: IUserRepository,
-    private readonly organizationEmailService: IOrganizationEmailService,
+    private readonly kafkaProducer: KafkaProducer,
   ) { }
 
   async execute(organizationId: string, reviewerId: string, reason: string,): Promise<OrganizationVerification> {
@@ -71,18 +72,15 @@ export class RejectOrganizationVerificationUseCase  implements IRejectOrganizati
       },
     );
 
-    try {
-      await this.organizationEmailService.sendOrganizationRejectedEmail(
-        admin.email,
-        organization.name,
-        rejectionReason,
-      );
-    } catch (error) {
-      console.error(
-        "Failed to send organization rejection email:",
-        error,
-      );
-    }
+    await this.kafkaProducer.publish(
+      KafkaTopics.EMAIL_EVENTS,
+      {
+        event: "ORGANIZATION_REJECTED",
+        email: admin.email,
+        organizationName: organization.name,
+        reason: rejectionReason,
+      },
+    );
 
     return updatedVerification;
   }

@@ -200,7 +200,8 @@ export function bindAuth(container: Container, createAuditLogUseCase: ICreateAud
     return {
         authRouter,
         userRouter,
-        getUserByIdUseCase
+        getUserByIdUseCase,
+        userRepository
     };
 
 }

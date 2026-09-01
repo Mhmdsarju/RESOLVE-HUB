@@ -49,9 +49,17 @@ export default function EngineerWarRoomDetailsPage() {
 
   const isLeavingRef = useRef(false);
 
-  const { participants, messages, sendMessage } = useWarRoomSocket(warRoom?.id ?? "");
+  const { participants, messages, sendMessage } = useWarRoomSocket(
+    warRoom?.id ?? "",
+  );
 
-  const { localStream, remoteStreams, isMediaReady, mediaError, leaveCall } = useWarRoomWebRTC({
+  const {
+    localStream,
+    remoteStreams,
+    isMediaReady,
+    mediaError,
+    leaveCall,
+  } = useWarRoomWebRTC({
     warRoomId: warRoom?.id ?? "",
     participants,
   });
@@ -113,7 +121,13 @@ export default function EngineerWarRoomDetailsPage() {
     );
   }
 
-  if (isWarRoomError || !warRoom || isIncidentError || !incident || isMessagesError) {
+  if (
+    isWarRoomError ||
+    !warRoom ||
+    isIncidentError ||
+    !incident ||
+    isMessagesError
+  ) {
     return (
       <div className="space-y-6">
         <WarRoomErrorState onRetry={() => refetch()} />
@@ -181,10 +195,20 @@ export default function EngineerWarRoomDetailsPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div
+      className="
+        flex
+        h-[calc(100vh-80px)]
+        min-h-0
+        flex-col
+        gap-4
+        overflow-hidden
+      "
+    >
       <div
         className="
           flex
+          shrink-0
           items-center
           justify-between
           gap-4
@@ -208,16 +232,33 @@ export default function EngineerWarRoomDetailsPage() {
       <div
         className="
           grid
+          min-h-0
+          flex-1
           gap-5
-          lg:grid-cols-[260px_minmax(0,1fr)_320px]
-          lg:items-start
+          overflow-hidden
+          lg:grid-cols-[220px_minmax(0,1fr)_280px]
+          lg:items-stretch
         "
       >
-        <div className="lg:sticky lg:top-5">
+        <div
+          className="
+            min-h-0
+            overflow-hidden
+          "
+        >
           <WarRoomParticipantList participants={participants} />
         </div>
 
-        <div className="min-w-0 space-y-5">
+        <div
+          className="
+            grid
+            min-h-0
+            min-w-0
+            grid-rows-[minmax(0,1.65fr)_minmax(220px,0.75fr)]
+            gap-4
+            overflow-hidden
+          "
+        >
           <WarRoomCollaboration
             participantCount={Math.max(participants.length - 1, 0)}
             localStream={localStream}
@@ -233,7 +274,12 @@ export default function EngineerWarRoomDetailsPage() {
           />
         </div>
 
-        <div className="lg:sticky lg:top-5">
+        <div
+          className="
+            min-h-0
+            overflow-hidden
+          "
+        >
           <WarRoomIncidentCard warRoom={warRoomWithIncident} />
         </div>
       </div>

@@ -41,7 +41,9 @@ export default function WarRoomChat({
   }, [historyMessages, realtimeMessages]);
 
   useEffect(() => {
-    const messageContainer = document.getElementById("war-room-message-container");
+    const messageContainer = document.getElementById(
+      "war-room-message-container",
+    );
 
     if (!messageContainer) {
       return;
@@ -73,6 +75,10 @@ export default function WarRoomChat({
   return (
     <div
       className="
+        flex
+        h-full
+        min-h-0
+        flex-col
         overflow-hidden
         rounded-2xl
         border
@@ -83,7 +89,8 @@ export default function WarRoomChat({
       <div
         id="war-room-message-container"
         className="
-          h-300
+          min-h-0
+          flex-1
           space-y-3
           overflow-y-auto
           px-4
@@ -101,7 +108,9 @@ export default function WarRoomChat({
             "
           >
             <div>
-              <p className="text-xs font-medium text-[#4B3932]">No messages yet</p>
+              <p className="text-xs font-medium text-[#4B3932]">
+                No messages yet
+              </p>
 
               <p className="mt-1 text-[10px] text-stone-400">
                 Start the conversation with your team.
@@ -111,7 +120,10 @@ export default function WarRoomChat({
         ) : (
           messages.map((message) => (
             <WarRoomMessageItem
-              key={message.id ?? `${message.userId}-${message.createdAt}-${message.content}`}
+              key={
+                message.id ??
+                `${message.userId}-${message.createdAt}-${message.content}`
+              }
               message={message}
               isOwnMessage={message.userId === currentUser?.id}
             />
@@ -121,6 +133,7 @@ export default function WarRoomChat({
 
       <div
         className="
+          shrink-0
           border-t
           border-[#E7DDD3]
           bg-white
@@ -135,8 +148,8 @@ export default function WarRoomChat({
             placeholder="Type a message..."
             rows={1}
             className="
-              min-h-40px
-              max-h-90px
+              min-h-[40px]
+              max-h-[90px]
               flex-1
               resize-none
               rounded-xl
