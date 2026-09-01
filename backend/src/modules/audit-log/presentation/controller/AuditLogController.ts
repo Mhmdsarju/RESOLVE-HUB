@@ -41,7 +41,7 @@ export class AuditLogController extends BaseController {
             const currentUser = this.getCurrentUser(req);
 
             const dto: GetAuditLogsDto = {
-                organizationId: currentUser.organizationId,
+                organizationId: currentUser.organizationId!,
                 page: Number(req.query.page) || 1,
                 limit: Number(req.query.limit) || 10,
                 search: req.query.search as string | undefined,

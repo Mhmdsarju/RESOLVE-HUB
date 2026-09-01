@@ -33,7 +33,7 @@ export class AlertRuleController extends BaseController {
 
             const dto: CreateAlertRuleDTO = {
                 monitoringProjectId: req.params.projectId,
-                organizationId: user.organizationId,
+                organizationId: user.organizationId!,
                 name: req.body.name,
                 metric: req.body.metric,
                 operator: req.body.operator,
@@ -71,7 +71,7 @@ export class AlertRuleController extends BaseController {
 
             const dto: GetAlertRulesDTO = {
                 monitoringProjectId: req.params.projectId,
-                organizationId: user.organizationId,
+                organizationId: user.organizationId!,
                 page,
                 limit,
             };
@@ -94,7 +94,7 @@ export class AlertRuleController extends BaseController {
 
             const alertRule = await this.getAlertRuleByIdUseCase.execute(
                 req.params.id,
-                user.organizationId
+                user.organizationId!
             );
 
             return ResponseHandler.success(
@@ -124,7 +124,7 @@ export class AlertRuleController extends BaseController {
 
             const alertRule = await this.updateAlertRuleUseCase.execute(
                 req.params.id,
-                user.organizationId,
+                user.organizationId!,
                 dto
             );
 
@@ -144,7 +144,7 @@ export class AlertRuleController extends BaseController {
 
             await this.deleteAlertRuleUseCase.execute(
                 req.params.id,
-                user.organizationId
+                user.organizationId!
             );
 
             return ResponseHandler.success(
@@ -179,7 +179,7 @@ export class AlertRuleController extends BaseController {
 
             const dto: ApplyDefaultAlertRuleDTO = {
                 monitoringProjectId: req.params.projectId,
-                organizationId: user.organizationId,
+                organizationId: user.organizationId!,
                 defaultRuleName: req.body.defaultRuleName,
             };
 

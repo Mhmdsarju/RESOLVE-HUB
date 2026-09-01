@@ -2,7 +2,7 @@ import { AlertSource } from "../../domain/enums/alertSource.enum";
 import { AlertStatus } from "../../domain/enums/alertStatus.enum";
 
 export interface CreateAlertDTO {
-    organizationId: string;
+    organizationId: string ;
     monitoringProjectId: string;
     integrationId?: string;
     alertRuleId?: string;
