@@ -18,13 +18,19 @@ import { GetTaskByIdUseCase } from "@/modules/task-management/application/use-ca
 import { ICreateTimelineEventUseCase } from "@/modules/timeline/domain/interfaces/usecases/ICreateTimelineEventUseCase";
 import { IUserRepository } from "@/modules/auth/domain/repositories/IUserRepository";
 import { ICreateNotificationUseCase } from "@/modules/notification/domain/interface/use-case/ICreateNotificationUseCase";
+import { KafkaManager } from "@/infrastructure/kafka/kafka.manager";
 
-export function bindTask(container: Container,createTimeLineEventUseCase:ICreateTimelineEventUseCase,createNotificationUseCase:ICreateNotificationUseCase) {
+export function bindTask(container: Container,
+    createTimeLineEventUseCase: ICreateTimelineEventUseCase,
+    createNotificationUseCase: ICreateNotificationUseCase,
+    kafkaManger:KafkaManager,
+) {
 
     const taskRepository = container.get<ITaskRepository>(TYPES.TaskRepository);
     const incidentRepository = container.get<IIncidentRepository>(TYPES.IncidentRepository);
     const teamMemberRepository = container.get<ITeamMemberRepository>(TYPES.TeamMemberRepository);
-    const userRepository=container.get<IUserRepository>(TYPES.UserRepository);
+    const userRepository = container.get<IUserRepository>(TYPES.UserRepository);
+
 
     const assignTaskUseCase = new AssignTaskUseCase(
         taskRepository,
@@ -70,8 +76,7 @@ export function bindTask(container: Container,createTimeLineEventUseCase:ICreate
         incidentRepository,
         teamMemberRepository,
         createTimeLineEventUseCase,
-        userRepository,
-        createNotificationUseCase
+        kafkaManger.producer
     );
 
     const updateTaskUseCase = new UpdateTaskUseCase(
@@ -81,7 +86,7 @@ export function bindTask(container: Container,createTimeLineEventUseCase:ICreate
         createTimeLineEventUseCase
     );
 
-    const getTaskByIdUseCase=new GetTaskByIdUseCase(
+    const getTaskByIdUseCase = new GetTaskByIdUseCase(
         taskRepository
     );
 
@@ -99,8 +104,8 @@ export function bindTask(container: Container,createTimeLineEventUseCase:ICreate
         getTaskByIdUseCase,
     );
 
-    const taskRouter=createTaskRoutes(taskController);
+    const taskRouter = createTaskRoutes(taskController);
 
-    return {taskRouter,createTaskUseCase};
+    return { taskRouter, createTaskUseCase };
 
 }

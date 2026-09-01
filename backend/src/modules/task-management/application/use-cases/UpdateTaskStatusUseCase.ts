@@ -8,9 +8,8 @@ import { IIncidentRepository } from "@/modules/incident/domain/interfaces/IIncid
 import { ITeamMemberRepository } from "@/modules/team-management/domain/interfaces/ITeamMemberRepository";
 import { ICreateTimelineEventUseCase } from "@/modules/timeline/domain/interfaces/usecases/ICreateTimelineEventUseCase";
 import { TimelineEventType } from "@/modules/timeline/domain/enums/timelineEventType.enum";
-import { IUserRepository } from "@/modules/auth/domain/repositories/IUserRepository";
-import { ICreateNotificationUseCase } from "@/modules/notification/domain/interface/use-case/ICreateNotificationUseCase";
-import { NotificationType } from "@/modules/notification/domain/enums/NotificationType";
+import { KafkaProducer } from "@/infrastructure/kafka/kafka.producer";
+import { KafkaTopics } from "@/infrastructure/kafka/kafka.topics";
 
 export class UpdateTaskStatusUseCase implements IUpdateTaskStatusUseCase {
     constructor(
@@ -18,8 +17,7 @@ export class UpdateTaskStatusUseCase implements IUpdateTaskStatusUseCase {
         private readonly incidentRepository: IIncidentRepository,
         private readonly teamMemberRepository: ITeamMemberRepository,
         private readonly createTimelineEventUseCase: ICreateTimelineEventUseCase,
-        private readonly userRepository: IUserRepository,
-        private readonly createNotificationUseCase: ICreateNotificationUseCase,
+        private readonly kafkaProducer: KafkaProducer
     ) { }
 
     async execute(taskId: string, status: TaskStatus, userId: string, role: string,): Promise<Task> {
@@ -122,6 +120,7 @@ export class UpdateTaskStatusUseCase implements IUpdateTaskStatusUseCase {
                 },
             );
 
+
             await this.createTimelineEventUseCase.execute(
                 existingTask.incidentId,
                 status === TaskStatus.DONE
@@ -133,20 +132,20 @@ export class UpdateTaskStatusUseCase implements IUpdateTaskStatusUseCase {
                 userId,
             );
 
-            const organizationAdmin = await this.userRepository.findOrganizationAdminByOrganizationId(incident.organizationId,);
 
-            if (organizationAdmin) {
-                await this.createNotificationUseCase.execute({
-                    userId: organizationAdmin.id!,
-                    type: NotificationType.TASK,
-                    title: status === TaskStatus.DONE
-                        ? "Task Completed"
-                        : "Task Status Updated",
-                    message: status === TaskStatus.DONE
-                        ? `Task "${existingTask.title}" was completed.`
-                        : `Task "${existingTask.title}" status changed from ${existingTask.status} to ${status}.`,
-                });
-            }
+            await this.kafkaProducer.publish(
+                KafkaTopics.TASK_EVENTS,
+                {
+                    event: "TASK_STATUS_UPDATED",
+                    taskId: existingTask.id,
+                    taskTitle: existingTask.title,
+                    incidentId: existingTask.incidentId,
+                    organizationId: incident.organizationId,
+                    previousStatus: existingTask.status,
+                    newStatus: status,
+                    updatedBy: userId,
+                },
+            );
 
             return updated;
         }

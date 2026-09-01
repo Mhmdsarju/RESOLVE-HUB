@@ -71,5 +71,4 @@ export function bindCore(container: Container) {
     container.bind<ITimelineEventRepository>(TYPES.TimeLineRepository).to(PrismaTimelineEventRepository).inSingletonScope();
     container.bind<IAuditLogRepository>(TYPES.AuditlogRepository).to(PrismaAuditLogRepository).inSingletonScope();
     container.bind<INotificationRepository>(TYPES.notificationRepository).to(PrismaNotificationRepository).inSingletonScope();
-
 }
