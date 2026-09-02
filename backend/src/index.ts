@@ -4,6 +4,7 @@ import { connectRedis } from "./config/redis";
 import { connectDatabase } from "./config/database";
 import { startServer } from "./app/server";
 import { kafkaManager } from "./config/inversify.config";
+import { subscriptionScheduler } from "./config/inversify.config";
 
 async function bootstrap() {
   try {
@@ -14,6 +15,8 @@ async function bootstrap() {
     await connectDatabase();
 
     await kafkaManager.connect();
+
+    subscriptionScheduler.start();
 
     // Start HTTP Server
     const server = startServer();

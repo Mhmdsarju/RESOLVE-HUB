@@ -45,6 +45,9 @@ model Organization {
   alertRoutingRules  AlertRoutingRule[]
   auditLogs          AuditLog[]
 
+  subscription Subscription?
+  payments     Payment[]
+
   @@map("organizations")
 }
 
@@ -120,7 +123,7 @@ model User {
   warRoomMessages           WarRoomMessage[]
   timelineEvents            TimelineEvent[]      @relation("TimelineEventActor")
   auditLogs                 AuditLog[]           @relation("AuditLogActor")
-  notifications Notification[]
+  notifications             Notification[]
 
   @@index([organizationId])
   @@map("users")
@@ -671,14 +674,13 @@ enum AuditEntityType {
   TASK
 }
 
-
 model Notification {
   id String @id @default(cuid())
 
   userId String @db.Uuid
 
-  type NotificationType
-  title String
+  type    NotificationType
+  title   String
   message String
 
   isRead Boolean @default(false)
@@ -698,4 +700,87 @@ enum NotificationType {
   SYSTEM
   INCIDENT
   TASK
+}
+
+model Plan {
+  id String @id @default(cuid())
+
+  name         PlanName @unique
+  price        Float
+  durationDays Int?
+  maxProjects  Int?
+  isActive     Boolean  @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  subscriptions Subscription[]
+
+  @@map("plans")
+}
+
+enum PlanName {
+  FREE
+  PREMIUM
+}
+
+model Subscription {
+  id             String @id @default(cuid())
+  organizationId String @db.Uuid
+  planId         String
+
+  status SubscriptionStatus @default(ACTIVE)
+
+  startDate DateTime
+  endDate   DateTime?
+
+  reminder10DaysSentAt DateTime?
+  reminder2DaysSentAt  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  plan         Plan         @relation(fields: [planId], references: [id])
+
+  payments Payment[]
+
+  @@unique([organizationId])
+  @@index([planId])
+  @@index([status])
+  @@index([endDate])
+  @@map("subscriptions")
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  EXPIRED
+}
+
+model Payment {
+  id             String @id @default(cuid())
+  organizationId String @db.Uuid
+  subscriptionId String
+
+  amount        Float
+  currency      String        @default("INR")
+  status        PaymentStatus
+  transactionId String        @unique
+
+  paidAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  subscription Subscription @relation(fields: [subscriptionId], references: [id])
+
+  @@index([organizationId])
+  @@index([subscriptionId])
+  @@index([status])
+  @@map("payments")
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
 }

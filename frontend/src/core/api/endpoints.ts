@@ -37,10 +37,8 @@ export const ENDPOINTS = {
   },
 
   TEAM_INVITATION: {
-    ACCEPT: (token: string) =>
-      `/team-invitations/accept/${token}`,
-    CANCEL: (id: string) =>
-      `/team-invitations/${id}`,
+    ACCEPT: (token: string) => `/team-invitations/accept/${token}`,
+    CANCEL: (id: string) => `/team-invitations/${id}`,
   },
 
   MONITORING_PROJECT: {
@@ -123,6 +121,11 @@ export const ENDPOINTS = {
     UNREAD_COUNT: "/notifications/unread-count",
     MARK_AS_READ: (id: string) => `/notifications/${id}/read`,
     MARK_ALL_AS_READ: "/notifications/read-all",
+  },
+
+  PLAN: {
+    BASE: "/plans",
+    BY_ID: (id: string) => `/plans/${id}`,
   },
 
 

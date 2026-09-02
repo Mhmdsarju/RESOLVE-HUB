@@ -4,8 +4,8 @@ import cors from "cors";
 import {
   authModule, organizationModule, teamModule,
   incidentModule, taskModule, integrationModule, monitoringModule,
-  alertModule, alertRoutingRule, alertRuleModule, fileModule, warRoomModule,timelineEventModulde,
-  auditLogModule,notificationModule
+  alertModule, alertRoutingRule, alertRuleModule, fileModule, warRoomModule, timelineEventModulde,
+  auditLogModule, notificationModule, planModule, subscriptionModule,paymentModule
 } from "../config/inversify.config";
 
 import { errorHandler } from "./middlewares/errorHandler";
@@ -42,7 +42,10 @@ app.use("/api/war-rooms", warRoomModule.warRoomParticipantsRouter,);
 app.use("/api/war-rooms", warRoomModule.warRoomMessageRouter);
 app.use("/api/timeline", timelineEventModulde.timelineEventRouter);
 app.use("/api/audit-logs", auditLogModule.auditLogRouter);
-app.use("/api/notifications",notificationModule.notificationRouter);
+app.use("/api/notifications", notificationModule.notificationRouter);
+app.use("/api/plans", planModule.planRouter);
+app.use("/api/subscriptions", subscriptionModule.subscriptionRouter);
+app.use("/api/payments", paymentModule.paymentRouter);
 
 app.use(errorHandler);
 

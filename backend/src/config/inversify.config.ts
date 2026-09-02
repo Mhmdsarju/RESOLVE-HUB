@@ -18,6 +18,10 @@ import { bindNotification } from "./bindings/notification.bindings";
 import { KafkaManager } from "@/infrastructure/kafka/kafka.manager";
 import { IOrganizationEmailService } from "@/modules/organization/domain/interfaces/IOrganizationEmailService";
 import { TYPES } from "./types";
+import { bindPlan } from "./bindings/plan.bindings";
+import { bindSubscription } from "./bindings/subscription.bindings";
+import { SubscriptionScheduler } from "@/infrastructure/scheduler/subscription.scheduler";
+import { bindPayment } from "./bindings/payment.bindings";
 
 
 const container = new Container();
@@ -38,10 +42,9 @@ export const kafkaManager = new KafkaManager(
     organizationEmailService
 )
 
-export const organizationModule = bindOrganization(container, auditLogModule.createAuditLogUseCase,kafkaManager);
+export const organizationModule = bindOrganization(container, auditLogModule.createAuditLogUseCase, kafkaManager);
+
 export const timelineEventModulde = bindTimelineEvent(container);
-
-
 
 export const teamModule = bindTeam(container, auditLogModule.createAuditLogUseCase, notificationModule.createNotificationUseCase);
 
@@ -68,6 +71,19 @@ export const alertModule = bindAlert(container,
     alertRoutingRule.routeAlertUseCase, incidentModule.createIncidentUseCase, taskModule.createTaskUseCase);
 
 export const fileModule = bindFile(container, timelineEventModulde.createTimelineEventUseCase);
+export const planModule = bindPlan(container);
+
+export const subscriptionModule = bindSubscription(
+    container,
+    kafkaManager,
+);
+
+export const subscriptionScheduler = new SubscriptionScheduler(
+    subscriptionModule.sendSubscriptionReminderUseCase,
+    subscriptionModule.processSubscriptionExpiryUseCase
+);
+
+export const paymentModule = bindPayment(container,);
 
 
 export default container;

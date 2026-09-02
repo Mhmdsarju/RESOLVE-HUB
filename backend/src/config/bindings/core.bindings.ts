@@ -46,6 +46,12 @@ import { IAuditLogRepository } from "@/modules/audit-log/domain/interface/IAudit
 import { PrismaAuditLogRepository } from "@/modules/audit-log/infrastructure/repositories/PrismaAuditLogRepository";
 import { INotificationRepository } from "@/modules/notification/domain/interface/INotificationRepository";
 import { PrismaNotificationRepository } from "@/modules/notification/infrastructure/repositories/PrismaNotificationRepository";
+import { IPlanRepository } from "@/modules/plan/domain/interface/IPlanRepository";
+import { PrismaPlanRepository } from "@/modules/plan/infrastructure/repositories/PrismaPlanRepository";
+import { ISubscriptionRepository } from "@/modules/subscription/domain/interface/ISubscriptionRepository";
+import { PrismaSubscriptionRepository } from "@/modules/subscription/infrastructure/repositories/PrismaSubscriptionRepository";
+import { IPaymentRepository } from "@/modules/payment/domain/interface/IPaymentRepository";
+import { PrismaPaymentRepository } from "@/modules/payment/infrastructure/repositories/PrismaPaymentRepository";
 
 export function bindCore(container: Container) {
 
@@ -71,4 +77,8 @@ export function bindCore(container: Container) {
     container.bind<ITimelineEventRepository>(TYPES.TimeLineRepository).to(PrismaTimelineEventRepository).inSingletonScope();
     container.bind<IAuditLogRepository>(TYPES.AuditlogRepository).to(PrismaAuditLogRepository).inSingletonScope();
     container.bind<INotificationRepository>(TYPES.notificationRepository).to(PrismaNotificationRepository).inSingletonScope();
+    container.bind<IPlanRepository>(TYPES.planRepository).to(PrismaPlanRepository).inSingletonScope();
+    container.bind<ISubscriptionRepository>(TYPES.subscriptionRepository).to(PrismaSubscriptionRepository).inSingletonScope();
+    container.bind<IPaymentRepository>(TYPES.paymentRepository).to(PrismaPaymentRepository).inSingletonScope();
+
 }

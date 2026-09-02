@@ -34,6 +34,22 @@ export class EmailEventHandler {
             );
         }
 
+        if (event.event === "SUBSCRIPTION_EXPIRING_10_DAYS") {
+            await this.organizationEmailService.sendSubscriptionExpiring10DaysEmail(
+                event.email,
+                event.organizationName,
+                new Date(event.endDate),
+            );
+        }
+
+        if (event.event === "SUBSCRIPTION_EXPIRING_2_DAYS") {
+            await this.organizationEmailService.sendSubscriptionExpiring2DaysEmail(
+                event.email,
+                event.organizationName,
+                new Date(event.endDate),
+            );
+        }
+
     }
 
 }
