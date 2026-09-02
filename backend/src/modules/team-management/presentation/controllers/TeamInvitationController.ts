@@ -23,7 +23,7 @@ export class TeamInvitationController extends BaseController {
             const user = this.getCurrentUser(req);
 
             const dto: CreateTeamInvitationDto = {
-                organizationId: user.organizationId,
+                organizationId: user.organizationId!,
                 teamId: req.params.teamId,
                 invitedEmail: req.body.invitedEmail,
                 role: req.body.role ?? TeamRole.MEMBER,

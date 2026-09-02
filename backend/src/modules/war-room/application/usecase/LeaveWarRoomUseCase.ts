@@ -25,33 +25,21 @@ export class LeaveWarRoomUseCase implements ILeaveWarRoomUseCase {
     async execute(id: string, userId: string, userRole: string): Promise<void> {
 
         if (!id?.trim()) {
-            throw new AppError(
-                "War room ID is required",
-                HttpStatusCode.BAD_REQUEST,
-            );
+            throw new AppError("War room ID is required", HttpStatusCode.BAD_REQUEST,);
         }
 
         if (!userId?.trim()) {
-            throw new AppError(
-                "User ID is required",
-                HttpStatusCode.BAD_REQUEST,
-            );
+            throw new AppError("User ID is required", HttpStatusCode.BAD_REQUEST,);
         }
 
         const warRoom = await this.warRoomRepository.findById(id);
 
         if (!warRoom) {
-            throw new AppError(
-                "War room not found",
-                HttpStatusCode.NOT_FOUND,
-            );
+            throw new AppError("War room not found", HttpStatusCode.NOT_FOUND,);
         }
 
         if (warRoom.status === WarRoomStatus.CLOSED) {
-            throw new AppError(
-                "Cannot leave a closed war room",
-                HttpStatusCode.BAD_REQUEST,
-            );
+            throw new AppError("Cannot leave a closed war room", HttpStatusCode.BAD_REQUEST,);
         }
 
         const incident = await this.incidentRepository.findById(
@@ -59,17 +47,11 @@ export class LeaveWarRoomUseCase implements ILeaveWarRoomUseCase {
         );
 
         if (!incident) {
-            throw new AppError(
-                "Incident not found",
-                HttpStatusCode.NOT_FOUND,
-            );
+            throw new AppError("Incident not found", HttpStatusCode.NOT_FOUND,);
         }
 
         if (!incident.assignedTeamId) {
-            throw new AppError(
-                "Incident is not assigned to a team",
-                HttpStatusCode.BAD_REQUEST,
-            );
+            throw new AppError("Incident is not assigned to a team", HttpStatusCode.BAD_REQUEST,);
         }
 
         if (userRole !== "ORG_ADMIN") {
@@ -80,25 +62,18 @@ export class LeaveWarRoomUseCase implements ILeaveWarRoomUseCase {
             );
 
             if (!teamMember) {
-                throw new AppError(
-                    "You are not a member of the assigned team",
-                    HttpStatusCode.FORBIDDEN,
-                );
+                throw new AppError("You are not a member of the assigned team", HttpStatusCode.FORBIDDEN,);
             }
 
         }
 
-        const participant =
-            await this.warRoomParticipantRepository.findByWarRoomAndUser(
-                id,
-                userId,
-            );
+        const participant = await this.warRoomParticipantRepository.findByWarRoomAndUser(
+            id,
+            userId,
+        );
 
         if (!participant) {
-            throw new AppError(
-                "You are not a participant of this war room",
-                HttpStatusCode.BAD_REQUEST,
-            );
+            throw new AppError("You are not a participant of this war room", HttpStatusCode.BAD_REQUEST,);
         }
 
         if (participant.leftAt) {

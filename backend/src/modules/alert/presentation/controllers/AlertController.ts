@@ -34,7 +34,7 @@ export class AlertController extends BaseController {
             const user = this.getCurrentUser(req);
 
             const dto: CreateAlertDTO = {
-                organizationId: user.organizationId,
+                organizationId: user.organizationId!,
                 monitoringProjectId: req.params.projectId,
                 integrationId: req.body.integrationId,
                 alertRuleId: req.body.alertRuleId,
@@ -75,7 +75,7 @@ export class AlertController extends BaseController {
 
             const result = await this.getAlertsUseCase.execute(
                 req.params.projectId,
-                user.organizationId,
+                user.organizationId!,
                 page,
                 limit,
             );
@@ -96,7 +96,7 @@ export class AlertController extends BaseController {
 
             const alert = await this.getAlertByIdUseCase.execute(
                 req.params.id,
-                user.organizationId,
+                user.organizationId!,
             );
 
             return ResponseHandler.success(
@@ -115,7 +115,7 @@ export class AlertController extends BaseController {
 
             const alert = await this.resolveAlertUseCase.execute(
                 req.params.id,
-                user.organizationId,
+                user.organizationId!,
             );
 
             return ResponseHandler.success(

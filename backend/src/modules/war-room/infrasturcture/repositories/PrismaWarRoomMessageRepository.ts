@@ -7,7 +7,7 @@ import { PaginationResult } from "@/shared/utils/Pagination/PaginationResult";
 import { WarRoomMessage } from "../../domain/entity/warRoomMessage.entity";
 import { IWarRoomMessageRepository } from "../../domain/interface/IWarRoomMessageRepository";
 
-import { WarRoomMessageMapper } from "../mapper/WarRoomMessageMapper"; 
+import { WarRoomMessageMapper } from "../mapper/WarRoomMessageMapper";
 
 @injectable()
 export class PrismaWarRoomMessageRepository implements IWarRoomMessageRepository {
@@ -42,11 +42,7 @@ export class PrismaWarRoomMessageRepository implements IWarRoomMessageRepository
         return messages.map(WarRoomMessageMapper.fromDb);
     }
 
-    async findByWarRoomId(
-        warRoomId: string,
-        page: number,
-        limit: number,
-    ): Promise<PaginationResult<WarRoomMessage>> {
+    async findByWarRoomId(warRoomId: string, page: number, limit: number,): Promise<PaginationResult<WarRoomMessage>> {
 
         const skip = (page - 1) * limit;
 
@@ -57,11 +53,8 @@ export class PrismaWarRoomMessageRepository implements IWarRoomMessageRepository
         const [messages, total] = await Promise.all([
             prisma.warRoomMessage.findMany({
                 where,
-
                 skip,
-
                 take: limit,
-
                 orderBy: {
                     createdAt: "desc",
                 },
@@ -84,10 +77,7 @@ export class PrismaWarRoomMessageRepository implements IWarRoomMessageRepository
         };
     }
 
-    async update(
-        id: string,
-        data: Partial<WarRoomMessage>,
-    ): Promise<WarRoomMessage> {
+    async update(id: string, data: Partial<WarRoomMessage>,): Promise<WarRoomMessage> {
 
         const updatedMessage = await prisma.warRoomMessage.update({
             where: { id },

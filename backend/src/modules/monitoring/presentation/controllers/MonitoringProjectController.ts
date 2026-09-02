@@ -24,7 +24,7 @@ export class MonitoringProjectController extends BaseController {
             const dto: CreateMonitoringProjectDTO = {
                 name: req.body.name,
                 description: req.body.description,
-                organizationId: user.organizationId,
+                organizationId: user.organizationId!,
                 createdBy: user.userId,
             };
 
@@ -46,7 +46,7 @@ export class MonitoringProjectController extends BaseController {
             const user = this.getCurrentUser(req);
 
             const dto = {
-                organizationId: user.organizationId,
+                organizationId: user.organizationId!,
                 page: Math.max(1, Number(req.query.page) || 1),
                 limit: Math.min(100, Math.max(1, Number(req.query.limit) || 10)),
             };
@@ -69,7 +69,7 @@ export class MonitoringProjectController extends BaseController {
 
             const project = await this.getMonitoringProjectByIdUseCase.execute(
                 req.params.id,
-                user.organizationId
+                user.organizationId!
             );
 
             return ResponseHandler.success(
@@ -94,7 +94,7 @@ export class MonitoringProjectController extends BaseController {
 
             const project = await this.updateMonitoringProjectUseCase.execute(
                 req.params.id,
-                user.organizationId,
+                user.organizationId!,
                 dto
             );
 
@@ -115,7 +115,7 @@ export class MonitoringProjectController extends BaseController {
 
             await this.deleteMonitoringProjectUseCase.execute(
                 req.params.id,
-                user.organizationId
+                user.organizationId!
             );
 
             return ResponseHandler.success(

@@ -1,10 +1,11 @@
 import { Producer } from "kafkajs";
 import { kafka } from "./kafka.config";
+import { IEventPublisher } from "@/modules/organization/domain/interfaces/IEventPublisher";
 
 
 // export const kafkaProducer: Producer = kafka.producer();
 
-export class KafkaProducer {
+export class KafkaProducer implements IEventPublisher{
     private readonly producer: Producer;
 
     constructor() {

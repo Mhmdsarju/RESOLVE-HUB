@@ -38,10 +38,7 @@ const upload = multer({
     fileFilter: (_req, file, cb) => {
         if (!allowedMimeTypes.includes(file.mimetype)) {
             cb(
-                new AppError(
-                    "Unsupported file type",
-                    HttpStatusCode.BAD_REQUEST,
-                ),
+                new AppError("Unsupported file type", HttpStatusCode.BAD_REQUEST,),
             );
 
             return;

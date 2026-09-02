@@ -10,7 +10,7 @@ export class WebRTCSignalingHandler {
     initialize() {
         this.io.on("connection", (socket: Socket) => {
 
-            console.log(`WebRTC signaling socket connected: ${socket.id}`,);
+            // console.log(`WebRTC signaling socket connected: ${socket.id}`,);
 
             socket.on("webrtc:offer", (data) => {
 

@@ -28,7 +28,7 @@ export class IntegrationController extends BaseController {
 
             const dto: CreateIntegrationDTO = {
                 monitoringProjectId: req.params.projectId,
-                organizationId: user.organizationId,
+                organizationId: user.organizationId!,
                 name: req.body.name,
                 type: req.body.type,
                 config: req.body.config,
@@ -62,7 +62,7 @@ export class IntegrationController extends BaseController {
 
             const result = await this.getIntegrationsUseCase.execute(
                 req.params.projectId,
-                user.organizationId,
+                user.organizationId!,
                 page,
                 limit
             );
@@ -83,7 +83,7 @@ export class IntegrationController extends BaseController {
 
             const integration = await this.getIntegrationByIdUseCase.execute(
                 req.params.id,
-                user.organizationId
+                user.organizationId!
             );
 
             return ResponseHandler.success(
@@ -109,7 +109,7 @@ export class IntegrationController extends BaseController {
 
             const integration = await this.updateIntegrationUseCase.execute(
                 req.params.id,
-                user.organizationId,
+                user.organizationId!,
                 dto
             );
 
@@ -129,7 +129,7 @@ export class IntegrationController extends BaseController {
 
             await this.deleteIntegrationUseCase.execute(
                 req.params.id,
-                user.organizationId
+                user.organizationId!
             );
 
             return ResponseHandler.success(

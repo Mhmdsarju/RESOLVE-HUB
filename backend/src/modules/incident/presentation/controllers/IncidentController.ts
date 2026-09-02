@@ -44,7 +44,7 @@ export class IncidentController extends BaseController {
             const incident = await this.createIncidentUseCase.execute(
                 dto,
                 currentUser.userId,
-                currentUser.organizationId
+                currentUser.organizationId!
             );
 
             return ResponseHandler.success(
@@ -136,7 +136,7 @@ export class IncidentController extends BaseController {
 
             const result = await this.getIncidentsUseCase.execute(
                 dto,
-                currentUser.organizationId
+                currentUser.organizationId!
             );
 
             return ResponseHandler.success(
@@ -154,7 +154,7 @@ export class IncidentController extends BaseController {
             const currentUser = this.getCurrentUser(req);
 
             const stats = await this.getIncidentStatsUseCase.execute(
-                currentUser.organizationId
+                currentUser.organizationId!
             );
 
             return ResponseHandler.success(

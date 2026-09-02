@@ -13,6 +13,7 @@ export class CreateAlertUseCase implements ICreateAlertUseCase {
     ) { }
 
     async execute(dto: CreateAlertDTO): Promise<Alert> {
+
         if (!dto.organizationId?.trim()) {
             throw new AppError("Organization ID is required", HttpStatusCode.BAD_REQUEST,);
         }
@@ -27,6 +28,30 @@ export class CreateAlertUseCase implements ICreateAlertUseCase {
 
         if (dto.source === "AUTOMATIC" && !dto.alertRuleId?.trim()) {
             throw new AppError("Alert rule ID is required for automatic alerts", HttpStatusCode.BAD_REQUEST,);
+        }
+
+        if (dto.incidentId) {
+            if (dto.source === "AUTOMATIC" && dto.alertRuleId) {
+                const existingAlert = await this.alertRepository.findActiveAlertByIncidentAndAlertRule(
+                    dto.incidentId,
+                    dto.alertRuleId,
+                );
+
+                if (existingAlert) {
+                    return existingAlert;
+                }
+            }
+
+            if (dto.source === "MANUAL") {
+                const existingAlert = await this.alertRepository.findActiveAlertByIncidentAndTitle(
+                    dto.incidentId,
+                    dto.title,
+                );
+
+                if (existingAlert) {
+                    return existingAlert;
+                }
+            }
         }
 
         const alert = new Alert({

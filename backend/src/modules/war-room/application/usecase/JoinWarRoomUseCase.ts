@@ -65,9 +65,7 @@ export class JoinWarRoomUseCase implements IJoinWarRoomUseCase {
             );
 
             if (!teamMember) {
-                throw new AppError(
-                    "You are not a member of the assigned team",
-                    HttpStatusCode.FORBIDDEN,
+                throw new AppError("You are not a member of the assigned team", HttpStatusCode.FORBIDDEN,
                 );
             }
 

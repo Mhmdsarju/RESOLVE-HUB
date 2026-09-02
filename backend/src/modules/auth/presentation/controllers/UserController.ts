@@ -20,7 +20,7 @@ export class UserController extends BaseController {
     try {
       const user = this.getCurrentUser(req);
 
-      const users = await this.getUsersByOrganizationUseCase.execute(user.organizationId);
+      const users = await this.getUsersByOrganizationUseCase.execute(user.organizationId!);
 
       return ResponseHandler.success(
         res,
@@ -75,7 +75,7 @@ export class UserController extends BaseController {
 
       const result = await this.getUserByIdUseCase.execute(
         req.params.userId,
-        user.organizationId,
+        user.organizationId!,
       );
 
       return ResponseHandler.success(

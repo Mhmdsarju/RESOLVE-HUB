@@ -1,7 +1,7 @@
 import "dotenv/config";
 
 import { KafkaProducer } from "./kafka.producer";
-import { KafkaTopics } from "./kafka.topics";
+import { KafkaTopics } from "../../shared/constant/kafka.topics";
 
 async function testProducer() {
     const producer = new KafkaProducer();
