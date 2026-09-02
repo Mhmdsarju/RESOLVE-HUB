@@ -18,31 +18,18 @@ export class SendWarRoomMessageUseCase implements ISendWarRoomMessageUseCase {
         private readonly warRoomMessageRepository: IWarRoomMessageRepository,
     ) { }
 
-    async execute(
-        warRoomId: string,
-        userId: string,
-        content: string,
-    ): Promise<WarRoomMessage> {
+    async execute(warRoomId: string, userId: string, content: string,): Promise<WarRoomMessage> {
 
         if (!warRoomId?.trim()) {
-            throw new AppError(
-                "War room ID is required",
-                HttpStatusCode.BAD_REQUEST,
-            );
+            throw new AppError("War room ID is required", HttpStatusCode.BAD_REQUEST,);
         }
 
         if (!userId?.trim()) {
-            throw new AppError(
-                "User ID is required",
-                HttpStatusCode.BAD_REQUEST,
-            );
+            throw new AppError("User ID is required", HttpStatusCode.BAD_REQUEST,);
         }
 
         if (!content?.trim()) {
-            throw new AppError(
-                "Message content is required",
-                HttpStatusCode.BAD_REQUEST,
-            );
+            throw new AppError("Message content is required", HttpStatusCode.BAD_REQUEST,);
         }
 
         const warRoom = await this.warRoomRepository.findById(
@@ -50,30 +37,20 @@ export class SendWarRoomMessageUseCase implements ISendWarRoomMessageUseCase {
         );
 
         if (!warRoom) {
-            throw new AppError(
-                "War room not found",
-                HttpStatusCode.NOT_FOUND,
-            );
+            throw new AppError("War room not found", HttpStatusCode.NOT_FOUND,);
         }
 
         if (warRoom.status === WarRoomStatus.CLOSED) {
-            throw new AppError(
-                "Cannot send message to a closed war room",
-                HttpStatusCode.BAD_REQUEST,
-            );
+            throw new AppError("Cannot send message to a closed war room", HttpStatusCode.BAD_REQUEST,);
         }
 
-        const participant =
-            await this.warRoomParticipantRepository.findByWarRoomAndUser(
-                warRoomId,
-                userId,
-            );
+        const participant = await this.warRoomParticipantRepository.findByWarRoomAndUser(
+            warRoomId,
+            userId,
+        );
 
         if (!participant || participant.leftAt) {
-            throw new AppError(
-                "You are not an active participant of this war room",
-                HttpStatusCode.FORBIDDEN,
-            );
+            throw new AppError("You are not an active participant of this war room", HttpStatusCode.FORBIDDEN,);
         }
 
         const message = new WarRoomMessage({

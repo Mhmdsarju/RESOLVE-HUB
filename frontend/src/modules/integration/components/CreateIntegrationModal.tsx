@@ -1,14 +1,22 @@
 import { useState } from "react";
-import {  X } from "lucide-react";
+import { X } from "lucide-react";
 
 import { useCreateIntegration } from "../hooks/useCreateIntegration";
 
-import type { CreateIntegrationDto, IntegrationType ,CreateIntegrationModalProps} from "../types/integration.types";
+import type {
+  CreateIntegrationDto,
+  IntegrationType,
+  CreateIntegrationModalProps,
+} from "../types/integration.types";
 import { INTEGRATION_TYPES } from "../constants/integration.constant";
 
-const integrationTypes=INTEGRATION_TYPES;
+const integrationTypes = INTEGRATION_TYPES;
 
-export default function CreateIntegrationModal({  projectId,  isOpen,  onClose,}: CreateIntegrationModalProps) {
+export default function CreateIntegrationModal({
+  projectId,
+  isOpen,
+  onClose,
+}: CreateIntegrationModalProps) {
   const createMutation = useCreateIntegration();
 
   const [name, setName] = useState("");

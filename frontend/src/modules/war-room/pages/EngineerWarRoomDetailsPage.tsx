@@ -16,7 +16,7 @@ import { useWarRoomWebRTC } from "../hooks/useWarRoomWebRTC";
 
 import { useIncident } from "@/modules/incident/hooks/useIncident";
 
-import { socket } from "@/core/config/socket";
+import { connectSocket, socket } from "@/core/config/socket";
 
 export default function EngineerWarRoomDetailsPage() {
   const navigate = useNavigate();
@@ -49,25 +49,16 @@ export default function EngineerWarRoomDetailsPage() {
 
   const isLeavingRef = useRef(false);
 
-  const { participants, messages, sendMessage } = useWarRoomSocket(
-    warRoom?.id ?? "",
-  );
+  const { participants, messages, sendMessage } = useWarRoomSocket(warRoom?.id ?? "");
 
-  const {
-    localStream,
-    remoteStreams,
-    isMediaReady,
-    mediaError,
-    leaveCall,
-  } = useWarRoomWebRTC({
+  const { localStream, remoteStreams, isMediaReady, mediaError, leaveCall } = useWarRoomWebRTC({
     warRoomId: warRoom?.id ?? "",
     participants,
   });
 
   const blocker = useBlocker(
     ({ currentLocation, nextLocation }) =>
-      !isLeavingRef.current &&
-      currentLocation.pathname !== nextLocation.pathname,
+      !isLeavingRef.current && currentLocation.pathname !== nextLocation.pathname,
   );
 
   useEffect(() => {
@@ -106,13 +97,13 @@ export default function EngineerWarRoomDetailsPage() {
       joinRoom();
     } else {
       socket.once("connect", joinRoom);
+      connectSocket();
     }
 
     return () => {
       socket.off("connect", joinRoom);
     };
   }, [warRoom?.id]);
-
   if (isWarRoomLoading || isIncidentLoading || isMessagesLoading) {
     return (
       <div className="space-y-6">
@@ -121,13 +112,7 @@ export default function EngineerWarRoomDetailsPage() {
     );
   }
 
-  if (
-    isWarRoomError ||
-    !warRoom ||
-    isIncidentError ||
-    !incident ||
-    isMessagesError
-  ) {
+  if (isWarRoomError || !warRoom || isIncidentError || !incident || isMessagesError) {
     return (
       <div className="space-y-6">
         <WarRoomErrorState onRetry={() => refetch()} />
@@ -155,14 +140,9 @@ export default function EngineerWarRoomDetailsPage() {
           isSocketJoinedRef.current = false;
         }
 
-        navigate(
-          location.state?.from === "/war-rooms"
-            ? "/war-rooms"
-            : "/engineer/war-rooms",
-          {
-            replace: true,
-          },
-        );
+        navigate(location.state?.from === "/war-rooms" ? "/war-rooms" : "/engineer/war-rooms", {
+          replace: true,
+        });
       },
     });
   };
@@ -182,14 +162,9 @@ export default function EngineerWarRoomDetailsPage() {
           isSocketJoinedRef.current = false;
         }
 
-        navigate(
-          location.state?.from === "/war-rooms"
-            ? "/war-rooms"
-            : "/engineer/war-rooms",
-          {
-            replace: true,
-          },
-        );
+        navigate(location.state?.from === "/war-rooms" ? "/war-rooms" : "/engineer/war-rooms", {
+          replace: true,
+        });
       },
     });
   };
@@ -214,9 +189,7 @@ export default function EngineerWarRoomDetailsPage() {
           gap-4
         "
       >
-        <h1 className="text-3xl font-bold leading-none text-[#4B3932]">
-          War Room for Discussion
-        </h1>
+        <h1 className="text-3xl font-bold leading-none text-[#4B3932]">War Room for Discussion</h1>
 
         <div className="shrink-0">
           <WarRoomActions
@@ -307,9 +280,7 @@ export default function EngineerWarRoomDetailsPage() {
               shadow-xl
             "
           >
-            <h2 className="text-lg font-semibold text-[#4B3932]">
-              Leave War Room?
-            </h2>
+            <h2 className="text-lg font-semibold text-[#4B3932]">Leave War Room?</h2>
 
             <p className="mt-2 text-sm leading-6 text-stone-500">
               You are currently in a war room. Are you sure you want to leave?
