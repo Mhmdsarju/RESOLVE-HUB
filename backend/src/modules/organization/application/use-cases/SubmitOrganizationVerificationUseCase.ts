@@ -10,15 +10,15 @@ import { IOrganizationVerificationRepository } from "../../domain/repositories/I
 import { IUserRepository } from "@/modules/auth/domain/repositories/IUserRepository";
 
 import { ISubmitOrganizationVerificationUseCase } from "../../domain/interfaces/ISubmitOrganizationVerificationUseCase";
-import { KafkaProducer } from "@/infrastructure/kafka/kafka.producer";
-import { KafkaTopics } from "@/infrastructure/kafka/kafka.topics";
+import { KafkaTopics } from "@/shared/constant/kafka.topics";
+import { IEventPublisher } from "../../domain/interfaces/IEventPublisher";
 
 export class SubmitOrganizationVerificationUseCase implements ISubmitOrganizationVerificationUseCase {
     constructor(
         private readonly organizationRepository: IOrganizationRepository,
         private readonly verificationRepository: IOrganizationVerificationRepository,
         private readonly userRepository: IUserRepository,
-        private readonly kafkaProducer: KafkaProducer,
+        private readonly eventPublisher: IEventPublisher,
     ) { }
 
     async execute(organizationId: string,): Promise<OrganizationVerification> {
@@ -78,7 +78,7 @@ export class SubmitOrganizationVerificationUseCase implements ISubmitOrganizatio
             },
         );
 
-        await this.kafkaProducer.publish(
+        await this.eventPublisher.publish(
             KafkaTopics.EMAIL_EVENTS,
             {
                 event: "ORGANIZATION_VERIFICATION_SUBMITTED",

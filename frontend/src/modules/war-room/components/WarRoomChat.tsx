@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { Send } from "lucide-react";
+import { Send, Smile } from "lucide-react";
+import EmojiPicker, { type EmojiClickData } from "emoji-picker-react";
 
 import { useMe } from "@/modules/user/hooks/useMe";
 
@@ -13,6 +14,8 @@ export default function WarRoomChat({
   onSendMessage,
 }: WarRoomChatProps) {
   const [content, setContent] = useState("");
+
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   const { data: currentUser } = useMe();
 
@@ -52,6 +55,11 @@ export default function WarRoomChat({
     messageContainer.scrollTop = messageContainer.scrollHeight;
   }, [messages.length]);
 
+  const handleEmojiClick = (emojiData: EmojiClickData) => {
+    setContent((current) => current + emojiData.emoji);
+    setShowEmojiPicker(false);
+  };
+
   const handleSend = () => {
     const trimmedContent = content.trim();
 
@@ -62,6 +70,7 @@ export default function WarRoomChat({
     onSendMessage(trimmedContent);
 
     setContent("");
+    setShowEmojiPicker(false);
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -140,57 +149,91 @@ export default function WarRoomChat({
           p-3
         "
       >
-        <div className="flex items-end gap-2">
-          <textarea
-            value={content}
-            onChange={(event) => setContent(event.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Type a message..."
-            rows={1}
-            className="
-              min-h-[40px]
-              max-h-[90px]
-              flex-1
-              resize-none
-              rounded-xl
-              border
-              border-[#D8CBBF]
-              bg-[#FAF6F0]
-              px-3
-              py-2.5
-              text-xs
-              text-[#4B3932]
-              outline-none
-              transition
-              placeholder:text-stone-400
-              focus:border-[#8C6D58]
-              focus:ring-2
-              focus:ring-[#8C6D58]/10
-            "
-          />
+        <div className="relative">
+          {showEmojiPicker && (
+            <div className="absolute bottom-12 left-0 z-50">
+              <EmojiPicker
+                onEmojiClick={handleEmojiClick}
+                width={300}
+                height={350}
+              />
+            </div>
+          )}
 
-          <button
-            type="button"
-            onClick={handleSend}
-            disabled={!content.trim()}
-            className="
-              inline-flex
-              h-10
-              w-10
-              shrink-0
-              items-center
-              justify-center
-              rounded-xl
-              bg-[#4B3932]
-              text-white
-              transition
-              hover:bg-[#3B2E29]
-              disabled:cursor-not-allowed
-              disabled:opacity-40
-            "
-          >
-            <Send size={16} />
-          </button>
+          <div className="flex items-end gap-2">
+            <button
+              type="button"
+              onClick={() => setShowEmojiPicker((current) => !current)}
+              className="
+                inline-flex
+                h-10
+                w-10
+                shrink-0
+                items-center
+                justify-center
+                rounded-xl
+                border
+                border-[#D8CBBF]
+                bg-[#FAF6F0]
+                text-[#4B3932]
+                transition
+                hover:bg-[#F0E8DF]
+              "
+            >
+              <Smile size={17} />
+            </button>
+
+            <textarea
+              value={content}
+              onChange={(event) => setContent(event.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Type a message..."
+              rows={1}
+              className="
+                min-h-[40px]
+                max-h-[90px]
+                flex-1
+                resize-none
+                rounded-xl
+                border
+                border-[#D8CBBF]
+                bg-[#FAF6F0]
+                px-3
+                py-2.5
+                text-xs
+                text-[#4B3932]
+                outline-none
+                transition
+                placeholder:text-stone-400
+                focus:border-[#8C6D58]
+                focus:ring-2
+                focus:ring-[#8C6D58]/10
+              "
+            />
+
+            <button
+              type="button"
+              onClick={handleSend}
+              disabled={!content.trim()}
+              className="
+                inline-flex
+                h-10
+                w-10
+                shrink-0
+                items-center
+                justify-center
+                rounded-xl
+                bg-[#4B3932]
+                text-white
+                transition
+                hover:bg-[#3B2E29]
+                disabled:cursor-not-allowed
+                disabled:opacity-40
+              "
+            >
+              <Send size={16} />
+            </button>
+          </div>
         </div>
 
         <p className="mt-1.5 text-[9px] text-stone-400">

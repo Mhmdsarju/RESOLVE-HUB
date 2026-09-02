@@ -11,15 +11,15 @@ import { IUserRepository } from "@/modules/auth/domain/repositories/IUserReposit
 
 import { IRejectOrganizationVerificationUseCase } from "../../domain/interfaces/IRejectOrganizationVerificationUseCase";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
-import { KafkaProducer } from "@/infrastructure/kafka/kafka.producer";
-import { KafkaTopics } from "@/infrastructure/kafka/kafka.topics";
+import { IEventPublisher } from "../../domain/interfaces/IEventPublisher";
+import { KafkaTopics } from "@/shared/constant/kafka.topics";
 
 export class RejectOrganizationVerificationUseCase implements IRejectOrganizationVerificationUseCase {
   constructor(
     private readonly organizationRepository: IOrganizationRepository,
     private readonly verificationRepository: IOrganizationVerificationRepository,
     private readonly userRepository: IUserRepository,
-    private readonly kafkaProducer: KafkaProducer,
+    private readonly eventPublisher: IEventPublisher,
   ) { }
 
   async execute(organizationId: string, reviewerId: string, reason: string,): Promise<OrganizationVerification> {
@@ -72,7 +72,7 @@ export class RejectOrganizationVerificationUseCase implements IRejectOrganizatio
       },
     );
 
-    await this.kafkaProducer.publish(
+    await this.eventPublisher.publish(
       KafkaTopics.EMAIL_EVENTS,
       {
         event: "ORGANIZATION_REJECTED",

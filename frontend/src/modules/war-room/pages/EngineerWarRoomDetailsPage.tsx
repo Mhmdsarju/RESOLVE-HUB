@@ -16,7 +16,7 @@ import { useWarRoomWebRTC } from "../hooks/useWarRoomWebRTC";
 
 import { useIncident } from "@/modules/incident/hooks/useIncident";
 
-import { connectSocket, socket } from "@/core/config/socket";
+import {  socket } from "@/core/config/socket";
 
 export default function EngineerWarRoomDetailsPage() {
   const navigate = useNavigate();
@@ -97,7 +97,6 @@ export default function EngineerWarRoomDetailsPage() {
       joinRoom();
     } else {
       socket.once("connect", joinRoom);
-      connectSocket();
     }
 
     return () => {
