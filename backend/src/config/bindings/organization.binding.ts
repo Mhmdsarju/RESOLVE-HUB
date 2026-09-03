@@ -19,12 +19,14 @@ import { createSuperAdminOrganizationRoutes } from "@/modules/organization/prese
 import { GetPendingOrganizationVerificationsUseCase } from "@/modules/organization/application/use-cases/GetPendingOrganizationVerificationsUseCase";
 import { ICreateAuditLogUseCase } from "@/modules/audit-log/domain/interface/usecase/ICreateAuditLogUseCase";
 import { KafkaManager } from "@/infrastructure/kafka/kafka.manager";
+import { ICreateFreeSubscriptionUseCase } from "@/modules/subscription/domain/interface/use-cases/ICreateFreeSubscriptionUseCase";
 
 
 export function bindOrganization(
     container: Container,
     createAuditLogUseCase: ICreateAuditLogUseCase,
     kafkaManager: KafkaManager,
+    createFreeSubscriptionUseCase: ICreateFreeSubscriptionUseCase,
 ) {
 
 
@@ -36,7 +38,8 @@ export function bindOrganization(
         organizationRepository,
         organizationVerificationRepository,
         userRepository,
-        kafkaManager.producer
+        kafkaManager.producer,
+        createFreeSubscriptionUseCase
     );
 
 

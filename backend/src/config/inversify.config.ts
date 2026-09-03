@@ -42,7 +42,12 @@ export const kafkaManager = new KafkaManager(
     organizationEmailService
 )
 
-export const organizationModule = bindOrganization(container, auditLogModule.createAuditLogUseCase, kafkaManager);
+export const subscriptionModule = bindSubscription(
+    container,
+    kafkaManager,
+);
+
+export const organizationModule = bindOrganization(container, auditLogModule.createAuditLogUseCase, kafkaManager,subscriptionModule.createFreeSubscriptionUseCase);
 
 export const timelineEventModulde = bindTimelineEvent(container);
 
@@ -73,10 +78,7 @@ export const alertModule = bindAlert(container,
 export const fileModule = bindFile(container, timelineEventModulde.createTimelineEventUseCase);
 export const planModule = bindPlan(container);
 
-export const subscriptionModule = bindSubscription(
-    container,
-    kafkaManager,
-);
+
 
 export const subscriptionScheduler = new SubscriptionScheduler(
     subscriptionModule.sendSubscriptionReminderUseCase,

@@ -10,10 +10,12 @@ export class PaymentMapper {
             id: payment.id,
             organizationId: payment.organizationId,
             subscriptionId: payment.subscriptionId,
+            planId: payment.planId,
             amount: payment.amount,
             currency: payment.currency,
             status: payment.status as PaymentStatus,
             transactionId: payment.transactionId,
+            razorpayOrderId: payment.razorpayOrderId,
             paidAt: payment.paidAt,
             createdAt: payment.createdAt,
         });
@@ -23,10 +25,12 @@ export class PaymentMapper {
         return {
             organizationId: payment.organizationId,
             subscriptionId: payment.subscriptionId,
+            planId: payment.planId,
             amount: payment.amount,
             currency: payment.currency,
             status: payment.status as PrismaPaymentStatus,
             transactionId: payment.transactionId,
+            razorpayOrderId: payment.razorpayOrderId,
             paidAt: payment.paidAt,
         };
     }

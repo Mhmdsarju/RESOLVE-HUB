@@ -7,6 +7,7 @@ import { IPaymentRepository } from "../../domain/interface/IPaymentRepository";
 import { ISubscriptionRepository } from "@/modules/subscription/domain/interface/ISubscriptionRepository";
 import { IPlanRepository } from "@/modules/plan/domain/interface/IPlanRepository";
 import { ICreatePaymentUseCase } from "../../domain/interface/use-cases/ICreatePaymentUseCase";
+import { IRazorpayService } from "../../domain/interface/IRazorpayService";
 
 export class CreatePaymentUseCase implements ICreatePaymentUseCase {
 
@@ -14,9 +15,15 @@ export class CreatePaymentUseCase implements ICreatePaymentUseCase {
         private readonly paymentRepository: IPaymentRepository,
         private readonly subscriptionRepository: ISubscriptionRepository,
         private readonly planRepository: IPlanRepository,
+        private readonly razorpayService: IRazorpayService,
     ) { }
 
-    async execute(organizationId: string, subscriptionId: string, amount: number,): Promise<Payment> {
+    async execute(
+        organizationId: string,
+        subscriptionId: string,
+        planId: string,
+        amount: number,
+    ): Promise<Payment> {
         const subscription = await this.subscriptionRepository.findById(subscriptionId);
 
         if (!subscription) {
@@ -33,7 +40,7 @@ export class CreatePaymentUseCase implements ICreatePaymentUseCase {
             );
         }
 
-        const plan = await this.planRepository.findById(subscription.planId);
+        const plan = await this.planRepository.findById(planId);
 
         if (!plan) {
             throw new AppError(
@@ -70,15 +77,21 @@ export class CreatePaymentUseCase implements ICreatePaymentUseCase {
             );
         }
 
-        const transactionId = `TXN_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
+        const razorpayOrder = await this.razorpayService.createOrder(
+            Math.round(amount * 100),
+            "INR",
+            `PAY_${organizationId}_${Date.now()}`,
+        );
 
         const payment = new Payment({
             organizationId,
             subscriptionId,
+            planId,
             amount,
             currency: "INR",
             status: PaymentStatus.PENDING,
-            transactionId,
+            transactionId: null,
+            razorpayOrderId: razorpayOrder.id,
         });
 
         return await this.paymentRepository.create(payment);

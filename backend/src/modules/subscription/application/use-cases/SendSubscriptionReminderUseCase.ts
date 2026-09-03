@@ -2,10 +2,10 @@ import { ISubscriptionRepository } from "../../domain/interface/ISubscriptionRep
 import { ISendSubscriptionReminderUseCase } from "../../domain/interface/use-cases/ISendSubscriptionReminderUseCase";
 import { IUserRepository } from "@/modules/auth/domain/repositories/IUserRepository";
 import { IOrganizationRepository } from "@/modules/organization/domain/repositories/IOrganizationRepository";
-import { KafkaProducer } from "@/infrastructure/kafka/kafka.producer";
-import { KafkaTopics } from "@/infrastructure/kafka/kafka.topics";
+import { IEventPublisher } from "@/modules/organization/domain/interfaces/IEventPublisher"; 
 import { AppError } from "@/shared/errors/AppError";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
+import { KafkaTopics } from "@/shared/constant/kafka.topics";
 
 export class SendSubscriptionReminderUseCase implements ISendSubscriptionReminderUseCase {
 
@@ -13,7 +13,7 @@ export class SendSubscriptionReminderUseCase implements ISendSubscriptionReminde
         private readonly subscriptionRepository: ISubscriptionRepository,
         private readonly userRepository: IUserRepository,
         private readonly organizationRepository: IOrganizationRepository,
-        private readonly kafkaProducer: KafkaProducer,
+        private readonly eventPublisher: IEventPublisher,
     ) { }
 
     async execute(): Promise<void> {
@@ -65,7 +65,7 @@ export class SendSubscriptionReminderUseCase implements ISendSubscriptionReminde
                 daysRemaining > 2 &&
                 !subscription.reminder10DaysSentAt
             ) {
-                await this.kafkaProducer.publish(
+                await this.eventPublisher.publish(
                     KafkaTopics.EMAIL_EVENTS,
                     {
                         event: "SUBSCRIPTION_EXPIRING_10_DAYS",
@@ -87,7 +87,7 @@ export class SendSubscriptionReminderUseCase implements ISendSubscriptionReminde
                 daysRemaining > 0 &&
                 !subscription.reminder2DaysSentAt
             ) {
-                await this.kafkaProducer.publish(
+                await this.eventPublisher.publish(
                     KafkaTopics.EMAIL_EVENTS,
                     {
                         event: "SUBSCRIPTION_EXPIRING_2_DAYS",

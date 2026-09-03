@@ -715,6 +715,7 @@ model Plan {
   updatedAt DateTime @updatedAt
 
   subscriptions Subscription[]
+  payments      Payment[]
 
   @@map("plans")
 }
@@ -761,20 +762,24 @@ model Payment {
   id             String @id @default(cuid())
   organizationId String @db.Uuid
   subscriptionId String
+  planId         String
 
-  amount        Float
-  currency      String        @default("INR")
-  status        PaymentStatus
-  transactionId String        @unique
+  amount          Float
+  currency        String        @default("INR")
+  status          PaymentStatus
+  transactionId   String?       @unique
+  razorpayOrderId String        @unique
 
   paidAt    DateTime?
   createdAt DateTime  @default(now())
 
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   subscription Subscription @relation(fields: [subscriptionId], references: [id])
+  plan         Plan         @relation(fields: [planId], references: [id])
 
   @@index([organizationId])
   @@index([subscriptionId])
+  @@index([planId])
   @@index([status])
   @@map("payments")
 }

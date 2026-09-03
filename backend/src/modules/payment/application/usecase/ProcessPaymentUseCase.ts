@@ -8,6 +8,7 @@ import { ISubscriptionRepository } from "@/modules/subscription/domain/interface
 import { IPlanRepository } from "@/modules/plan/domain/interface/IPlanRepository";
 import { IProcessPaymentUseCase } from "../../domain/interface/use-cases/IProcessPaymentUseCase";
 import { SubscriptionStatus } from "@/modules/subscription/domain/enums/subscriptionStatus.enum";
+import { IRazorpayService } from "../../domain/interface/IRazorpayService";
 
 export class ProcessPaymentUseCase implements IProcessPaymentUseCase {
 
@@ -15,9 +16,16 @@ export class ProcessPaymentUseCase implements IProcessPaymentUseCase {
         private readonly paymentRepository: IPaymentRepository,
         private readonly subscriptionRepository: ISubscriptionRepository,
         private readonly planRepository: IPlanRepository,
+        private readonly razorpayService: IRazorpayService,
     ) { }
 
-    async execute(paymentId: string, organizationId: string): Promise<Payment> {
+    async execute(
+        paymentId: string,
+        organizationId: string,
+        razorpayPaymentId: string,
+        razorpayOrderId: string,
+        razorpaySignature: string,
+    ): Promise<Payment> {
         const payment = await this.paymentRepository.findById(paymentId);
 
         if (!payment) {
@@ -41,6 +49,26 @@ export class ProcessPaymentUseCase implements IProcessPaymentUseCase {
             );
         }
 
+        if (payment.razorpayOrderId !== razorpayOrderId) {
+            throw new AppError(
+                "Razorpay order does not match the payment",
+                HttpStatusCode.BAD_REQUEST,
+            );
+        }
+
+        const isValidSignature = this.razorpayService.verifyPaymentSignature(
+            razorpayOrderId,
+            razorpayPaymentId,
+            razorpaySignature,
+        );
+
+        if (!isValidSignature) {
+            throw new AppError(
+                "Invalid Razorpay payment signature",
+                HttpStatusCode.BAD_REQUEST,
+            );
+        }
+
         const subscription = await this.subscriptionRepository.findById(
             payment.subscriptionId,
         );
@@ -60,7 +88,7 @@ export class ProcessPaymentUseCase implements IProcessPaymentUseCase {
         }
 
         const plan = await this.planRepository.findById(
-            subscription.planId,
+            payment.planId,
         );
 
         if (!plan) {
@@ -80,6 +108,7 @@ export class ProcessPaymentUseCase implements IProcessPaymentUseCase {
         await this.subscriptionRepository.update(
             subscription.id!,
             {
+                planId: plan.id!,
                 status: SubscriptionStatus.ACTIVE,
                 startDate: now,
                 endDate,
@@ -92,6 +121,7 @@ export class ProcessPaymentUseCase implements IProcessPaymentUseCase {
             payment.id!,
             {
                 status: PaymentStatus.SUCCESS,
+                transactionId: razorpayPaymentId,
                 paidAt: now,
             },
         );

@@ -15,6 +15,7 @@ import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
 
 import { IEventPublisher } from "../../domain/interfaces/IEventPublisher";
 import { KafkaTopics } from "@/shared/constant/kafka.topics";
+import { ICreateFreeSubscriptionUseCase } from "@/modules/subscription/domain/interface/use-cases/ICreateFreeSubscriptionUseCase";
 
 
 
@@ -24,6 +25,7 @@ export class ApproveOrganizationVerificationUseCase implements IApproveOrganizat
     private readonly verificationRepository: IOrganizationVerificationRepository,
     private readonly userRepository: IUserRepository,
     private readonly eventPublisher: IEventPublisher,
+    private readonly createFreeSubscriptionUseCase: ICreateFreeSubscriptionUseCase,
   ) { }
 
   async execute(organizationId: string, reviewerId: string,): Promise<OrganizationVerification> {
@@ -68,6 +70,8 @@ export class ApproveOrganizationVerificationUseCase implements IApproveOrganizat
         status: OrganizationStatus.ACTIVE,
       },
     );
+
+    await this.createFreeSubscriptionUseCase.execute(organizationId);
 
     await this.eventPublisher.publish(
       KafkaTopics.EMAIL_EVENTS,
