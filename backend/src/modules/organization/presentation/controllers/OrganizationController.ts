@@ -26,7 +26,11 @@ export class OrganizationController {
       }
 
       if (!user.organizationId) {
-        throw new AppError("Organization ID not found for this user", HttpStatusCode.BAD_REQUEST,);
+        return ResponseHandler.success(
+          res,
+          "Organization fetched successfully",
+          null,
+        );
       }
 
       const organization = await this.getOrganizationProfileUseCase.execute(user.organizationId,);
@@ -53,7 +57,7 @@ export class OrganizationController {
         throw new AppError("Organization ID not found for this user", HttpStatusCode.BAD_REQUEST,);
       }
 
-      const result = await this.updateOrganizationUseCase.execute(user.organizationId, req.body,user.userId);
+      const result = await this.updateOrganizationUseCase.execute(user.organizationId, req.body, user.userId);
 
       return ResponseHandler.success(
         res,

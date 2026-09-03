@@ -10,6 +10,9 @@ import { createSocketAuthMiddleware } from "./middleware/socketAuthMiddleware";
 import { CollaborationRoomManager } from "./CollaborationRoomManager";
 import { ISendWarRoomMessageUseCase } from "@/modules/war-room/domain/interface/usecase/ISendWarRoomMessageUseCase";
 
+import { IOrganizationRepository } from "@/modules/organization/domain/repositories/IOrganizationRepository";
+import { OrganizationAccessStatus } from "@/modules/organization/domain/enums/organizationAccessStatus.enum";
+
 export class CollaborationSocketHandler {
 
     constructor(
@@ -21,6 +24,7 @@ export class CollaborationSocketHandler {
         private readonly getWarRoomParticipantsUseCase: IGetWarRoomParticipantsUseCase,
         private readonly sendWarRoomMessageUseCase: ISendWarRoomMessageUseCase,
         private readonly getUserByIdUseCase: IGetUserByIdUseCase,
+        private readonly organizationRepository: IOrganizationRepository,
     ) { }
 
     initialize() {
@@ -28,6 +32,26 @@ export class CollaborationSocketHandler {
         this.io.use(createSocketAuthMiddleware(this.tokenService));
 
         this.io.on("connection", async (socket: Socket) => {
+
+            const organizationId = socket.data.user.organizationId;
+
+            if (!organizationId) {
+                socket.disconnect(true);
+                return;
+            }
+
+            const organization = await this.organizationRepository.findById(
+                organizationId,
+            );
+
+            if (
+                !organization ||
+                organization.accessStatus === OrganizationAccessStatus.FROZEN
+            ) {
+                socket.disconnect(true);
+                return;
+            }
+
 
             console.log(`Socket connected: ${socket.id}`,);
 

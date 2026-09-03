@@ -1,22 +1,26 @@
 import { Router } from "express";
 import { AlertRuleController } from "../controllers/AlertRuleController";
 import { authMiddleware } from "@/app/middlewares/authMiddleware";
+import { organizationAccessMiddleware } from "@/app/middlewares/organization-access.middleware";
 
 export function createAlertRuleRoutes(controller: AlertRuleController) {
     const router = Router();
 
+    router.use(authMiddleware);
+    router.use(organizationAccessMiddleware);
+
     router.route("/:projectId/alert-rules")
-        .post(authMiddleware, controller.create.bind(controller))
-        .get(authMiddleware, controller.getAll.bind(controller));
+        .post(controller.create.bind(controller))
+        .get(controller.getAll.bind(controller));
 
-    router.get("/alert-rules/defaults", authMiddleware, controller.getDefaults.bind(controller));
+    router.get("/alert-rules/defaults", controller.getDefaults.bind(controller));
 
-    router.post("/:projectId/alert-rules/default", authMiddleware, controller.applyDefault.bind(controller));
+    router.post("/:projectId/alert-rules/default", controller.applyDefault.bind(controller));
 
     router.route("/alert-rules/:id")
-        .get(authMiddleware, controller.getById.bind(controller))
-        .put(authMiddleware, controller.update.bind(controller))
-        .delete(authMiddleware, controller.delete.bind(controller));
+        .get(controller.getById.bind(controller))
+        .put(controller.update.bind(controller))
+        .delete(controller.delete.bind(controller));
 
     return router;
 }

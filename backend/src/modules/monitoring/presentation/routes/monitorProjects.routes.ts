@@ -1,9 +1,12 @@
 import { Router } from "express";
 import { authMiddleware } from "@/app/middlewares/authMiddleware";
 import { MonitoringProjectController } from "../controllers/MonitoringProjectController";
+import { organizationAccessMiddleware } from "@/app/middlewares/organization-access.middleware";
 
 export function createMonitoringProjectRoutes(controller: MonitoringProjectController) {
     const router = Router();
+    router.use(authMiddleware);
+    router.use(organizationAccessMiddleware);
 
     router.route("/")
         .post(authMiddleware, controller.create.bind(controller))

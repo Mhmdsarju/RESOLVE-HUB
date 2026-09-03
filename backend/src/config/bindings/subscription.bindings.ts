@@ -14,19 +14,16 @@ import { SendSubscriptionReminderUseCase } from "@/modules/subscription/applicat
 import { IUserRepository } from "@/modules/auth/domain/repositories/IUserRepository";
 import { KafkaManager } from "@/infrastructure/kafka/kafka.manager";
 
-import { SubscriptionController } from "@/modules/subscription/presentation/controllers/SubscriptionController"; 
+import { SubscriptionController } from "@/modules/subscription/presentation/controllers/SubscriptionController";
 import { createSubscriptionRoutes } from "@/modules/subscription/presentation/routes/subscription.routes";
 import { IOrganizationRepository } from "@/modules/organization/domain/repositories/IOrganizationRepository";
 
-export function bindSubscription(
-    container: Container,
-    kafkaManager: KafkaManager,
-) {
+export function bindSubscription(container: Container, kafkaManager: KafkaManager,) {
 
     const subscriptionRepository = container.get<ISubscriptionRepository>(TYPES.subscriptionRepository);
     const planRepository = container.get<IPlanRepository>(TYPES.planRepository);
     const userRepository = container.get<IUserRepository>(TYPES.UserRepository);
-    const organizationRepository=container.get<IOrganizationRepository>(TYPES.OrganizationRepository);
+    const organizationRepository = container.get<IOrganizationRepository>(TYPES.OrganizationRepository);
 
     const createFreeSubscriptionUseCase = new CreateFreeSubscriptionUseCase(
         subscriptionRepository,
@@ -49,6 +46,7 @@ export function bindSubscription(
 
     const processSubscriptionExpiryUseCase = new ProcessSubscriptionExpiryUseCase(
         subscriptionRepository,
+        organizationRepository
     );
 
     const sendSubscriptionReminderUseCase = new SendSubscriptionReminderUseCase(

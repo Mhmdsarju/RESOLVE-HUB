@@ -13,6 +13,7 @@ import { CollaborationSocketHandler } from "@/modules/collaboration/infrastructu
 import { CollaborationRoomManager } from "@/modules/collaboration/infrastructure/websocket/CollaborationRoomManager";
 import { IGetUserByIdUseCase } from "@/modules/auth/domain/interfaces/use-cases/IGetUserByIdUseCase";
 import { WebRTCSignalingHandler } from "@/modules/collaboration/infrastructure/webrtc/WebRTCSignalingHandler";
+import { IOrganizationRepository } from "@/modules/organization/domain/repositories/IOrganizationRepository";
 
 export function bindCollaboration(
     container: Container,
@@ -21,13 +22,16 @@ export function bindCollaboration(
     leaveWarRoomUseCase: ILeaveWarRoomUseCase,
     getWarRoomParticipantsUseCase: IGetWarRoomParticipantsUseCase,
     sendWarRoomMessageUseCase: ISendWarRoomMessageUseCase,
-    getUserByIdUseCase:IGetUserByIdUseCase,
+    getUserByIdUseCase: IGetUserByIdUseCase,
 ) {
 
     const tokenService = container.get<ITokenService>(TYPES.TokenService,);
 
     const roomManager = new CollaborationRoomManager(
         io,
+    );
+    const organizationRepository = container.get<IOrganizationRepository>(
+        TYPES.OrganizationRepository,
     );
 
     const collaborationSocketHandler = new CollaborationSocketHandler(
@@ -38,10 +42,11 @@ export function bindCollaboration(
         leaveWarRoomUseCase,
         getWarRoomParticipantsUseCase,
         sendWarRoomMessageUseCase,
-        getUserByIdUseCase
+        getUserByIdUseCase,
+        organizationRepository
     );
 
-    const webRTCSignalingHandler=new WebRTCSignalingHandler(
+    const webRTCSignalingHandler = new WebRTCSignalingHandler(
         io,
         roomManager,
     )

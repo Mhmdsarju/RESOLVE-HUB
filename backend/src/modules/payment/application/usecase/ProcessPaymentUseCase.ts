@@ -9,6 +9,8 @@ import { IPlanRepository } from "@/modules/plan/domain/interface/IPlanRepository
 import { IProcessPaymentUseCase } from "../../domain/interface/use-cases/IProcessPaymentUseCase";
 import { SubscriptionStatus } from "@/modules/subscription/domain/enums/subscriptionStatus.enum";
 import { IRazorpayService } from "../../domain/interface/IRazorpayService";
+import { IOrganizationRepository } from "@/modules/organization/domain/repositories/IOrganizationRepository";
+import { OrganizationAccessStatus } from "@/modules/organization/domain/enums/organizationAccessStatus.enum";
 
 export class ProcessPaymentUseCase implements IProcessPaymentUseCase {
 
@@ -17,6 +19,7 @@ export class ProcessPaymentUseCase implements IProcessPaymentUseCase {
         private readonly subscriptionRepository: ISubscriptionRepository,
         private readonly planRepository: IPlanRepository,
         private readonly razorpayService: IRazorpayService,
+        private readonly organizationRepository: IOrganizationRepository,
     ) { }
 
     async execute(
@@ -116,6 +119,12 @@ export class ProcessPaymentUseCase implements IProcessPaymentUseCase {
                 reminder2DaysSentAt: null,
             },
         );
+        await this.organizationRepository.update(
+            organizationId,
+            {
+                accessStatus:OrganizationAccessStatus.ACTIVE
+            }
+        )
 
         return await this.paymentRepository.update(
             payment.id!,

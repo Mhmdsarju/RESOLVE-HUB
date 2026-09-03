@@ -16,18 +16,19 @@ datasource db {
 }
 
 model Organization {
-  id          String             @id @default(uuid()) @db.Uuid
-  name        String
-  industry    String?
-  companySize String?
-  website     String?
-  description String?
-  phone       String?
-  country     String?
-  state       String?
-  city        String?
-  address     String?
-  status      OrganizationStatus @default(PENDING_PROFILE)
+  id           String                   @id @default(uuid()) @db.Uuid
+  name         String
+  industry     String?
+  companySize  String?
+  website      String?
+  description  String?
+  phone        String?
+  country      String?
+  state        String?
+  city         String?
+  address      String?
+  status       OrganizationStatus       @default(PENDING_PROFILE)
+  accessStatus OrganizationAccessStatus @default(ACTIVE)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -49,6 +50,11 @@ model Organization {
   payments     Payment[]
 
   @@map("organizations")
+}
+
+enum OrganizationAccessStatus {
+  ACTIVE
+  FROZEN
 }
 
 model OrganizationVerification {

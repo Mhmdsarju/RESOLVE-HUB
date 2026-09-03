@@ -14,6 +14,7 @@ import { PaymentController } from "@/modules/payment/presentation/controllers/Pa
 import { createPaymentRoutes } from "@/modules/payment/presentation/routes/payment.routes";
 import { IPlanRepository } from "@/modules/plan/domain/interface/IPlanRepository";
 import { RazorpayService } from "@/modules/payment/infrastructure/services/RazorpayService";
+import { IOrganizationRepository } from "@/modules/organization/domain/repositories/IOrganizationRepository";
 
 export function bindPayment(container: Container) {
 
@@ -21,6 +22,7 @@ export function bindPayment(container: Container) {
     const subscriptionRepository = container.get<ISubscriptionRepository>(TYPES.subscriptionRepository,);
     const planRepository = container.get<IPlanRepository>(TYPES.planRepository);
     const razorpayService = new RazorpayService();
+    const organizationRepository= container.get<IOrganizationRepository>(TYPES.OrganizationRepository);
 
     const createPaymentUseCase = new CreatePaymentUseCase(
         paymentRepository,
@@ -41,7 +43,8 @@ export function bindPayment(container: Container) {
         paymentRepository,
         subscriptionRepository,
         planRepository,
-        razorpayService
+        razorpayService,
+        organizationRepository
     );
 
     const paymentController = new PaymentController(
