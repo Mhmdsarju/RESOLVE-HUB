@@ -1,6 +1,7 @@
 import type { RouteObject } from "react-router-dom";
 
 import ProtectedGuard from "@/shared/guards/ProtectedRoute";
+import SubscriptionAccessGuard from "@/shared/guards/SubscriptionAccessGuard";
 
 import DashboardLayout from "@/modules/dashboard/layout/DashboardLayout";
 import DashboardPage from "@/modules/dashboard/pages/DashboardPage";
@@ -31,6 +32,8 @@ import WarRoomListPage from "@/modules/war-room/pages/WarRoomListPage";
 import WarRoomDetailsPage from "@/modules/war-room/pages/WarRoomDetailsPage";
 import AuditLogPage from "@/modules/audit/pages/AuditLogPage";
 
+import SubscriptionPage from "@/modules/subscription/pages/SubscriptionPage";
+
 export const orgAdminRoutes: RouteObject[] = [
   {
     element: <ProtectedGuard />,
@@ -44,91 +47,103 @@ export const orgAdminRoutes: RouteObject[] = [
         element: <DashboardLayout />,
         children: [
           {
-            path: "/dashboard",
-            element: <DashboardPage />,
+            element: <SubscriptionAccessGuard />,
+            children: [
+              {
+                path: "/dashboard",
+                element: <DashboardPage />,
+              },
+
+              {
+                path: "/organization/settings",
+                element: <OrganizationSettingsPage />,
+              },
+
+              {
+                path: "/teams",
+                element: <TeamListPage />,
+              },
+
+              {
+                path: "/team-invitations",
+                element: <TeamInvitationPage />,
+              },
+
+              {
+                path: "/teams/:id",
+                element: <TeamDetailsPage />,
+              },
+
+              {
+                path: "/incidents",
+                element: <IncidentListPage />,
+              },
+
+              {
+                path: "/incidents/:id",
+                element: <IncidentDetailsPage />,
+              },
+
+              {
+                path: "/monitoring",
+                element: <MonitoringProjectsPage />,
+              },
+
+              {
+                path: "/monitoring/:id",
+                element: <MonitoringProjectDetailsPage />,
+              },
+
+              {
+                path: "/monitoring/:projectId/integrations/:integrationId",
+                element: <IntegrationDetailsPage />,
+              },
+
+              {
+                path: "/monitoring/:projectId/alerts/:alertId",
+                element: <AlertDetailsPage />,
+              },
+
+              {
+                path: "/monitoring/:projectId/alert-rules",
+                element: <AlertRuleListPage />,
+              },
+
+              {
+                path: "/monitoring/:projectId/alert-rules/:alertRuleId",
+                element: <AlertRuleDetailsPage />,
+              },
+
+              {
+                path: "/monitoring/:projectId/alert-routing-rules",
+                element: <AlertRoutingRuleListPage />,
+              },
+
+              {
+                path: "/monitoring/:projectId/alert-routing-rules/:id",
+                element: <AlertRoutingRuleDetailsPage />,
+              },
+
+              {
+                path: "/war-rooms",
+                element: <WarRoomListPage />,
+              },
+
+              {
+                path: "/war-rooms/:id",
+                element: <WarRoomDetailsPage canClose />,
+              },
+
+              {
+                path: "/audit-logs",
+                element: <AuditLogPage />,
+              },
+            ],
           },
 
           {
-            path: "/organization/settings",
-            element: <OrganizationSettingsPage />,
-          },
-
-          {
-            path: "/teams",
-            element: <TeamListPage />,
-          },
-
-          {
-            path: "/team-invitations",
-            element: <TeamInvitationPage />,
-          },
-
-          {
-            path: "/teams/:id",
-            element: <TeamDetailsPage />,
-          },
-
-          {
-            path: "/incidents",
-            element: <IncidentListPage />,
-          },
-
-          {
-            path: "/incidents/:id",
-            element: <IncidentDetailsPage />,
-          },
-
-          {
-            path: "/monitoring",
-            element: <MonitoringProjectsPage />,
-          },
-
-          {
-            path: "/monitoring/:id",
-            element: <MonitoringProjectDetailsPage />,
-          },
-
-          {
-            path: "/monitoring/:projectId/integrations/:integrationId",
-            element: <IntegrationDetailsPage />,
-          },
-
-          {
-            path: "/monitoring/:projectId/alerts/:alertId",
-            element: <AlertDetailsPage />,
-          },
-
-          {
-            path: "/monitoring/:projectId/alert-rules",
-            element: <AlertRuleListPage />,
-          },
-
-          {
-            path: "/monitoring/:projectId/alert-rules/:alertRuleId",
-            element: <AlertRuleDetailsPage />,
-          },
-
-          {
-            path: "/monitoring/:projectId/alert-routing-rules",
-            element: <AlertRoutingRuleListPage />,
-          },
-
-          {
-            path: "/monitoring/:projectId/alert-routing-rules/:id",
-            element: <AlertRoutingRuleDetailsPage />,
-          },
-          {
-            path: "/war-rooms",
-            element: <WarRoomListPage />,
-          },
-
-          {
-            path: "/war-rooms/:id",
-            element: <WarRoomDetailsPage canClose />,
-          },
-          {
-            path: "/audit-logs",
-            element: <AuditLogPage />,
+            path: "/subscription",
+            element: <SubscriptionPage />,
           },
         ],
       },

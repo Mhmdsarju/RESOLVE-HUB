@@ -1,9 +1,9 @@
 import {
   BarChart3,
   Building2,
+  CreditCard,
   LayoutDashboard,
   Settings,
-  Shield,
   Users,
 } from "lucide-react";
 
@@ -33,6 +33,11 @@ export const superAdminSidebar: SidebarSection[] = [
         path: "/users",
         icon: Users,
       },
+      {
+        label: "Plans",
+        path: "/plans",
+        icon: CreditCard,
+      },
     ],
   },
   {
@@ -42,11 +47,6 @@ export const superAdminSidebar: SidebarSection[] = [
         label: "Analytics",
         path: "/analytics",
         icon: BarChart3,
-      },
-      {
-        label: "Audit Logs",
-        path: "/audit-logs",
-        icon: Shield,
       },
     ],
   },

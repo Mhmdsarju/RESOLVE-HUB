@@ -7,6 +7,7 @@ import DashboardPage from "@/modules/dashboard/pages/DashboardPage";
 
 import OrganizationVerificationListPage from "@/modules/organization/pages/admin/OrganizationVerificationListPage";
 import OrganizationVerificationReviewPage from "@/modules/organization/pages/admin/OrganizationVerificationReviewPage";
+import PlanPage from "@/modules/plan/pages/PlansPage";
 
 export const superAdminRoutes: RouteObject[] = [
   {
@@ -28,6 +29,10 @@ export const superAdminRoutes: RouteObject[] = [
           {
             path: "/organizations/:organizationId/verification",
             element: <OrganizationVerificationReviewPage />,
+          },
+          {
+            path: "/plans",
+            element: <PlanPage />,
           },
         ],
       },

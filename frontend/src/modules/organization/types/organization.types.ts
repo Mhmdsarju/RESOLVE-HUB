@@ -18,6 +18,7 @@ export interface Organization {
   city: string | null;
   address: string | null;
   status: OrganizationStatus;
+  accessStatus: OrganizationAccessStatus;
   createdAt: string;
   updatedAt: string;
 }
@@ -80,3 +81,7 @@ export interface OrganizationVerificationDetails {
     status: string;
   };
 }
+
+export type OrganizationAccessStatus =
+  | "ACTIVE"
+  | "FROZEN";

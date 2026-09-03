@@ -1,6 +1,7 @@
 import type { RouteObject } from "react-router-dom";
 
 import ProtectedGuard from "@/shared/guards/ProtectedRoute";
+import SubscriptionAccessGuard from "@/shared/guards/SubscriptionAccessGuard";
 
 import DashboardLayout from "@/modules/dashboard/layout/DashboardLayout";
 import DashboardPage from "@/modules/dashboard/pages/DashboardPage";
@@ -17,35 +18,40 @@ export const engineerRoutes: RouteObject[] = [
     element: <ProtectedGuard />,
     children: [
       {
-        element: <DashboardLayout />,
+        element: <SubscriptionAccessGuard />,
         children: [
           {
-            path: "/dashboard",
-            element: <DashboardPage />,
-          },
+            element: <DashboardLayout />,
+            children: [
+              {
+                path: "/dashboard",
+                element: <DashboardPage />,
+              },
 
-          {
-            path: "/my-tasks",
-            element: <EngineerTasksPage />,
-          },
+              {
+                path: "/my-tasks",
+                element: <EngineerTasksPage />,
+              },
 
-          {
-            path: "/tasks/:id",
-            element: <TaskDetailsPage />,
-          },
+              {
+                path: "/tasks/:id",
+                element: <TaskDetailsPage />,
+              },
 
-          {
-            path: "/profile",
-            element: <SettingsPage />,
-          },
-          {
-            path: "/engineer/war-rooms",
-            element: <EngineerWarRoomListPage />,
-          },
+              {
+                path: "/profile",
+                element: <SettingsPage />,
+              },
+              {
+                path: "/engineer/war-rooms",
+                element: <EngineerWarRoomListPage />,
+              },
 
-          {
-            path: "/engineer/war-rooms/:id",
-            element: <EngineerWarRoomDetailsPage />,
+              {
+                path: "/engineer/war-rooms/:id",
+                element: <EngineerWarRoomDetailsPage />,
+              },
+            ],
           },
         ],
       },

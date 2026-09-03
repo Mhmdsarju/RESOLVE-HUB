@@ -128,5 +128,17 @@ export const ENDPOINTS = {
     BY_ID: (id: string) => `/plans/${id}`,
   },
 
+  SUBSCRIPTION: {
+    BASE: "/subscriptions",
+    FREE: "/subscriptions/free",
+    UPGRADE: "/subscriptions/upgrade",
+    ACCESS: "/subscriptions/access",
+  },
+
+  PAYMENT: {
+    BASE: "/payments",
+    BY_ID: (id: string) => `/payments/${id}`,
+    PROCESS: (id: string) => `/payments/${id}/process`,
+  },
 
 } as const;

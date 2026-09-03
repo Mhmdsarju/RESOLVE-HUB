@@ -5,7 +5,8 @@ import {
   LayoutDashboard,
   RadioTower,
   ShieldCheck,
-  Users, Mail
+  Users, Mail,
+  CreditCard
 } from "lucide-react";
 
 import type { SidebarSection } from "../types/sidebar.types";
@@ -79,6 +80,11 @@ export const orgAdminSidebar: SidebarSection[] = [
         label: "Organization Settings",
         path: "/organization/settings",
         icon: Building2,
+      },
+      {
+        label: "Subscription",
+        path: "/subscription",
+        icon: CreditCard,
       },
     ],
   },
