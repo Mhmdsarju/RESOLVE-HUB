@@ -21,7 +21,7 @@ import { GenerateRAGIncidentAnalysisUseCase } from "@/modules/ai-copilot/applica
 import { LangChainGeminiService } from "@/modules/ai-copilot/infrastructure/services/LangChainGeminiService";
 import { KnowledgeRetrieverFactory } from "@/modules/ai-copilot/infrastructure/services/KnowledgeRetrieverFactory";
 import { IKnowledgeRetrieverFactory } from "@/modules/ai-copilot/domain/interface/IKnowledgeRetrieverFactory";
-import { RAGChain } from "@/modules/ai-copilot/infrastructure/services/RAGChain";
+import { createIncidentCopilotGraph } from "@/modules/ai-copilot/infrastructure/langgraph/IncidentCopilotGraph";
 
 export function bindAI(container: Container, getIncidentByIdUseCase: IGetIncidentByIdUseCase) {
 
@@ -68,16 +68,16 @@ export function bindAI(container: Container, getIncidentByIdUseCase: IGetInciden
 
     const ragPromptBuilder = new RAGPromptBuilder();
 
-    const ragChain = new RAGChain(
+    const incidentCopilotGraph = createIncidentCopilotGraph(
         knowledgeRetrieverFactory,
-        knowledgeContextBuilder,
+        getIncidentByIdUseCase,
+        langChainGeminiService,
         ragPromptBuilder,
-        langChainGeminiService
+        knowledgeContextBuilder
     );
 
     const generateRAGIncidentAnalysisUseCase = new GenerateRAGIncidentAnalysisUseCase(
-        getIncidentByIdUseCase,
-        ragChain,
+        incidentCopilotGraph,
         aiIncidentAnalysisRepository
     );
 
@@ -93,7 +93,8 @@ export function bindAI(container: Container, getIncidentByIdUseCase: IGetInciden
 
     return {
         aiRouter,
-        analyzeIncidentUseCase
+        analyzeIncidentUseCase,
+        incidentCopilotGraph
     }
 
 }

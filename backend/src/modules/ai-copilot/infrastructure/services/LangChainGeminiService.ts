@@ -4,6 +4,8 @@ import { PromptTemplate } from "@langchain/core/prompts";
 import { AIAnalysisResultSchema } from "../../application/dto/AIAnalysisResultSchema";
 import { IAIAnalysisResult } from "../../domain/interface/IAIAnalysisResult";
 import { IGeminiStructuredService } from "../../domain/interface/IGeminiStructuredService";
+import { AppError } from "@/shared/errors/AppError";
+import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
 
 export class LangChainGeminiService implements IGeminiStructuredService {
 
@@ -28,9 +30,20 @@ export class LangChainGeminiService implements IGeminiStructuredService {
 
     async generateStructuredResponse(prompt: string): Promise<IAIAnalysisResult> {
 
-        return this.chain.invoke({
-            input: prompt,
-        });
+        try {
+
+            return await this.chain.invoke({
+                input: prompt,
+            });
+
+        } catch (error: unknown) {
+
+            console.error("Gemini structured response failed:", error);
+
+            throw new AppError("AI analysis failed", HttpStatusCode.INTERNAL_SERVER_ERROR);
+
+        }
     }
 
 }
+

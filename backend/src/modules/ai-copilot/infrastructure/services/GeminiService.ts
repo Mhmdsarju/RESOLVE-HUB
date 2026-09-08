@@ -66,9 +66,6 @@ export class GeminiService implements IGeminiService {
             }
         }
 
-        throw new AppError(
-            "Gemini request failed",
-            HttpStatusCode.INTERNAL_SERVER_ERROR
-        );
+        throw new AppError("Gemini request failed", HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
 }

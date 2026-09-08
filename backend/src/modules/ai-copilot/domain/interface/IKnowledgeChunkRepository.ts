@@ -5,7 +5,5 @@ import { KnowledgeChunkSearchResultDTO } from "../../application/dto/KnowledgeCh
 export interface IKnowledgeChunkRepository {
     create(data: CreateKnowledgeChunkDTO): Promise<void>;
 
-    searchSimilar(
-        data: SearchSimilarKnowledgeChunksDTO
-    ): Promise<KnowledgeChunkSearchResultDTO[]>;
+    searchSimilar(data: SearchSimilarKnowledgeChunksDTO): Promise<KnowledgeChunkSearchResultDTO[]>;
 }

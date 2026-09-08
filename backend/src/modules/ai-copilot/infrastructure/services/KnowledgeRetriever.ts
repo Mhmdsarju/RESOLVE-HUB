@@ -17,9 +17,7 @@ export class KnowledgeRetriever extends BaseRetriever implements IKnowledgeRetri
         super();
     }
 
-    async retrieve(
-        query: string
-    ): Promise<KnowledgeChunkSearchResultDTO[]> {
+    async retrieve(query: string): Promise<KnowledgeChunkSearchResultDTO[]> {
 
         return this.searchKnowledgeUseCase.execute({
             organizationId: this.organizationId,
@@ -29,9 +27,7 @@ export class KnowledgeRetriever extends BaseRetriever implements IKnowledgeRetri
         });
     }
 
-    async _getRelevantDocuments(
-        query: string
-    ): Promise<Document[]> {
+    async _getRelevantDocuments(query: string): Promise<Document[]> {
 
         const chunks = await this.retrieve(query);
 

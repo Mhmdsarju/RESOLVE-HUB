@@ -15,20 +15,15 @@ export class RAGChain implements IRAGChain {
         private readonly aiService: IGeminiStructuredService
     ) { }
 
-    async execute(
-        data: BuildRAGPromptDTO,
-        organizationId: string
-    ): Promise<IAIAnalysisResult> {
+    async execute(data: BuildRAGPromptDTO, organizationId: string): Promise<IAIAnalysisResult> {
 
-        const knowledgeRetriever =
-            this.knowledgeRetrieverFactory.create(
-                organizationId
-            );
+        const knowledgeRetriever = this.knowledgeRetrieverFactory.create(
+            organizationId
+        );
 
-        const searchResult =
-            await knowledgeRetriever.retrieve(
-                `${data.title} ${data.description ?? ""}`
-            );
+        const searchResult = await knowledgeRetriever.retrieve(
+            `${data.title} ${data.description ?? ""}`
+        );
 
         if (searchResult.length === 0) {
             return {
@@ -38,21 +33,18 @@ export class RAGChain implements IRAGChain {
             };
         }
 
-        const context =
-            this.knowledgeContextBuilder.build(
-                searchResult
-            );
+        const context = this.knowledgeContextBuilder.build(
+            searchResult
+        );
 
-        const prompt =
-            await this.ragPromptBuilder.build(
-                data,
-                context
-            );
+        const prompt = await this.ragPromptBuilder.build(
+            data,
+            context
+        );
 
-        const parsedResponse =
-            await this.aiService.generateStructuredResponse(
-                prompt
-            );
+        const parsedResponse = await this.aiService.generateStructuredResponse(
+            prompt
+        );
 
         return {
             ...parsedResponse,

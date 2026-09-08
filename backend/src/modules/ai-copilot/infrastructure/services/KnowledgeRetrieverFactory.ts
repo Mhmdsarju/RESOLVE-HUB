@@ -9,9 +9,7 @@ export class KnowledgeRetrieverFactory implements IKnowledgeRetrieverFactory {
         private readonly searchKnowledgeUseCase: ISearchKnowledgeUseCase
     ) { }
 
-    create(
-        organizationId: string
-    ): IKnowledgeRetriever {
+    create(organizationId: string): IKnowledgeRetriever {
 
         return new KnowledgeRetriever(
             this.searchKnowledgeUseCase,

@@ -40,10 +40,7 @@ Rules:
 - Do not return confidence, evidence, or recommendations arrays.
 `);
 
-    async build(
-        data: BuildRAGPromptDTO,
-        context: string
-    ): Promise<string> {
+    async build(data: BuildRAGPromptDTO, context: string): Promise<string> {
 
         return this.promptTemplate.format({
             title: data.title,

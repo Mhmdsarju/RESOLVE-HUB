@@ -1,43 +1,62 @@
 import { IGenerateRAGIncidentAnalysisUseCase } from "../../domain/interface/IGenerateRAGIncidentAnalysisUseCase";
-import { IGetIncidentByIdUseCase } from "@/modules/incident/domain/interfaces/use-cases/IGetIncidentByIdUseCase";
-import { IRAGChain } from "../../domain/interface/IRAGChain";
+import { createIncidentCopilotGraph } from "../../infrastructure/langgraph/IncidentCopilotGraph";
 import { IAIAnalysisResult } from "../../domain/interface/IAIAnalysisResult";
 import { IAIIncidentAnalysisRepository } from "../../domain/interface/IAIIncidentAnalysisRepository";
 
 export class GenerateRAGIncidentAnalysisUseCase implements IGenerateRAGIncidentAnalysisUseCase {
 
     constructor(
-        private readonly getIncidentByIdUseCase: IGetIncidentByIdUseCase,
-        private readonly ragChain: IRAGChain,
+        private readonly incidentCopilotGraph: ReturnType<typeof createIncidentCopilotGraph>,
         private readonly aiIncidentAnalysisRepository: IAIIncidentAnalysisRepository
     ) { }
 
     async execute(incidentId: string, organizationId: string): Promise<IAIAnalysisResult> {
 
-        const incident = await this.getIncidentByIdUseCase.execute(
+        const result = await this.incidentCopilotGraph.invoke({
             incidentId,
-            organizationId
-        );
+            organizationId,
 
-        const result = await this.ragChain.execute({
-            title: incident.title,
-            description: incident.description ?? null,
-            severity: incident.severity,
-            priority: incident.priority,
-            status: incident.status,
-            type: incident.type,
-        }, organizationId);
+            incident: {
+                title: "",
+                description: null,
+                severity: "",
+                priority: "",
+                status: "",
+                type: "",
+            },
+
+            retrievedDocuments: [],
+            evidence: [],
+            summary: null,
+            rootCause: null,
+            recommendation: null,
+            retryCount: 0,
+        });
+
+        const analysisResult: IAIAnalysisResult = {
+            summary: result.summary
+                ?? "Unable to generate an AI summary.",
+            possibleRootCause: result.rootCause
+                ?? "Insufficient evidence to determine the root cause.",
+            initialRecommendation: result.recommendation
+                ?? "Collect more information before taking corrective action.",
+            evidence: result.evidence.map((chunk) => ({
+                content: chunk.content,
+                similarity: chunk.similarity,
+            })),
+        };
 
         await this.aiIncidentAnalysisRepository.create({
             incidentId,
             organizationId,
-            summary: result.summary,
-            possibleRootCause: result.possibleRootCause,
-            initialRecommendation: result.initialRecommendation,
+            summary: analysisResult.summary,
+            possibleRootCause: analysisResult.possibleRootCause,
+            initialRecommendation: analysisResult.initialRecommendation,
             model: "gemini-3.6-flash",
             promptVersion: "rag-v1",
         });
 
-        return result;
+        return analysisResult;
     }
 }
+
