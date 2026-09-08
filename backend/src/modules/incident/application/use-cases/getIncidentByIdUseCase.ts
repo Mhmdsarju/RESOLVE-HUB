@@ -8,11 +8,14 @@ export class GetIncidentByIdUseCase implements IGetIncidentByIdUseCase {
     private readonly incidentRepository: IIncidentRepository
   ) {}
 
-  async execute(id: string) {
-    const incident = await this.incidentRepository.findById(id);
+  async execute(id: string, organizationId: string) {
+    const incident = await this.incidentRepository.findByIdForOrganization(
+        id,
+        organizationId
+    );
 
     if (!incident) {
-      throw new AppError("Incident not found",HttpStatusCode.NOT_FOUND);
+        throw new AppError("Incident not found",HttpStatusCode.NOT_FOUND);
     }
 
     return incident;

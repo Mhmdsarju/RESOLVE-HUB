@@ -20,7 +20,7 @@ export class PrismaIncidentRepository implements IIncidentRepository {
     return IncidentMapper.fromDb(created);
   }
 
-  async findById(id: string): Promise<Incident | null> {
+  async findById(id: string,): Promise<Incident | null> {
     const data = await prisma.incident.findUnique({
       where: { id },
     });
@@ -91,6 +91,22 @@ export class PrismaIncidentRepository implements IIncidentRepository {
     });
   }
 
+  async findByIdForOrganization(
+    id: string,
+    organizationId: string
+  ): Promise<Incident | null> {
+    const data = await prisma.incident.findFirst({
+      where: {
+        id,
+        organizationId,
+      },
+    });
+
+    if (!data) return null;
+
+    return IncidentMapper.fromDb(data);
+  }
+
   async getStats(organizationId: string) {
     const where = { organizationId };
 
@@ -138,6 +154,7 @@ export class PrismaIncidentRepository implements IIncidentRepository {
 
       return result;
     };
+
 
     return {
       total,

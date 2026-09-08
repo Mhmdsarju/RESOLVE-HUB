@@ -52,6 +52,12 @@ import { ISubscriptionRepository } from "@/modules/subscription/domain/interface
 import { PrismaSubscriptionRepository } from "@/modules/subscription/infrastructure/repositories/PrismaSubscriptionRepository";
 import { IPaymentRepository } from "@/modules/payment/domain/interface/IPaymentRepository";
 import { PrismaPaymentRepository } from "@/modules/payment/infrastructure/repositories/PrismaPaymentRepository";
+import { PrismaAIIncidentAnalysisRepository } from "@/modules/ai-copilot/infrastructure/repositories/PrismaAIIncidentAnalysisRepository";
+import { IAIIncidentAnalysisRepository } from "@/modules/ai-copilot/domain/interface/IAIIncidentAnalysisRepository";
+import { IKnowledgeChunkRepository } from "@/modules/ai-copilot/domain/interface/IKnowledgeChunkRepository";
+import { PrismaKnowledgeChunkRepository } from "@/modules/ai-copilot/infrastructure/repositories/PrismaKnowledgeChunkRepository";
+import { IKnowledgeDocumentRepository } from "@/modules/ai-copilot/domain/interface/IKnowledgeDocumentRepository";
+import { PrismaKnowledgeDocumentRepository } from "@/modules/ai-copilot/infrastructure/repositories/PrismaKnowledgeDocumentRepository";
 
 export function bindCore(container: Container) {
 
@@ -70,7 +76,7 @@ export function bindCore(container: Container) {
     container.bind<IAlertRuleRepository>(TYPES.AlertRuleRepository).to(PrismaAlertRuleRepository).inSingletonScope();
     container.bind<IAlertRoutingRuleRepository>(TYPES.AlertRoutingRuleRepository).to(PrismaAlertRoutingRuleRepository).inSingletonScope();
     container.bind<IFileRepository>(TYPES.fileRepository).to(PrismaFileRepository).inSingletonScope();
-    container.bind<IFileStorage>(TYPES.fileStorage  ).to(CloudinaryFileStorage).inSingletonScope();
+    container.bind<IFileStorage>(TYPES.fileStorage).to(CloudinaryFileStorage).inSingletonScope();
     container.bind<IWarRoomRepository>(TYPES.warroomRepository).to(PrismaWarRoomRepository).inSingletonScope();
     container.bind<IWarRoomParticipantRepository>(TYPES.warroomParticipantsRepository).to(PrismaWarRoomParticipantRepository).inSingletonScope();
     container.bind<IWarRoomMessageRepository>(TYPES.warRoomMessageRepository).to(PrismaWarRoomMessageRepository).inSingletonScope();
@@ -80,5 +86,7 @@ export function bindCore(container: Container) {
     container.bind<IPlanRepository>(TYPES.planRepository).to(PrismaPlanRepository).inSingletonScope();
     container.bind<ISubscriptionRepository>(TYPES.subscriptionRepository).to(PrismaSubscriptionRepository).inSingletonScope();
     container.bind<IPaymentRepository>(TYPES.paymentRepository).to(PrismaPaymentRepository).inSingletonScope();
-
+    container.bind<IAIIncidentAnalysisRepository>(TYPES.AIIncidentAnalysisRepository).to(PrismaAIIncidentAnalysisRepository).inSingletonScope();
+    container.bind<IKnowledgeChunkRepository>(TYPES.KnowledgeChunkRepository).to(PrismaKnowledgeChunkRepository).inSingletonScope();
+    container.bind<IKnowledgeDocumentRepository>(TYPES.KnowledgeDocumentRepository).to(PrismaKnowledgeDocumentRepository).inSingletonScope();
 }

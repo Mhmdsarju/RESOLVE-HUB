@@ -105,10 +105,11 @@ export class IncidentController extends BaseController {
 
     async getById(req: Request, res: Response, next: NextFunction) {
         try {
-            this.getCurrentUser(req);
+            const currentUser=this.getCurrentUser(req);
 
             const incident = await this.getIncidentByIdUseCase.execute(
-                req.params.id
+                req.params.id,
+                currentUser.organizationId!,
             );
 
             return ResponseHandler.success(

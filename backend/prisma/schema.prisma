@@ -46,8 +46,11 @@ model Organization {
   alertRoutingRules  AlertRoutingRule[]
   auditLogs          AuditLog[]
 
-  subscription Subscription?
-  payments     Payment[]
+  subscription       Subscription?
+  payments           Payment[]
+  aiIncidentAnalyses AIIncidentAnalysis[]
+  knowledgeDocuments KnowledgeDocument[]
+  knowledgeChunks    KnowledgeChunk[]
 
   @@map("organizations")
 }
@@ -262,6 +265,7 @@ model Incident {
   alerts         Alert[]
   warRoom        WarRoom?
   timelineEvents TimelineEvent[]
+  aiAnalyses     AIIncidentAnalysis[]
 
   @@index([organizationId])
   @@index([status])
@@ -794,4 +798,81 @@ enum PaymentStatus {
   PENDING
   SUCCESS
   FAILED
+}
+
+model AIIncidentAnalysis {
+  id String @id @default(cuid())
+
+  incidentId     String
+  organizationId String @db.Uuid
+
+  summary               String
+  possibleRootCause     String
+  initialRecommendation String
+
+  model         String
+  promptVersion String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  incident     Incident     @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([incidentId])
+  @@index([organizationId])
+  @@index([organizationId, incidentId])
+  @@map("ai_incident_analyses")
+}
+
+model KnowledgeDocument {
+  id             String @id @default(cuid())
+  organizationId String @db.Uuid
+
+  title      String
+  sourceType KnowledgeSourceType
+  sourceId   String?
+  content    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  chunks KnowledgeChunk[]
+
+  @@index([organizationId])
+  @@index([organizationId, sourceType])
+  @@map("knowledge_documents")
+}
+
+enum KnowledgeSourceType {
+  INCIDENT
+  RUNBOOK
+  SOP
+  RCA
+  ARCHITECTURE
+}
+
+model KnowledgeChunk {
+  id             String @id @default(cuid())
+  documentId     String
+  organizationId String @db.Uuid
+
+  chunkIndex Int
+  content    String
+  metadata   Json?
+
+  embedding Unsupported("vector(768)")?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  document     KnowledgeDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  organization Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([documentId, chunkIndex])
+  @@index([organizationId])
+  @@index([organizationId, documentId])
+  @@map("knowledge_chunks")
 }

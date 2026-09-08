@@ -12,8 +12,6 @@ export function setOrganizationRepository(repository: IOrganizationRepository,) 
 
 export async function organizationAccessMiddleware(req: Request, res: Response, next: NextFunction,) {
     try {
-        console.log("ORGANIZATION ACCESS MIDDLEWARE:", req.method, req.originalUrl);
-console.log("USER:", req.user);
         if (req.user?.role === "SUPER_ADMIN") {
             return next();
         }

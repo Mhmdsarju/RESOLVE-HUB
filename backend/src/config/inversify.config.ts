@@ -22,6 +22,7 @@ import { bindPlan } from "./bindings/plan.bindings";
 import { bindSubscription } from "./bindings/subscription.bindings";
 import { SubscriptionScheduler } from "@/infrastructure/scheduler/subscription.scheduler";
 import { bindPayment } from "./bindings/payment.bindings";
+import { bindAI } from "./bindings/ai.bindings";
 
 
 const container = new Container();
@@ -48,13 +49,9 @@ export const subscriptionModule = bindSubscription(
 );
 
 export const organizationModule = bindOrganization(container, auditLogModule.createAuditLogUseCase, kafkaManager,subscriptionModule.createFreeSubscriptionUseCase);
-
 export const timelineEventModulde = bindTimelineEvent(container);
-
 export const teamModule = bindTeam(container, auditLogModule.createAuditLogUseCase, notificationModule.createNotificationUseCase);
-
 export const warRoomModule = bindWarRoom(container, timelineEventModulde.createTimelineEventUseCase);
-
 export const incidentModule = bindIncident(
     container, timelineEventModulde.
     createTimelineEventUseCase, warRoomModule.createWarRoomUseCase, notificationModule.createNotificationUseCase);
@@ -86,6 +83,7 @@ export const subscriptionScheduler = new SubscriptionScheduler(
 );
 
 export const paymentModule = bindPayment(container,);
+export const aiModule = bindAI(container,incidentModule.getIncidentByIdUseCase);
 
 
 export default container;

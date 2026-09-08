@@ -5,7 +5,7 @@ import {
   authModule, organizationModule, teamModule,
   incidentModule, taskModule, integrationModule, monitoringModule,
   alertModule, alertRoutingRule, alertRuleModule, fileModule, warRoomModule, timelineEventModulde,
-  auditLogModule, notificationModule, planModule, subscriptionModule,paymentModule
+  auditLogModule, notificationModule, planModule, subscriptionModule,paymentModule,aiModule
 } from "../config/inversify.config";
 
 import { errorHandler } from "./middlewares/errorHandler";
@@ -28,6 +28,7 @@ app.use("/api/teams", teamModule.teamRouter);
 app.use("/api", teamModule.teamInvitationRouter);
 app.use("/api/teams", teamModule.teamMemberRouter);
 app.use("/api/incidents", incidentModule.incidentRouter);
+app.use("/api/ai", aiModule.aiRouter);
 app.use("/api/tasks", taskModule.taskRouter);
 app.use("/api/monitoring-projects", monitoringModule.monitoringProjectRouter);
 app.use("/api/monitoring-projects", integrationModule.integrationRouter);

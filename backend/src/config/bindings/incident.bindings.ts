@@ -19,7 +19,7 @@ export function bindIncident(
     container: Container,
     createTimeLineEventUseCase: ICreateTimelineEventUseCase,
     createWarRoomUseCase: ICreateWarRoomUseCase,
-    createNotificationUseCase: ICreateNotificationUseCase
+    createNotificationUseCase: ICreateNotificationUseCase,
 ) {
 
     const incidentRepository = container.get<IIncidentRepository>(TYPES.IncidentRepository);
@@ -47,6 +47,6 @@ export function bindIncident(
 
     const incidentRouter = createIncidentRoutes(incidentController);
 
-    return { incidentRouter, createIncidentUseCase }
+    return { incidentRouter, createIncidentUseCase, getIncidentByIdUseCase }
 
 }

@@ -29,4 +29,8 @@ export interface IIncidentRepository extends IBaseRepository<Incident> {
     priority: Record<string, number>;
   }>;
 
+  findByIdForOrganization(
+    id: string,
+    organizationId: string
+  ): Promise<Incident | null>;
 }

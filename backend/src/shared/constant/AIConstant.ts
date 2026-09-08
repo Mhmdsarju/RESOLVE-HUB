@@ -1,0 +1,4 @@
+export const AIConstant = {
+    KNOWLEDGE_SEARCH_LIMIT: 5,
+    KNOWLEDGE_SIMILARITY_THRESHOLD: 0.3,
+};
