@@ -85,3 +85,23 @@ export interface OrganizationVerificationDetails {
 export type OrganizationAccessStatus =
   | "ACTIVE"
   | "FROZEN";
+
+export interface OrganizationDashboardStats {
+  teams: number;
+  members: number;
+  incidents: number;
+  warRooms: number;
+  plan: string;
+  incidentTrends: {
+    month: string;
+    incidents: number;
+  }[];
+  incidentStatus: {
+    status: string;
+    count: number;
+  }[];
+  teamIncidents: {
+    team: string;
+    incidents: number;
+  }[];
+}

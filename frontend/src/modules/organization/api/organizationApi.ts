@@ -6,6 +6,7 @@ import type {
   UpdateOrganizationDto,
   PendingOrganizationVerification,
   OrganizationVerificationDetails,
+  OrganizationDashboardStats,
 } from "../types/organization.types";
 
 import type { ApiResponse } from "@/core/types/api.types";
@@ -70,6 +71,14 @@ export async function rejectOrganizationVerification(organizationId: string, rea
   const response = await api.post<ApiResponse<Organization>>(
     `/admin/organizations/${organizationId}/reject`,
     { reason },
+  );
+
+  return response.data.data;
+}
+
+export async function getOrganizationDashboardStats() {
+  const response = await api.get<ApiResponse<OrganizationDashboardStats>>(
+    "/organizations/dashboard",
   );
 
   return response.data.data;

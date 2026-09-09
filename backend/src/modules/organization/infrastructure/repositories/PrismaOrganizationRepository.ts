@@ -4,10 +4,11 @@ import { prisma } from "../../../../config/database";
 import { Organization } from "../../domain/entities/Organization";
 import { IOrganizationRepository } from "../../domain/repositories/IOrganizationRepository";
 import { OrganizationMapper } from "../mappers/OrganizationMapper";
+import { OrganizationDashboardStatsDTO } from "../../application/dto/OrganizationDashboardStatsDTO";
 
 @injectable()
-export class PrismaOrganizationRepository  implements IOrganizationRepository {
-  
+export class PrismaOrganizationRepository implements IOrganizationRepository {
+
   async create(organization: Organization): Promise<Organization> {
     const createdOrganization = await prisma.organization.create({
       data: OrganizationMapper.toDb(organization),
@@ -58,5 +59,53 @@ export class PrismaOrganizationRepository  implements IOrganizationRepository {
     }
 
     return OrganizationMapper.fromDb(organization);
+  }
+
+  async getDashboardStats(organizationId: string): Promise<OrganizationDashboardStatsDTO> {
+    const [teams, members, incidents, warRooms, subscription] = await Promise.all([
+      prisma.team.count({
+        where: {
+          organizationId,
+          deletedAt: null,
+        },
+      }),
+
+      prisma.user.count({
+        where: {
+          organizationId,
+        },
+      }),
+
+      prisma.incident.count({
+        where: {
+          organizationId,
+        },
+      }),
+
+      prisma.warRoom.count({
+        where: {
+          incident: {
+            organizationId,
+          },
+        },
+      }),
+
+      prisma.subscription.findUnique({
+        where: {
+          organizationId,
+        },
+        include: {
+          plan: true,
+        },
+      }),
+    ]);
+
+    return {
+      teams,
+      members,
+      incidents,
+      warRooms,
+      plan: subscription?.plan.name ?? "FREE",
+    };
   }
 }

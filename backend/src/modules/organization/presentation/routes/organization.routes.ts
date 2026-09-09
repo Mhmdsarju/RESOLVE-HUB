@@ -12,6 +12,7 @@ export function createOrganizationRoutes(organizationController: OrganizationCon
     router.put("/me", organizationController.updateProfile.bind(organizationController));
     router.post("/me/submit-verification", organizationController.submitVerification.bind(organizationController));
     router.get("/me/verification", organizationController.getVerificationStatus.bind(organizationController));
+    router.get("/dashboard", organizationController.getDashboardStats.bind(organizationController));
 
     return router;
 }

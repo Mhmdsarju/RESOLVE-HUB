@@ -1,5 +1,5 @@
 import {
-  Activity, BarChart3,
+  Activity, 
   Building2,
   FolderKanban,
   LayoutDashboard,
@@ -61,11 +61,6 @@ export const orgAdminSidebar: SidebarSection[] = [
   {
     title: "INSIGHTS",
     items: [
-      {
-        label: "Analytics",
-        path: "/analytics",
-        icon: BarChart3,
-      },
       {
         label: "Audit Logs",
         path: "/audit-logs",

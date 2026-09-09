@@ -20,6 +20,7 @@ import { GetPendingOrganizationVerificationsUseCase } from "@/modules/organizati
 import { ICreateAuditLogUseCase } from "@/modules/audit-log/domain/interface/usecase/ICreateAuditLogUseCase";
 import { KafkaManager } from "@/infrastructure/kafka/kafka.manager";
 import { ICreateFreeSubscriptionUseCase } from "@/modules/subscription/domain/interface/use-cases/ICreateFreeSubscriptionUseCase";
+import { GetOrganizationDashboardStatsUseCase } from "@/modules/organization/application/use-cases/GetOrganizationDashboardStatsUseCase";
 
 
 export function bindOrganization(
@@ -78,11 +79,16 @@ export function bindOrganization(
         createAuditLogUseCase
     );
 
+    const getOrganizationDashboardStatsUseCase=new GetOrganizationDashboardStatsUseCase(
+        organizationRepository
+    )
+
     const organizationController = new OrganizationController(
         getOrganizationProfileUseCase,
         updateOrganizationUseCase,
         submitOrganizationVerificationUseCase,
         getOrganizationVerificationUseCase,
+        getOrganizationDashboardStatsUseCase
     );
 
     const superAdminOrganizationController = new SuperAdminOrganizationController(
