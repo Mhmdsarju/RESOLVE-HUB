@@ -13,7 +13,7 @@ export class LangChainGeminiService implements IGeminiStructuredService {
 
     constructor() {
         const model = new ChatGoogleGenerativeAI({
-            model: "gemini-3.6-flash",
+            model:"gemini-3.8-flash",
             apiKey: process.env.GEMINI_API_KEY,
         });
 

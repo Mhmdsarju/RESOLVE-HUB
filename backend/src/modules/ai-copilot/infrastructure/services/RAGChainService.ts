@@ -6,7 +6,7 @@ export class RAGChainService {
 
     constructor() {
         this.model = new ChatGoogleGenerativeAI({
-            model: "gemini-3.6-flash",
+            model:"gemini-3.8-flash",
             apiKey: process.env.GEMINI_API_KEY,
         });
     }

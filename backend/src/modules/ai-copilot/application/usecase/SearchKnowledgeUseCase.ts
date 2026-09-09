@@ -15,26 +15,30 @@ export class SearchKnowledgeUseCase implements ISearchKnowledgeUseCase {
 
     async execute(data: SearchKnowledgeDTO): Promise<KnowledgeChunkSearchResultDTO[]> {
 
-        if (data.limit !== undefined && (data.limit < 1 || data.limit > 10)) {
-            throw new AppError("Search limit must be between 1 and 10", HttpStatusCode.BAD_REQUEST);
-        }
-
-        if (
-            data.similarityThreshold !== undefined &&
-            (data.similarityThreshold < 0 || data.similarityThreshold > 1)
-        ) {
-            throw new AppError("Similarity threshold must be between 0 and 1", HttpStatusCode.BAD_REQUEST);
-        }
-
-        const embedding = await this.geminiEmbeddingService.generateEmbedding(
-            data.query
-        );
-
-        return this.knowledgeChunkRepository.searchSimilar({
-            organizationId: data.organizationId,
-            embedding,
-            limit: data.limit ?? 5,
-            similarityThreshold: data.similarityThreshold,
-        });
+    if (data.limit !== undefined && (data.limit < 1 || data.limit > 10)) {
+        throw new AppError("Search limit must be between 1 and 10", HttpStatusCode.BAD_REQUEST);
     }
+
+    if (
+        data.similarityThreshold !== undefined &&
+        (data.similarityThreshold < 0 || data.similarityThreshold > 1)
+    ) {
+        throw new AppError("Similarity threshold must be between 0 and 1", HttpStatusCode.BAD_REQUEST);
+    }
+
+    const embedding = await this.geminiEmbeddingService.generateEmbedding(
+        data.query
+    );
+
+    console.log("Embedding generated:", embedding.length);
+
+    const results = await this.knowledgeChunkRepository.searchSimilar({
+        organizationId: data.organizationId,
+        embedding,
+        limit: data.limit ?? 5,
+        similarityThreshold: data.similarityThreshold,
+    });
+
+    return results;
+}
 }

@@ -11,6 +11,10 @@ export class PrismaAIIncidentAnalysisRepository implements IAIIncidentAnalysisRe
         summary: string;
         possibleRootCause: string;
         initialRecommendation: string;
+        evidence: {
+            content: string;
+            similarity: number;
+        }[];
         model: string;
         promptVersion: string;
     }): Promise<AIIncidentAnalysis> {

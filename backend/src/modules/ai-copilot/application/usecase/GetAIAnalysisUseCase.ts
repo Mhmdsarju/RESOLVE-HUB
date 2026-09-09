@@ -1,4 +1,4 @@
-import { IGetAIAnalysisUseCase } from "../../domain/interface/IGetAIAnalysisUseCase"; 
+import { IGetAIAnalysisUseCase } from "../../domain/interface/IGetAIAnalysisUseCase";
 import { IAIIncidentAnalysisRepository } from "../../domain/interface/IAIIncidentAnalysisRepository";
 import { IAIAnalysisResult } from "../../domain/interface/IAIAnalysisResult";
 
@@ -22,6 +22,12 @@ export class GetAIAnalysisUseCase implements IGetAIAnalysisUseCase {
             summary: analysis.summary,
             possibleRootCause: analysis.possibleRootCause,
             initialRecommendation: analysis.initialRecommendation,
+            evidence: analysis.evidence
+                ? analysis.evidence as {
+                    content: string;
+                    similarity: number;
+                }[]
+                : [],
         };
     }
 }

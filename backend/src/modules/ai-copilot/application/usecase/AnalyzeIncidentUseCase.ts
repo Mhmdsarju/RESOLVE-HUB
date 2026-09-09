@@ -72,7 +72,8 @@ Rules:
       summary: parsedResponse.summary,
       possibleRootCause: parsedResponse.possibleRootCause,
       initialRecommendation: parsedResponse.initialRecommendation,
-      model: "gemini-3.6-flash",
+      evidence: [],
+      model: "gemini-3.8-flash",
       promptVersion: "v1",
     });
 

@@ -15,7 +15,6 @@ export class RetrieveKnowledgeNode implements IRetrieveKnowledgeNode {
         );
 
         const query = `${state.incident.title} ${state.incident.description ?? ""}`;
-
         const retrievedDocuments = await knowledgeRetriever.retrieve(
             query
         );

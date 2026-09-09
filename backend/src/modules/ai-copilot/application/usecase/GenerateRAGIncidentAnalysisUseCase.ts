@@ -52,7 +52,8 @@ export class GenerateRAGIncidentAnalysisUseCase implements IGenerateRAGIncidentA
             summary: analysisResult.summary,
             possibleRootCause: analysisResult.possibleRootCause,
             initialRecommendation: analysisResult.initialRecommendation,
-            model: "gemini-3.6-flash",
+            evidence: analysisResult.evidence ?? [],
+            model: "gemini-3.8-flash",
             promptVersion: "rag-v1",
         });
 

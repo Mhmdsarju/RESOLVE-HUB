@@ -14,7 +14,7 @@ export class GeminiService implements IGeminiService {
     }
 
     async generateResponse(prompt: string): Promise<string> {
-        const maxAttempts = 3;
+        const maxAttempts = 1;
         const timeout = 60000;
 
         for (let attempt = 1; attempt <= maxAttempts; attempt++) {
@@ -28,7 +28,7 @@ export class GeminiService implements IGeminiService {
             try {
 
                 const response = await this.client.models.generateContent({
-                    model: "gemini-3.6-flash",
+                    model:"gemini-3.8-flash",
                     contents: prompt,
                     config: {
                         responseMimeType: "application/json",
