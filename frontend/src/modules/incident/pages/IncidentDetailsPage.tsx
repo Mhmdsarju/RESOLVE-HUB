@@ -396,6 +396,7 @@ export default function IncidentDetailsPage() {
       <div>
         {activeTab === "details" ? (
           <IncidentDetails incident={incident} />
+          
         ) : activeTab === "tasks" ? (
           <TaskSection incidentId={incident.id} teamId={incident.assignedTeamId ?? ""} />
         ) : (

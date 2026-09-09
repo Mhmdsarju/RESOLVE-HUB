@@ -141,4 +141,9 @@ export const ENDPOINTS = {
     PROCESS: (id: string) => `/payments/${id}/process`,
   },
 
+  AI: {
+    INCIDENT_RAG_ANALYSIS: (incidentId: string) => `/ai/incidents/${incidentId}/rag-analysis`,
+    ANALYSIS: (incidentId: string) => `/ai/analysis/${incidentId}`,
+  },
+
 } as const;

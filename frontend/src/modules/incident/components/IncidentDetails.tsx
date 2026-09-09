@@ -4,6 +4,7 @@ import type { Incident } from "../types/incident.types";
 
 import IncidentStatusSelect from "./IncidentStatusSelect";
 import AssignIncidentTeam from "./AssignIncidentTeam";
+import AIIncidentAnalysis from "@/modules/ai-copilot/components/AIIncidentAnalysis";
 
 interface IncidentDetailsProps {
   incident: Incident;
@@ -152,6 +153,8 @@ export default function IncidentDetails({ incident }: IncidentDetailsProps) {
           </div>
         </div>
       </div>
+
+      <AIIncidentAnalysis incidentId={incident.id} />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <div
