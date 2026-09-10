@@ -2,7 +2,7 @@ import { ISubscriptionRepository } from "../../domain/interface/ISubscriptionRep
 import { ISendSubscriptionReminderUseCase } from "../../domain/interface/use-cases/ISendSubscriptionReminderUseCase";
 import { IUserRepository } from "@/modules/auth/domain/repositories/IUserRepository";
 import { IOrganizationRepository } from "@/modules/organization/domain/repositories/IOrganizationRepository";
-import { IEventPublisher } from "@/modules/organization/domain/interfaces/IEventPublisher"; 
+import { IEventPublisher } from "@/modules/organization/domain/interfaces/IEventPublisher";
 import { AppError } from "@/shared/errors/AppError";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
 import { KafkaTopics } from "@/shared/constant/kafka.topics";
@@ -28,10 +28,7 @@ export class SendSubscriptionReminderUseCase implements ISendSubscriptionReminde
         for (const subscription of subscriptions) {
 
             if (!subscription.endDate) {
-                throw new AppError(
-                    "Subscription end date not found",
-                    HttpStatusCode.BAD_REQUEST,
-                );
+                throw new AppError("Subscription end date not found", HttpStatusCode.BAD_REQUEST,);
             }
 
             const admin = await this.userRepository.findOrganizationAdminByOrganizationId(
@@ -39,10 +36,7 @@ export class SendSubscriptionReminderUseCase implements ISendSubscriptionReminde
             );
 
             if (!admin) {
-                throw new AppError(
-                    "Organization admin not found",
-                    HttpStatusCode.NOT_FOUND,
-                );
+                throw new AppError("Organization admin not found", HttpStatusCode.NOT_FOUND,);
             }
 
             const organization = await this.organizationRepository.findById(
@@ -50,21 +44,14 @@ export class SendSubscriptionReminderUseCase implements ISendSubscriptionReminde
             );
 
             if (!organization) {
-                throw new AppError(
-                    "Organization not found",
-                    HttpStatusCode.NOT_FOUND,
-                );
+                throw new AppError("Organization not found", HttpStatusCode.NOT_FOUND,);
             }
 
             const daysRemaining = Math.ceil(
                 (subscription.endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
             );
 
-            if (
-                daysRemaining <= 10 &&
-                daysRemaining > 2 &&
-                !subscription.reminder10DaysSentAt
-            ) {
+            if (daysRemaining <= 10 && daysRemaining > 2 && !subscription.reminder10DaysSentAt) {
                 await this.eventPublisher.publish(
                     KafkaTopics.EMAIL_EVENTS,
                     {
@@ -82,11 +69,7 @@ export class SendSubscriptionReminderUseCase implements ISendSubscriptionReminde
                 );
             }
 
-            if (
-                daysRemaining <= 2 &&
-                daysRemaining > 0 &&
-                !subscription.reminder2DaysSentAt
-            ) {
+            if (daysRemaining <= 2 && daysRemaining > 0 && !subscription.reminder2DaysSentAt) {
                 await this.eventPublisher.publish(
                     KafkaTopics.EMAIL_EVENTS,
                     {

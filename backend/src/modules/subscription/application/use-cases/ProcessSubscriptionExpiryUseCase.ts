@@ -1,7 +1,7 @@
 import { ISubscriptionRepository } from "../../domain/interface/ISubscriptionRepository";
 import { IProcessSubscriptionExpiryUseCase } from "../../domain/interface/use-cases/IProcessSubscriptionExpiryUseCase";
 import { SubscriptionStatus } from "../../domain/enums/subscriptionStatus.enum";
-import { IOrganizationRepository } from "@/modules/organization/domain/repositories/IOrganizationRepository"; 
+import { IOrganizationRepository } from "@/modules/organization/domain/repositories/IOrganizationRepository";
 import { OrganizationAccessStatus } from "@/modules/organization/domain/enums/organizationAccessStatus.enum";
 
 export class ProcessSubscriptionExpiryUseCase implements IProcessSubscriptionExpiryUseCase {
@@ -13,8 +13,7 @@ export class ProcessSubscriptionExpiryUseCase implements IProcessSubscriptionExp
 
     async execute(): Promise<void> {
 
-        const subscriptions =
-            await this.subscriptionRepository.findExpiredSubscriptions(new Date());
+        const subscriptions = await this.subscriptionRepository.findExpiredSubscriptions(new Date());
 
         for (const subscription of subscriptions) {
             await this.subscriptionRepository.update(

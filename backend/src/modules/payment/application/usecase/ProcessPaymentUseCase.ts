@@ -32,31 +32,19 @@ export class ProcessPaymentUseCase implements IProcessPaymentUseCase {
         const payment = await this.paymentRepository.findById(paymentId);
 
         if (!payment) {
-            throw new AppError(
-                "Payment not found",
-                HttpStatusCode.NOT_FOUND,
-            );
+            throw new AppError("Payment not found", HttpStatusCode.NOT_FOUND,);
         }
 
         if (payment.organizationId !== organizationId) {
-            throw new AppError(
-                "Payment does not belong to this organization",
-                HttpStatusCode.FORBIDDEN,
-            );
+            throw new AppError("Payment does not belong to this organization", HttpStatusCode.FORBIDDEN,);
         }
 
         if (payment.status !== PaymentStatus.PENDING) {
-            throw new AppError(
-                "Payment has already been processed",
-                HttpStatusCode.BAD_REQUEST,
-            );
+            throw new AppError("Payment has already been processed", HttpStatusCode.BAD_REQUEST,);
         }
 
         if (payment.razorpayOrderId !== razorpayOrderId) {
-            throw new AppError(
-                "Razorpay order does not match the payment",
-                HttpStatusCode.BAD_REQUEST,
-            );
+            throw new AppError("Razorpay order does not match the payment", HttpStatusCode.BAD_REQUEST,);
         }
 
         const isValidSignature = this.razorpayService.verifyPaymentSignature(
@@ -66,10 +54,7 @@ export class ProcessPaymentUseCase implements IProcessPaymentUseCase {
         );
 
         if (!isValidSignature) {
-            throw new AppError(
-                "Invalid Razorpay payment signature",
-                HttpStatusCode.BAD_REQUEST,
-            );
+            throw new AppError("Invalid Razorpay payment signature", HttpStatusCode.BAD_REQUEST,);
         }
 
         const subscription = await this.subscriptionRepository.findById(
@@ -77,17 +62,11 @@ export class ProcessPaymentUseCase implements IProcessPaymentUseCase {
         );
 
         if (!subscription) {
-            throw new AppError(
-                "Subscription not found",
-                HttpStatusCode.NOT_FOUND,
-            );
+            throw new AppError("Subscription not found", HttpStatusCode.NOT_FOUND,);
         }
 
         if (subscription.organizationId !== organizationId) {
-            throw new AppError(
-                "Subscription does not belong to this organization",
-                HttpStatusCode.FORBIDDEN,
-            );
+            throw new AppError("Subscription does not belong to this organization", HttpStatusCode.FORBIDDEN,);
         }
 
         const plan = await this.planRepository.findById(
@@ -95,10 +74,7 @@ export class ProcessPaymentUseCase implements IProcessPaymentUseCase {
         );
 
         if (!plan) {
-            throw new AppError(
-                "Plan not found",
-                HttpStatusCode.NOT_FOUND,
-            );
+            throw new AppError("Plan not found", HttpStatusCode.NOT_FOUND,);
         }
 
         const now = new Date();
@@ -122,7 +98,7 @@ export class ProcessPaymentUseCase implements IProcessPaymentUseCase {
         await this.organizationRepository.update(
             organizationId,
             {
-                accessStatus:OrganizationAccessStatus.ACTIVE
+                accessStatus: OrganizationAccessStatus.ACTIVE
             }
         )
 

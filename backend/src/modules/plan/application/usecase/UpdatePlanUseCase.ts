@@ -24,40 +24,20 @@ export class UpdatePlanUseCase implements IUpdatePlanUseCase {
             const existingPlan = await this.planRepository.findByName(data.name);
 
             if (existingPlan && existingPlan.id !== id) {
-                throw new AppError(
-                    "Plan already exists",
-                    HttpStatusCode.CONFLICT,
-                );
+                throw new AppError("Plan already exists", HttpStatusCode.CONFLICT,);
             }
         }
 
         if (data.price !== undefined && data.price < 0) {
-            throw new AppError(
-                "Plan price cannot be negative",
-                HttpStatusCode.BAD_REQUEST,
-            );
+            throw new AppError("Plan price cannot be negative", HttpStatusCode.BAD_REQUEST,);
         }
 
-        if (
-            data.durationDays !== undefined &&
-            data.durationDays !== null &&
-            data.durationDays <= 0
-        ) {
-            throw new AppError(
-                "Duration must be greater than 0",
-                HttpStatusCode.BAD_REQUEST,
-            );
+        if (data.durationDays !== undefined && data.durationDays !== null && data.durationDays <= 0) {
+            throw new AppError("Duration must be greater than 0", HttpStatusCode.BAD_REQUEST,);
         }
 
-        if (
-            data.maxProjects !== undefined &&
-            data.maxProjects !== null &&
-            data.maxProjects <= 0
-        ) {
-            throw new AppError(
-                "Maximum projects must be greater than 0",
-                HttpStatusCode.BAD_REQUEST,
-            );
+        if (data.maxProjects !== undefined && data.maxProjects !== null && data.maxProjects <= 0) {
+            throw new AppError("Maximum projects must be greater than 0", HttpStatusCode.BAD_REQUEST,);
         }
 
         const updatedPlan = await this.planRepository.update(

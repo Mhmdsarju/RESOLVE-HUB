@@ -22,11 +22,7 @@ export class RazorpayService implements IRazorpayService {
         });
     }
 
-    verifyPaymentSignature(
-        orderId: string,
-        paymentId: string,
-        signature: string,
-    ): boolean {
+    verifyPaymentSignature(orderId: string, paymentId: string, signature: string,): boolean {
         const body = `${orderId}|${paymentId}`;
 
         const expectedSignature = crypto

@@ -15,19 +15,13 @@ export class GetSubscriptionUseCase implements IGetSubscriptionUseCase {
     async execute(organizationId: string): Promise<Subscription> {
 
         if (!organizationId?.trim()) {
-            throw new AppError(
-                "Organization ID is required",
-                HttpStatusCode.BAD_REQUEST,
-            );
+            throw new AppError("Organization ID is required", HttpStatusCode.BAD_REQUEST,);
         }
 
         const subscription = await this.subscriptionRepository.findByOrganizationId(organizationId);
 
         if (!subscription) {
-            throw new AppError(
-                "Subscription not found",
-                HttpStatusCode.NOT_FOUND,
-            );
+            throw new AppError("Subscription not found", HttpStatusCode.NOT_FOUND,);
         }
 
         return subscription;
