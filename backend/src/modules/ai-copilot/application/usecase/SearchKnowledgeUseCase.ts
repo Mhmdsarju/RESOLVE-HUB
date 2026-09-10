@@ -1,3 +1,5 @@
+// Searches relevant knowledge chunks by converting the query
+//  into an embedding and performing a pgvector similarity search.
 import { ISearchKnowledgeUseCase } from "../../domain/interface/ISearchKnowledgeUseCase";
 import { IKnowledgeChunkRepository } from "../../domain/interface/IKnowledgeChunkRepository";
 import { IGeminiEmbeddingService } from "../../domain/interface/IGeminiEmbeddingService";

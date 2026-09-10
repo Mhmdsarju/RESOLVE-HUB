@@ -1,5 +1,5 @@
+// Splits large documents into overlapping text chunks to prepare them for embedding and RAG retrieval.
 import { ITextChunkingService } from "../../domain/interface/ITextChunkingService";
-
 export class TextChunkingService implements ITextChunkingService {
 
     private readonly chunkSize = 500;

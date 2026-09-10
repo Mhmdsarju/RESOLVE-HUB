@@ -1,3 +1,6 @@
+// Defines the shared LangGraph state used to pass incident data, 
+// RAG evidence, AI analysis, and workflow information between nodes.
+//Zod is used to define and validate the data types and structure of the LangGraph state.
 import { StateSchema } from "@langchain/langgraph";
 import { z } from "zod";
 

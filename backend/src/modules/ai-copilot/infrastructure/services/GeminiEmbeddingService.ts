@@ -1,5 +1,5 @@
+// Converts text into a 768-dimensional Gemini embedding vector for storage and semantic similarity search.
 import { GoogleGenAI } from "@google/genai";
-
 import { IGeminiEmbeddingService } from "../../domain/interface/IGeminiEmbeddingService";
 
 export class GeminiEmbeddingService implements IGeminiEmbeddingService {

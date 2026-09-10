@@ -1,3 +1,6 @@
+// Handles the complete incident AI analysis flow: fetches the incident,
+// generates and validates the AI analysis, stores the result, and returns it.
+
 import { IAnalyzeIncidentUseCase } from "../../domain/interface/IAnalyzeIncidentUseCase";
 import { IGeminiService } from "../../domain/interface/IGeminiService";
 import { IGetIncidentByIdUseCase } from "@/modules/incident/domain/interfaces/use-cases/IGetIncidentByIdUseCase";
@@ -58,6 +61,7 @@ Rules:
       }
 
       parsedResponse = parsed;
+
     } catch (error) {
       if (error instanceof AppError) {
         throw error;

@@ -1,3 +1,4 @@
+// Retrieves the latest stored AI analysis for an incident and returns it in the required analysis format.
 import { IGetAIAnalysisUseCase } from "../../domain/interface/IGetAIAnalysisUseCase";
 import { IAIIncidentAnalysisRepository } from "../../domain/interface/IAIIncidentAnalysisRepository";
 import { IAIAnalysisResult } from "../../domain/interface/IAIAnalysisResult";
@@ -26,8 +27,7 @@ export class GetAIAnalysisUseCase implements IGetAIAnalysisUseCase {
                 ? analysis.evidence as {
                     content: string;
                     similarity: number;
-                }[]
-                : [],
+                }[] : [],
         };
     }
 }

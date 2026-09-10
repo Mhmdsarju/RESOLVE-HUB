@@ -1,5 +1,6 @@
 // Ingestion = Document → Chunk → Embedding → pgvector
-
+// Ingests a knowledge document by splitting it into chunks, 
+// generating embeddings, and storing them for RAG vector search.
 import cuid from "cuid";
 import { IIngestKnowledgeDocumentUseCase } from "../../domain/interface/IIngestKnowledgeDocumentUseCase";
 import { IKnowledgeDocumentRepository } from "../../domain/interface/IKnowledgeDocumentRepository";

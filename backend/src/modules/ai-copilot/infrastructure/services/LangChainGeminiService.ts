@@ -1,6 +1,7 @@
+// Creates organization-specific KnowledgeRetriever 
+// instances with the required search use case and dependencies.
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { PromptTemplate } from "@langchain/core/prompts";
-
 import { AIAnalysisResultSchema } from "../../application/dto/AIAnalysisResultSchema";
 import { IAIAnalysisResult } from "../../domain/interface/IAIAnalysisResult";
 import { IGeminiStructuredService } from "../../domain/interface/IGeminiStructuredService";

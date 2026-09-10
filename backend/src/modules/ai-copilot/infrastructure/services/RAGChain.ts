@@ -1,3 +1,5 @@
+// Orchestrates the RAG pipeline by retrieving relevant knowledge, building context and prompts,
+//  generating structured AI analysis, and attaching evidence.
 import { IKnowledgeRetrieverFactory } from "../../domain/interface/IKnowledgeRetrieverFactory";
 import { IKnowledgeContextBuilder } from "../../domain/interface/IKnowledgeContextBuilder";
 import { IRAGPromptBuilder } from "../../domain/interface/IRAGPromptBuilder";
@@ -7,7 +9,6 @@ import { IAIAnalysisResult } from "../../domain/interface/IAIAnalysisResult";
 import { BuildRAGPromptDTO } from "../../application/dto/BuildRAGPromptDTO";
 
 export class RAGChain implements IRAGChain {
-
     constructor(
         private readonly knowledgeRetrieverFactory: IKnowledgeRetrieverFactory,
         private readonly knowledgeContextBuilder: IKnowledgeContextBuilder,

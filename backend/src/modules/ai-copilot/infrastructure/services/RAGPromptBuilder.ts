@@ -1,5 +1,6 @@
+// Builds the final RAG prompt by combining incident details 
+// with retrieved knowledge context and analysis rules.
 import { PromptTemplate } from "@langchain/core/prompts";
-
 import { IRAGPromptBuilder } from "../../domain/interface/IRAGPromptBuilder";
 import { BuildRAGPromptDTO } from "../../application/dto/BuildRAGPromptDTO";
 

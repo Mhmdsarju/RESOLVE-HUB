@@ -1,5 +1,5 @@
+//// Handles Gemini LLM requests with JSON responses, timeout protection, and error handling.
 import { GoogleGenAI } from "@google/genai";
-
 import { IGeminiService } from "../../domain/interface/IGeminiService";
 import { AppError } from "@/shared/errors/AppError";
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";

@@ -1,3 +1,5 @@
+// Generates a RAG-based AI incident analysis using the LangGraph copilot,
+//  stores the analysis with evidence, and returns the result.
 import { IGenerateRAGIncidentAnalysisUseCase } from "../../domain/interface/IGenerateRAGIncidentAnalysisUseCase";
 import { createIncidentCopilotGraph } from "../../infrastructure/langgraph/IncidentCopilotGraph";
 import { IAIAnalysisResult } from "../../domain/interface/IAIAnalysisResult";
@@ -34,12 +36,9 @@ export class GenerateRAGIncidentAnalysisUseCase implements IGenerateRAGIncidentA
         });
 
         const analysisResult: IAIAnalysisResult = {
-            summary: result.summary
-                ?? "Unable to generate an AI summary.",
-            possibleRootCause: result.rootCause
-                ?? "Insufficient evidence to determine the root cause.",
-            initialRecommendation: result.recommendation
-                ?? "Collect more information before taking corrective action.",
+            summary: result.summary ?? "Unable to generate an AI summary.",
+            possibleRootCause: result.rootCause ?? "Insufficient evidence to determine the root cause.",
+            initialRecommendation: result.recommendation ?? "Collect more information before taking corrective action.",
             evidence: result.evidence.map((chunk) => ({
                 content: chunk.content,
                 similarity: chunk.similarity,

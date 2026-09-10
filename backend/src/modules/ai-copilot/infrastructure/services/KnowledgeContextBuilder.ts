@@ -1,3 +1,4 @@
+// Builds a structured context string from retrieved knowledge chunks for use in the LLM prompt.
 import { IKnowledgeContextBuilder } from "../../domain/interface/IKnowledgeContextBuilder";
 import { KnowledgeChunkSearchResultDTO } from "../../application/dto/KnowledgeChunkSearchResultDTO";
 

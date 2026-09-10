@@ -10,10 +10,6 @@ export class KnowledgeRetrieverFactory implements IKnowledgeRetrieverFactory {
     ) { }
 
     create(organizationId: string): IKnowledgeRetriever {
-
-        return new KnowledgeRetriever(
-            this.searchKnowledgeUseCase,
-            organizationId
-        );
+        return new KnowledgeRetriever(this.searchKnowledgeUseCase, organizationId);
     }
 }

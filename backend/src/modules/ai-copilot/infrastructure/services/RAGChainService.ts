@@ -1,3 +1,5 @@
+// Uses LangChain's Gemini integration to send RAG prompts to 
+// the LLM and return the generated response as a string.
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 
 export class RAGChainService {
