@@ -83,3 +83,47 @@ export async function getOrganizationDashboardStats() {
 
   return response.data.data;
 }
+
+export async function getOrganizationAnalytics() {
+  const response = await api.get<
+    ApiResponse<{
+      totalOrganizations: number;
+      activeOrganizations: number;
+      frozenOrganizations: number;
+    }>
+  >("/admin/organizations/analytics");
+
+  return response.data.data;
+}
+
+export async function getSuperAdminOrganizations(params: {
+  page: number;
+  limit: number;
+  search?: string;
+  status?: string;
+}) {
+  const response = await api.get<
+    ApiResponse<{
+      organizations: {
+        id: string;
+        name: string;
+        industry: string | null;
+        companySize: string | null;
+        country: string | null;
+        state: string | null;
+        city: string | null;
+        status: string;
+        accessStatus: string;
+        createdAt: string;
+      }[];
+      total: number;
+      page: number;
+      limit: number;
+      totalPages: number;
+    }>
+  >("/admin/organizations", {
+    params,
+  });
+
+  return response.data.data;
+}

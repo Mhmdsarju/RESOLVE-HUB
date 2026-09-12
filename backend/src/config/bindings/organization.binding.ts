@@ -21,6 +21,8 @@ import { ICreateAuditLogUseCase } from "@/modules/audit-log/domain/interface/use
 import { KafkaManager } from "@/infrastructure/kafka/kafka.manager";
 import { ICreateFreeSubscriptionUseCase } from "@/modules/subscription/domain/interface/use-cases/ICreateFreeSubscriptionUseCase";
 import { GetOrganizationDashboardStatsUseCase } from "@/modules/organization/application/use-cases/GetOrganizationDashboardStatsUseCase";
+import { GetOrganizationAnalyticsUseCase } from "@/modules/organization/application/use-cases/GetOrganizationAnalyticsUseCase";
+import { GetSuperAdminOrganizationsUseCase } from "@/modules/organization/application/use-cases/GetSuperAdminOrganizationsUseCase";
 
 
 export function bindOrganization(
@@ -91,11 +93,21 @@ export function bindOrganization(
         getOrganizationDashboardStatsUseCase
     );
 
+    const getOrganizationAnalyticsUseCase= new GetOrganizationAnalyticsUseCase(
+        organizationRepository
+    );
+
+    const getSuperAdminOrganizationsUseCase=new GetSuperAdminOrganizationsUseCase(
+        organizationRepository
+    )
+
     const superAdminOrganizationController = new SuperAdminOrganizationController(
         approveOrganizationVerificationUseCase,
         rejectOrganizationVerificationUseCase,
         getPendingOrganizationVerificationsUseCase,
         getOrganizationVerificationDetailsUseCase,
+        getOrganizationAnalyticsUseCase,
+        getSuperAdminOrganizationsUseCase
     );
 
     const organizationRouter = createOrganizationRoutes(organizationController);

@@ -12,6 +12,8 @@ export function createSuperAdminOrganizationRoutes(controller: SuperAdminOrganiz
     router.post("/:organizationId/reject", controller.rejectOrganization.bind(controller));
     router.get("/pending-verification", controller.getPendingVerifications.bind(controller));
     router.get("/:organizationId/verification", controller.getVerificationDetails.bind(controller));
+    router.get("/", controller.getSuperAdminOrganizations.bind(controller));
+    router.get("/analytics", controller.getOrganizationAnalytics.bind(controller),);
 
     return router;
 }

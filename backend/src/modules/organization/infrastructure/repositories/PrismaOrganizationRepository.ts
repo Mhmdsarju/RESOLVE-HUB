@@ -5,6 +5,8 @@ import { Organization } from "../../domain/entities/Organization";
 import { IOrganizationRepository } from "../../domain/repositories/IOrganizationRepository";
 import { OrganizationMapper } from "../mappers/OrganizationMapper";
 import { OrganizationDashboardStatsDTO } from "../../application/dto/OrganizationDashboardStatsDTO";
+import { SuperAdminOrganizationsDTO } from "../../application/dto/SuperAdminOrganizationDTO";
+import { OrganizationStatus } from "@prisma/client";
 
 @injectable()
 export class PrismaOrganizationRepository implements IOrganizationRepository {
@@ -108,4 +110,89 @@ export class PrismaOrganizationRepository implements IOrganizationRepository {
       plan: subscription?.plan.name ?? "FREE",
     };
   }
+
+  async getOrganizationAnalytics(): Promise<{
+    totalOrganizations: number;
+    activeOrganizations: number;
+    frozenOrganizations: number;
+  }> {
+    const [totalOrganizations, activeOrganizations, frozenOrganizations] =
+      await Promise.all([
+        prisma.organization.count(),
+        prisma.organization.count({
+          where: {
+            accessStatus: "ACTIVE",
+          },
+        }),
+        prisma.organization.count({
+          where: {
+            accessStatus: "FROZEN",
+          },
+        }),
+      ]);
+
+    return {
+      totalOrganizations,
+      activeOrganizations,
+      frozenOrganizations,
+    };
+  }
+
+
+  async getSuperAdminOrganizations(
+    page: number,
+    limit: number,
+    search?: string,
+    status?: string,
+  ): Promise<SuperAdminOrganizationsDTO> {
+    const where = {
+      ...(search && {
+        name: {
+          contains: search,
+          mode: "insensitive" as const,
+        },
+      }),
+      ...(status && {
+        status: status as OrganizationStatus,
+      }),
+    };
+
+    const skip = (page - 1) * limit;
+
+    const [organizations, total] = await Promise.all([
+      prisma.organization.findMany({
+        where,
+        select: {
+          id: true,
+          name: true,
+          industry: true,
+          companySize: true,
+          country: true,
+          state: true,
+          city: true,
+          status: true,
+          accessStatus: true,
+          createdAt: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        skip,
+        take: limit,
+      }),
+      prisma.organization.count({
+        where,
+      }),
+    ]);
+
+    return {
+      organizations,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
+
 }
