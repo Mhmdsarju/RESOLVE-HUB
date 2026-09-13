@@ -771,13 +771,13 @@ export default function MonitoringProjectDetailsPage() {
             <>
               <div
                 className="
-                  flex
-                  flex-col
-                  gap-4
-                  sm:flex-row
-                  sm:items-center
-                  sm:justify-between
-                "
+    flex
+    flex-col
+    gap-4
+    sm:flex-row
+    sm:items-center
+    sm:justify-between
+  "
               >
                 <div>
                   <h3 className="text-lg font-bold text-[#4B3932]">Integrations</h3>
@@ -787,32 +787,62 @@ export default function MonitoringProjectDetailsPage() {
                   </p>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => setIsCreateIntegrationOpen(true)}
-                  className="
-                    inline-flex
-                    items-center
-                    justify-center
-                    gap-2
-                    rounded-xl
-                    bg-[#4B3932]
-                    px-5
-                    py-3
-                    text-sm
-                    font-semibold
-                    text-white
-                    shadow-sm
-                    transition-all
-                    duration-300
-                    hover:-translate-y-0.5
-                    hover:bg-[#3B2E29]
-                    hover:shadow-lg
-                  "
-                >
-                  <Plus size={18} />
-                  Add Integration
-                </button>
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <button
+                    type="button"
+                    onClick={() => navigate(`/monitoring/${id}/setup-guide`)}
+                    className="
+        inline-flex
+        items-center
+        justify-center
+        gap-2
+        rounded-xl
+        border
+        border-[#E7DDD3]
+        bg-white
+        px-5
+        py-3
+        text-sm
+        font-semibold
+        text-[#4B3932]
+        transition-all
+        duration-300
+        hover:-translate-y-0.5
+        hover:bg-[#FAF6F0]
+        hover:shadow-md
+      "
+                  >
+                    <FileText size={17} />
+                    Setup Guide
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsCreateIntegrationOpen(true)}
+                    className="
+        inline-flex
+        items-center
+        justify-center
+        gap-2
+        rounded-xl
+        bg-[#4B3932]
+        px-5
+        py-3
+        text-sm
+        font-semibold
+        text-white
+        shadow-sm
+        transition-all
+        duration-300
+        hover:-translate-y-0.5
+        hover:bg-[#3B2E29]
+        hover:shadow-lg
+      "
+                  >
+                    <Plus size={18} />
+                    Add Integration
+                  </button>
+                </div>
               </div>
 
               <div className="mt-6">

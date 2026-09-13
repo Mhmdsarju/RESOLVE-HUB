@@ -33,6 +33,7 @@ import WarRoomDetailsPage from "@/modules/war-room/pages/WarRoomDetailsPage";
 import AuditLogPage from "@/modules/audit/pages/AuditLogPage";
 
 import SubscriptionPage from "@/modules/subscription/pages/SubscriptionPage";
+import PrometheusSetupGuidePage from "@/modules/integration/components/PrometheusSetupGuidePage";
 
 export const orgAdminRoutes: RouteObject[] = [
   {
@@ -92,6 +93,11 @@ export const orgAdminRoutes: RouteObject[] = [
               {
                 path: "/monitoring/:id",
                 element: <MonitoringProjectDetailsPage />,
+              },
+
+              {
+                path: "/monitoring/:projectId/setup-guide",
+                element: <PrometheusSetupGuidePage/>
               },
 
               {
