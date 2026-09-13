@@ -7,6 +7,10 @@ import type {
   PendingOrganizationVerification,
   OrganizationVerificationDetails,
   OrganizationDashboardStats,
+  RevenueAnalyticsDTO,
+  SuperAdminOrganizationsDTO,
+  PaymentHistoryDTO,
+  SuperAdminDashboardDTO,
 } from "../types/organization.types";
 
 import type { ApiResponse } from "@/core/types/api.types";
@@ -102,28 +106,55 @@ export async function getSuperAdminOrganizations(params: {
   search?: string;
   status?: string;
 }) {
-  const response = await api.get<
-    ApiResponse<{
-      organizations: {
-        id: string;
-        name: string;
-        industry: string | null;
-        companySize: string | null;
-        country: string | null;
-        state: string | null;
-        city: string | null;
-        status: string;
-        accessStatus: string;
-        createdAt: string;
-      }[];
-      total: number;
-      page: number;
-      limit: number;
-      totalPages: number;
-    }>
-  >("/admin/organizations", {
-    params,
-  });
+  const response = await api.get<ApiResponse<SuperAdminOrganizationsDTO>>(
+    "/admin/organizations",
+    {
+      params,
+    }
+  );
+
+  return response.data.data;
+}
+
+export async function getRevenueAnalytics() {
+  const response = await api.get<ApiResponse<RevenueAnalyticsDTO>>(
+    "/admin/organizations/revenue-analytics"
+  );
+
+  return response.data.data;
+}
+
+export async function getPaymentHistory(params: {
+  page: number;
+  limit: number;
+  search?: string;
+  status?: string;
+}) {
+  const response = await api.get<ApiResponse<PaymentHistoryDTO>>(
+    "/admin/organizations/payment-history",
+    {
+      params,
+    }
+  );
+
+  return response.data.data;
+}
+
+export async function exportPaymentReport() {
+  const response = await api.get(
+    "/admin/organizations/payment-history/export",
+    {
+      responseType: "blob",
+    }
+  );
+
+  return response.data;
+}
+
+export async function getSuperAdminDashboard() {
+  const response = await api.get<ApiResponse<SuperAdminDashboardDTO>>(
+    "/admin/organizations/dashboard"
+  );
 
   return response.data.data;
 }

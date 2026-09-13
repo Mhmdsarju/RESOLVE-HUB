@@ -23,6 +23,11 @@ import { ICreateFreeSubscriptionUseCase } from "@/modules/subscription/domain/in
 import { GetOrganizationDashboardStatsUseCase } from "@/modules/organization/application/use-cases/GetOrganizationDashboardStatsUseCase";
 import { GetOrganizationAnalyticsUseCase } from "@/modules/organization/application/use-cases/GetOrganizationAnalyticsUseCase";
 import { GetSuperAdminOrganizationsUseCase } from "@/modules/organization/application/use-cases/GetSuperAdminOrganizationsUseCase";
+import { GetRevenueAnalyticsUseCase } from "@/modules/organization/application/use-cases/GetRevenueAnalyticsUseCase";
+import { GetPaymentHistoryUseCase } from "@/modules/organization/application/use-cases/GetPaymentHistoryUseCase";
+import { ExportPaymentReportUseCase } from "@/modules/organization/application/use-cases/ExportPaymentReportUseCase";
+import { IPdfService } from "@/shared/services/interface/IPdfService";
+import { GetSuperAdminDashboardUseCase } from "@/modules/organization/application/use-cases/GetSuperAdminDashboardUseCase";
 
 
 export function bindOrganization(
@@ -36,6 +41,7 @@ export function bindOrganization(
     const organizationRepository = container.get<IOrganizationRepository>(TYPES.OrganizationRepository,);
     const organizationVerificationRepository = container.get<IOrganizationVerificationRepository>(TYPES.OrganizationVerificationRepository,);
     const userRepository = container.get<IUserRepository>(TYPES.UserRepository);
+    const Pdfservice = container.get<IPdfService>(TYPES.PdfService);
 
     const approveOrganizationVerificationUseCase = new ApproveOrganizationVerificationUseCase(
         organizationRepository,
@@ -81,7 +87,7 @@ export function bindOrganization(
         createAuditLogUseCase
     );
 
-    const getOrganizationDashboardStatsUseCase=new GetOrganizationDashboardStatsUseCase(
+    const getOrganizationDashboardStatsUseCase = new GetOrganizationDashboardStatsUseCase(
         organizationRepository
     )
 
@@ -93,11 +99,28 @@ export function bindOrganization(
         getOrganizationDashboardStatsUseCase
     );
 
-    const getOrganizationAnalyticsUseCase= new GetOrganizationAnalyticsUseCase(
+    const getOrganizationAnalyticsUseCase = new GetOrganizationAnalyticsUseCase(
         organizationRepository
     );
 
-    const getSuperAdminOrganizationsUseCase=new GetSuperAdminOrganizationsUseCase(
+    const getSuperAdminOrganizationsUseCase = new GetSuperAdminOrganizationsUseCase(
+        organizationRepository
+    )
+
+    const getRevenueAnalyticsUseCase = new GetRevenueAnalyticsUseCase(
+        organizationRepository
+    )
+
+    const getPaymentHistoryUseCase = new GetPaymentHistoryUseCase(
+        organizationRepository
+    );
+
+    const exportPaymentReportUseCase = new ExportPaymentReportUseCase(
+        organizationRepository,
+        Pdfservice
+    );
+
+    const getSuperAdminDashboardUseCase=new GetSuperAdminDashboardUseCase(
         organizationRepository
     )
 
@@ -107,7 +130,11 @@ export function bindOrganization(
         getPendingOrganizationVerificationsUseCase,
         getOrganizationVerificationDetailsUseCase,
         getOrganizationAnalyticsUseCase,
-        getSuperAdminOrganizationsUseCase
+        getSuperAdminOrganizationsUseCase,
+        getRevenueAnalyticsUseCase,
+        getPaymentHistoryUseCase,
+        exportPaymentReportUseCase,
+        getSuperAdminDashboardUseCase
     );
 
     const organizationRouter = createOrganizationRoutes(organizationController);

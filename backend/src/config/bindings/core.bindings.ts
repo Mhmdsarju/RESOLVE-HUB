@@ -58,6 +58,8 @@ import { IKnowledgeChunkRepository } from "@/modules/ai-copilot/domain/interface
 import { PrismaKnowledgeChunkRepository } from "@/modules/ai-copilot/infrastructure/repositories/PrismaKnowledgeChunkRepository";
 import { IKnowledgeDocumentRepository } from "@/modules/ai-copilot/domain/interface/IKnowledgeDocumentRepository";
 import { PrismaKnowledgeDocumentRepository } from "@/modules/ai-copilot/infrastructure/repositories/PrismaKnowledgeDocumentRepository";
+import { IPdfService } from "@/shared/services/interface/IPdfService";
+import { PdfService } from "@/shared/services/PdfService";
 
 export function bindCore(container: Container) {
 
@@ -89,4 +91,5 @@ export function bindCore(container: Container) {
     container.bind<IAIIncidentAnalysisRepository>(TYPES.AIIncidentAnalysisRepository).to(PrismaAIIncidentAnalysisRepository).inSingletonScope();
     container.bind<IKnowledgeChunkRepository>(TYPES.KnowledgeChunkRepository).to(PrismaKnowledgeChunkRepository).inSingletonScope();
     container.bind<IKnowledgeDocumentRepository>(TYPES.KnowledgeDocumentRepository).to(PrismaKnowledgeDocumentRepository).inSingletonScope();
+    container.bind<IPdfService>(TYPES.PdfService).to(PdfService).inSingletonScope();
 }

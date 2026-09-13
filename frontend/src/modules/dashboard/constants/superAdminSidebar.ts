@@ -3,7 +3,6 @@ import {
   Building2,
   CreditCard,
   LayoutDashboard,
-  Settings,
   Users,
 } from "lucide-react";
 
@@ -44,19 +43,14 @@ export const superAdminSidebar: SidebarSection[] = [
     title: "INSIGHTS",
     items: [
       {
-        label: "Analytics",
+        label: "Payment Analytics",
         path: "/analytics",
         icon: BarChart3,
       },
-    ],
-  },
-  {
-    title: "SETTINGS",
-    items: [
       {
-        label: "Platform Settings",
-        path: "/platform/settings",
-        icon: Settings,
+        label: "Payment History",
+        path: "/history",
+        icon: BarChart3,
       },
     ],
   },

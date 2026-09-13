@@ -1,5 +1,8 @@
 import { IBaseRepository } from "../../../../shared/base/repositories/IBaseRepository";
 import { OrganizationDashboardStatsDTO } from "../../application/dto/OrganizationDashboardStatsDTO";
+import { PaymentHistoryDTO } from "../../application/dto/PaymentHistoryDTO";
+import { RevenueAnalyticsDTO } from "../../application/dto/RevenueAnalyticsDTO";
+import { SuperAdminDashboardDTO } from "../../application/dto/SuperAdminDashboardDTO";
 import { SuperAdminOrganizationsDTO } from "../../application/dto/SuperAdminOrganizationDTO";
 import { Organization } from "../entities/Organization";
 
@@ -20,5 +23,13 @@ export interface IOrganizationRepository extends IBaseRepository<Organization> {
     status?: string,
   ): Promise<SuperAdminOrganizationsDTO>;
 
+  getRevenueAnalytics(): Promise<RevenueAnalyticsDTO>;
+  getPaymentHistory(
+    page: number,
+    limit: number,
+    search?: string,
+    status?: string,
+  ): Promise<PaymentHistoryDTO>;
 
+  getSuperAdminDashboard(): Promise<SuperAdminDashboardDTO>;
 }

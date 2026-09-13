@@ -11,4 +11,5 @@ export const WARROOM_TYPES={
     AIIncidentAnalysisRepository:Symbol.for("AIIncidentAnalysisRepository"),
     KnowledgeChunkRepository: Symbol.for("KnowledgeChunkRepository"),
     KnowledgeDocumentRepository: Symbol.for("KnowledgeDocumentRepository"),
+    PdfService: Symbol.for("PdfService"),
 }

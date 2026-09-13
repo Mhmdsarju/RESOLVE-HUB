@@ -9,6 +9,8 @@ import OrganizationVerificationListPage from "@/modules/organization/pages/admin
 import OrganizationVerificationReviewPage from "@/modules/organization/pages/admin/OrganizationVerificationReviewPage";
 import PlanPage from "@/modules/plan/pages/PlansPage";
 import SuperAdminOrganizationManagement from "@/modules/organization/components/SuperAdminOrganizationManagement";
+import SuperAdminRevenueAnalyticsPage from "@/modules/organization/pages/SuperAdminRevenueAnalyticsPage";
+import SuperAdminPaymentHistoryPage from "@/modules/organization/pages/SuperAdminPaymentHistoryPage";
 
 export const superAdminRoutes: RouteObject[] = [
   {
@@ -38,6 +40,14 @@ export const superAdminRoutes: RouteObject[] = [
           {
             path:"/users",
             element:<SuperAdminOrganizationManagement/>
+          },
+          {
+            path:"/analytics",
+            element:<SuperAdminRevenueAnalyticsPage/>
+          },
+          {
+            path:"/history",
+            element:<SuperAdminPaymentHistoryPage/>
           }
         ],
       },
