@@ -34,6 +34,7 @@ import AuditLogPage from "@/modules/audit/pages/AuditLogPage";
 
 import SubscriptionPage from "@/modules/subscription/pages/SubscriptionPage";
 import PrometheusSetupGuidePage from "@/modules/integration/components/PrometheusSetupGuidePage";
+import ResolveAgentSetupGuidePage from "@/modules/integration/components/ResolveAgentSetupGuidePage";
 
 export const orgAdminRoutes: RouteObject[] = [
   {
@@ -98,6 +99,10 @@ export const orgAdminRoutes: RouteObject[] = [
               {
                 path: "/monitoring/:projectId/setup-guide",
                 element: <PrometheusSetupGuidePage/>
+              },
+                {
+                path: "/monitoring/:projectId/agent-setup",
+                element: <ResolveAgentSetupGuidePage/>
               },
 
               {

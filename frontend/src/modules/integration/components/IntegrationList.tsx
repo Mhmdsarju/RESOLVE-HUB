@@ -2,10 +2,16 @@ import { Boxes, RefreshCw } from "lucide-react";
 
 import IntegrationCard from "./IntegrationCard";
 
-import type {  IntegrationListProps} from "../types/integration.types";
+import type { IntegrationListProps } from "../types/integration.types";
 
-
-export default function IntegrationList({  integrations,  isLoading,  isError,  onIntegrationClick,  onIntegrationEdit,  onIntegrationDelete,}: IntegrationListProps) {
+export default function IntegrationList({
+  integrations,
+  isLoading,
+  isError,
+  onIntegrationClick,
+  onIntegrationEdit,
+  onIntegrationDelete,
+}: IntegrationListProps) {
   if (isLoading) {
     return (
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -132,8 +138,7 @@ export default function IntegrationList({  integrations,  isLoading,  isError,  
         <h3 className="mt-5 text-lg font-bold text-[#4B3932]">No integrations yet</h3>
 
         <p className="mt-2 max-w-md text-sm leading-6 text-stone-500">
-          Connect Prometheus, Grafana, or a webhook to start integrating this monitoring project
-          with ResolveHub.
+          Connect Prometheus or Resolve Agent to start monitoring this project with ResolveHub.
         </p>
       </div>
     );
