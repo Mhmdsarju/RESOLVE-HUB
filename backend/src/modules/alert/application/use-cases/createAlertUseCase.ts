@@ -26,9 +26,9 @@ export class CreateAlertUseCase implements ICreateAlertUseCase {
             throw new AppError("Alert title is required", HttpStatusCode.BAD_REQUEST,);
         }
 
-        if (dto.source === "AUTOMATIC" && !dto.alertRuleId?.trim()) {
-            throw new AppError("Alert rule ID is required for automatic alerts", HttpStatusCode.BAD_REQUEST,);
-        }
+        // if (dto.source === "AUTOMATIC" && !dto.alertRuleId?.trim()) {
+        //     throw new AppError("Alert rule ID is required for automatic alerts", HttpStatusCode.BAD_REQUEST,);
+        // }
 
         if (dto.incidentId) {
             if (dto.source === "AUTOMATIC" && dto.alertRuleId) {

@@ -7,11 +7,9 @@ import { organizationAccessMiddleware } from "@/app/middlewares/organization-acc
 export function createTimelineEventRoutes(timelineEventController: TimelineEventController,) {
     const router = Router();
 
-    router.use(authMiddleware);
-    router.use(organizationAccessMiddleware);
 
-    router.post("/", timelineEventController.create.bind(timelineEventController),);
-    router.get("/incident/:incidentId", timelineEventController.getByIncidentId.bind(timelineEventController),);
+    router.post("/",authMiddleware,organizationAccessMiddleware, timelineEventController.create.bind(timelineEventController),);
+    router.get("/incident/:incidentId",authMiddleware,organizationAccessMiddleware, timelineEventController.getByIncidentId.bind(timelineEventController),);
 
     return router;
 }

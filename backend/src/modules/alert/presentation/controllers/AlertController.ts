@@ -141,11 +141,14 @@ export class AlertController extends BaseController {
                 });
             }
 
-            if (integration.type !== IntegrationType.PROMETHEUS) {
+            if (
+                integration.type !== IntegrationType.PROMETHEUS &&
+                integration.type !== IntegrationType.RESOLVE_AGENT
+            ) {
                 return res.status(HttpStatusCode.BAD_REQUEST).json({
                     success: false,
                     message:
-                        "Integration is not a Prometheus integration",
+                        "Integration is not a supported alert integration",
                 });
             }
 
@@ -186,13 +189,13 @@ export class AlertController extends BaseController {
                     alertName,
                 );
 
-                if (!alertRule) {
-                    return res.status(HttpStatusCode.BAD_REQUEST).json({
-                        success: false,
-                        message:
-                            `Alert rule not found for "${alertName}"`,
-                    });
-                }
+                // if (!alertRule) {
+                //     return res.status(HttpStatusCode.BAD_REQUEST).json({
+                //         success: false,
+                //         message:
+                //             `Alert rule not found for "${alertName}"`,
+                //     });
+                // }
 
                 const status = alert.status === "firing"
                     ? AlertStatus.FIRING
@@ -205,7 +208,7 @@ export class AlertController extends BaseController {
 
                     integrationId: integration.id,
 
-                    alertRuleId: alertRule.id,
+                    alertRuleId: alertRule?.id,
 
                     source: AlertSource.AUTOMATIC,
 

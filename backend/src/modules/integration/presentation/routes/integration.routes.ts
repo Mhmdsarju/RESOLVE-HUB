@@ -6,17 +6,14 @@ import { organizationAccessMiddleware } from "@/app/middlewares/organization-acc
 export function createIntegrationRoutes(controller: IntegrationController) {
     const router = Router();
 
-    router.use(authMiddleware);
-    router.use(organizationAccessMiddleware);
-
     router.route("/:projectId/integrations")
-        .post(controller.create.bind(controller))
-        .get(controller.getAll.bind(controller));
+        .post(authMiddleware,organizationAccessMiddleware,controller.create.bind(controller))
+        .get(authMiddleware,organizationAccessMiddleware,controller.getAll.bind(controller));
 
     router.route("/integrations/:id")
-        .get(controller.getById.bind(controller))
-        .put(controller.update.bind(controller))
-        .delete(controller.delete.bind(controller));
+        .get(authMiddleware,organizationAccessMiddleware,controller.getById.bind(controller))
+        .put(authMiddleware,organizationAccessMiddleware,controller.update.bind(controller))
+        .delete(authMiddleware,organizationAccessMiddleware,controller.delete.bind(controller));
 
     return router;
 }

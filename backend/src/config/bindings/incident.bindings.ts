@@ -13,6 +13,9 @@ import { ICreateWarRoomUseCase } from "@/modules/war-room/domain/interface/useca
 import { ICreateTimelineEventUseCase } from "@/modules/timeline/domain/interfaces/usecases/ICreateTimelineEventUseCase";
 import { ITeamRepository } from "@/modules/team-management/domain/interfaces/ITeamRepository";
 import { ICreateNotificationUseCase } from "@/modules/notification/domain/interface/use-case/ICreateNotificationUseCase";
+import { IUserRepository } from "@/modules/auth/domain/repositories/IUserRepository";
+import { IOrganizationRepository } from "@/modules/organization/domain/repositories/IOrganizationRepository";
+import { KafkaManager } from "@/infrastructure/kafka/kafka.manager";
 
 
 export function bindIncident(
@@ -20,13 +23,23 @@ export function bindIncident(
     createTimeLineEventUseCase: ICreateTimelineEventUseCase,
     createWarRoomUseCase: ICreateWarRoomUseCase,
     createNotificationUseCase: ICreateNotificationUseCase,
+    kafkaManager: KafkaManager,
 ) {
 
     const incidentRepository = container.get<IIncidentRepository>(TYPES.IncidentRepository);
-    const teamRepository = container.get<ITeamRepository>(TYPES.TeamRepository)
+    const teamRepository = container.get<ITeamRepository>(TYPES.TeamRepository);
+    const userRepository = container.get<IUserRepository>(TYPES.UserRepository);
+    const organizationRepository = container.get<IOrganizationRepository>(TYPES.OrganizationRepository);
 
     const assignTeamUseCase = new AssignTeamUseCase(incidentRepository, createTimeLineEventUseCase, teamRepository);
-    const createIncidentUseCase = new CreateIncidentUseCase(incidentRepository, createWarRoomUseCase, createTimeLineEventUseCase);
+    const createIncidentUseCase = new CreateIncidentUseCase(
+        incidentRepository,
+        createWarRoomUseCase,
+        createTimeLineEventUseCase,
+        userRepository,
+        organizationRepository,
+        kafkaManager.producer
+    );
     const getIncidentByIdUseCase = new GetIncidentByIdUseCase(incidentRepository);
     const getIncidentStatsUseCase = new GetIncidentStatsUseCase(incidentRepository);
     const getIncidentsUseCase = new GetIncidentsUseCase(incidentRepository);

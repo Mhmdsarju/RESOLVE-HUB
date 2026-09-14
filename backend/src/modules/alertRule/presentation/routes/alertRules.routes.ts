@@ -6,21 +6,19 @@ import { organizationAccessMiddleware } from "@/app/middlewares/organization-acc
 export function createAlertRuleRoutes(controller: AlertRuleController) {
     const router = Router();
 
-    router.use(authMiddleware);
-    router.use(organizationAccessMiddleware);
 
     router.route("/:projectId/alert-rules")
-        .post(controller.create.bind(controller))
-        .get(controller.getAll.bind(controller));
+        .post(authMiddleware,organizationAccessMiddleware, controller.create.bind(controller))
+        .get(authMiddleware,organizationAccessMiddleware, controller.getAll.bind(controller));
 
-    router.get("/alert-rules/defaults", controller.getDefaults.bind(controller));
+    router.get("/alert-rules/defaults",authMiddleware,organizationAccessMiddleware, controller.getDefaults.bind(controller));
 
-    router.post("/:projectId/alert-rules/default", controller.applyDefault.bind(controller));
+    router.post("/:projectId/alert-rules/default",authMiddleware,organizationAccessMiddleware, controller.applyDefault.bind(controller));
 
     router.route("/alert-rules/:id")
-        .get(controller.getById.bind(controller))
-        .put(controller.update.bind(controller))
-        .delete(controller.delete.bind(controller));
+        .get(authMiddleware,organizationAccessMiddleware,controller.getById.bind(controller))
+        .put(authMiddleware,organizationAccessMiddleware,controller.update.bind(controller))
+        .delete(authMiddleware,organizationAccessMiddleware,controller.delete.bind(controller));
 
     return router;
 }

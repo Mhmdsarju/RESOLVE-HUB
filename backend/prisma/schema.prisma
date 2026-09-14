@@ -464,8 +464,7 @@ enum AlertSource {
 
 enum IntegrationType {
   PROMETHEUS
-  GRAFANA
-  WEBHOOK
+  RESOLVE_AGENT
 }
 
 enum AlertStatus {

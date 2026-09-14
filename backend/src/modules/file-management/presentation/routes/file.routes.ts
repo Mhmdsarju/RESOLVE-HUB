@@ -9,7 +9,6 @@ import { FileController } from "../controller/FileController";
 export function createFileRoutes(fileController: FileController) {
     const router = Router();
 
-    router.use(authMiddleware);
     
 
     router.route("/tasks/:taskId/files")
@@ -21,9 +20,9 @@ export function createFileRoutes(fileController: FileController) {
             fileController.getByTask.bind(fileController),
         );
 
-    router.get("/files/:id", fileController.getById.bind(fileController),);
-    router.get("/files/:id/download", fileController.download.bind(fileController),);
-    router.delete("/files/:id", fileController.delete.bind(fileController),);
+    router.get("/files/:id",authMiddleware, fileController.getById.bind(fileController),);
+    router.get("/files/:id/download", authMiddleware,fileController.download.bind(fileController),);
+    router.delete("/files/:id", authMiddleware,fileController.delete.bind(fileController),);
 
     return router;
 }

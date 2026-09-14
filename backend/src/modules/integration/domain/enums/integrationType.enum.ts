@@ -1,5 +1,4 @@
 export enum IntegrationType {
   PROMETHEUS = "PROMETHEUS",
-  GRAFANA = "GRAFANA",
-  WEBHOOK = "WEBHOOK",
+  RESOLVE_AGENT = "RESOLVE_AGENT",
 }

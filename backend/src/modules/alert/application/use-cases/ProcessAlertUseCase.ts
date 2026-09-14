@@ -39,9 +39,9 @@ export class ProcessAlertUseCase implements IProcessAlertUseCase {
 
         const teamId = await this.routeAlertUseCase.execute(alert);
 
-        if (!teamId) {
-            return alert;
-        }
+        // if (!teamId) {
+        //     return alert;
+        // }
 
         const labels = typeof alert.payload.labels === "object" &&
             alert.payload.labels !== null
@@ -57,27 +57,29 @@ export class ProcessAlertUseCase implements IProcessAlertUseCase {
             description: alert.message,
             severity,
             priority,
-            assignedTeamId: teamId,
+            assignedTeamId: teamId ?? undefined,
             monitoringProjectId: alert.monitoringProjectId,
             type: IncidentType.AUTOMATED,
         };
 
         const incident = await this.createIncidentUseCase.execute(incidentDto, undefined, alert.organizationId,);
 
-        const teamLead = await this.teamMemberRepository.findTeamLead(teamId,);
+       if (teamId) {
+            const teamLead = await this.teamMemberRepository.findTeamLead(teamId,);
 
-        if (teamLead) {
-            await this.createTaskUseCase.execute({
-                title: `Investigate ${alert.title}`,
-                description:
-                    alert.message ??
-                    `Investigate the incident created from alert "${alert.title}".`,
-                incidentId: incident.id!,
-                assignedTo: teamLead.userId,
-                type: TaskType.AUTOMATIC,
-                priority:
-                    this.getTaskPriority(priority),
-            });
+            if (teamLead) {
+                await this.createTaskUseCase.execute({
+                    title: `Investigate ${alert.title}`,
+                    description:
+                        alert.message ??
+                        `Investigate the incident created from alert "${alert.title}".`,
+                    incidentId: incident.id!,
+                    assignedTo: teamLead.userId,
+                    type: TaskType.AUTOMATIC,
+                    priority:
+                        this.getTaskPriority(priority),
+                });
+            }
         }
 
         return await this.alertRepository.update(

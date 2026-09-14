@@ -7,9 +7,7 @@ import { organizationAccessMiddleware } from "@/app/middlewares/organization-acc
 
 export function createAuditLogRoutes(auditLogController: AuditLogController,) {
     const router = Router();
-    router.use(authMiddleware);
-    router.use(organizationAccessMiddleware);
-    router.get("/", auditLogController.getByOrganization.bind(auditLogController),);
+    router.get("/",authMiddleware,organizationAccessMiddleware, auditLogController.getByOrganization.bind(auditLogController),);
 
     return router;
 }

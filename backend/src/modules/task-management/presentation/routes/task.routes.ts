@@ -6,17 +6,15 @@ import { organizationAccessMiddleware } from "@/app/middlewares/organization-acc
 export function createTaskRoutes(taskController: TaskController) {
     const router = Router();
 
-    router.use(authMiddleware);
-    router.use(organizationAccessMiddleware);
 
-    router.post("/", taskController.createTask.bind(taskController));
-    router.get("/my", taskController.getMyTasks.bind(taskController));
-    router.get("/incident/:incidentId", taskController.getTasksByIncident.bind(taskController));
-    router.patch("/:taskId/status", taskController.updateStatus.bind(taskController));
-    router.patch("/:taskId/assign", taskController.assignTask.bind(taskController));
-    router.delete("/:taskId", taskController.deleteTask.bind(taskController));
-    router.put("/:taskId", taskController.updateTask.bind(taskController));
-    router.get("/:taskId", taskController.getTaskById.bind(taskController));
+    router.post("/",authMiddleware,organizationAccessMiddleware, taskController.createTask.bind(taskController));
+    router.get("/my",authMiddleware,organizationAccessMiddleware, taskController.getMyTasks.bind(taskController));
+    router.get("/incident/:incidentId",authMiddleware,organizationAccessMiddleware, taskController.getTasksByIncident.bind(taskController));
+    router.patch("/:taskId/status",authMiddleware,organizationAccessMiddleware, taskController.updateStatus.bind(taskController));
+    router.patch("/:taskId/assign",authMiddleware,organizationAccessMiddleware, taskController.assignTask.bind(taskController));
+    router.delete("/:taskId",authMiddleware,organizationAccessMiddleware, taskController.deleteTask.bind(taskController));
+    router.put("/:taskId",authMiddleware,organizationAccessMiddleware, taskController.updateTask.bind(taskController));
+    router.get("/:taskId",authMiddleware,organizationAccessMiddleware, taskController.getTaskById.bind(taskController));
 
     return router;
 }
