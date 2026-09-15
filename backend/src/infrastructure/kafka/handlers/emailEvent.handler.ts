@@ -50,6 +50,15 @@ export class EmailEventHandler {
             );
         }
 
+        if (event.event === "INCIDENT_CREATED") {
+            await this.organizationEmailService.sendIncidentCreatedEmail(
+                event.email,
+                event.organizationName,
+                event.incidentTitle,
+                event.incidentDescription,
+            );
+        }
+
     }
 
 }

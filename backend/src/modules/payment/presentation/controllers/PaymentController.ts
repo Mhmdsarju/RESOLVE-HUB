@@ -26,6 +26,7 @@ export class PaymentController extends BaseController {
             const payment = await this.createPaymentUseCase.execute(
                 user.organizationId!,
                 req.body.subscriptionId,
+                req.body.planId,
                 Number(req.body.amount),
             );
 
@@ -83,6 +84,9 @@ export class PaymentController extends BaseController {
             const payment = await this.processPaymentUseCase.execute(
                 req.params.id,
                 user.organizationId!,
+                req.body.razorpayPaymentId,
+                req.body.razorpayOrderId,
+                req.body.razorpaySignature,
             );
 
             return ResponseHandler.success(

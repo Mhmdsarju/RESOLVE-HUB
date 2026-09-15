@@ -1,17 +1,39 @@
-import { ChevronRight, ExternalLink, Globe, Pencil,  Trash2,  } from "lucide-react";
+import { ChevronRight, ExternalLink, Globe, Pencil, Trash2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-import type { IntegrationCardProps} from "../types/integration.types";
+import type { IntegrationCardProps } from "../types/integration.types";
 import { SHORT_INTEGRATION_TYPES } from "../constants/integration.constant";
 
+const integrationConfig = SHORT_INTEGRATION_TYPES;
 
-const integrationConfig=SHORT_INTEGRATION_TYPES
+export default function IntegrationCard({
+  integration,
+  onClick,
+  onEdit,
+  onDelete,
+}: IntegrationCardProps) {
+  const navigate = useNavigate();
 
-export default function IntegrationCard({  integration,  onClick,  onEdit,  onDelete,}: IntegrationCardProps) {
   const config = integrationConfig[integration.type];
 
   const Icon = config.icon;
 
   const configEntries = Object.entries(integration.config ?? {});
+
+  const handleSetupGuide = () => {
+    if (integration.type === "RESOLVE_AGENT") {
+      navigate(
+        `/monitoring/${integration.monitoringProjectId}/agent-setup?integrationId=${integration.id}`
+      );
+      return;
+    }
+
+    if (integration.type === "PROMETHEUS") {
+      navigate(
+        `/monitoring/${integration.monitoringProjectId}/setup-guide?integrationId=${integration.id}`
+      );
+    }
+  };
 
   return (
     <div
@@ -141,11 +163,14 @@ export default function IntegrationCard({  integration,  onClick,  onEdit,  onDe
           <div className="flex items-center gap-2">
             <Globe size={15} className="text-stone-400" />
 
-            <span className="text-xs font-medium text-stone-500">Configuration</span>
+            <span className="text-xs font-medium text-stone-500">
+              Configuration
+            </span>
           </div>
 
           <span className="text-xs font-semibold text-[#4B3932]">
-            {configEntries.length} {configEntries.length === 1 ? "setting" : "settings"}
+            {configEntries.length}{" "}
+            {configEntries.length === 1 ? "setting" : "settings"}
           </span>
         </div>
 
@@ -155,19 +180,19 @@ export default function IntegrationCard({  integration,  onClick,  onEdit,  onDe
               <span
                 key={key}
                 className="
-                    rounded-lg
-                    border
-                    border-[#E7DDD3]
-                    bg-white
-                    px-2.5
-                    py-1
-                    text-[11px]
-                    font-medium
-                    text-stone-500
-                    transition-colors
-                    duration-200
-                    group-hover:border-[#D8C9BD]
-                  "
+                  rounded-lg
+                  border
+                  border-[#E7DDD3]
+                  bg-white
+                  px-2.5
+                  py-1
+                  text-[11px]
+                  font-medium
+                  text-stone-500
+                  transition-colors
+                  duration-200
+                  group-hover:border-[#D8C9BD]
+                "
               >
                 {key}
               </span>
@@ -213,7 +238,11 @@ export default function IntegrationCard({  integration,  onClick,  onEdit,  onDe
             py-1
             text-[11px]
             font-semibold
-            ${integration.isActive ? "bg-green-50 text-green-700" : "bg-stone-100 text-stone-500"}
+            ${
+              integration.isActive
+                ? "bg-green-50 text-green-700"
+                : "bg-stone-100 text-stone-500"
+            }
           `}
         >
           <span
@@ -221,7 +250,11 @@ export default function IntegrationCard({  integration,  onClick,  onEdit,  onDe
               h-1.5
               w-1.5
               rounded-full
-              ${integration.isActive ? "bg-green-500" : "bg-stone-400"}
+              ${
+                integration.isActive
+                  ? "bg-green-500"
+                  : "bg-stone-400"
+              }
             `}
           />
 
@@ -229,6 +262,39 @@ export default function IntegrationCard({  integration,  onClick,  onEdit,  onDe
         </span>
 
         <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation();
+              handleSetupGuide();
+            }}
+            className="
+              rounded-lg
+              px-3
+              py-2
+              text-xs
+              font-semibold
+              text-[#4B3932]
+              transition-all
+              duration-200
+              hover:-translate-y-0.5
+              hover:bg-[#F0E7D5]
+              hover:shadow-sm
+              focus:outline-none
+              focus:ring-2
+              focus:ring-[#4B3932]/10
+            "
+            title={
+              integration.type === "RESOLVE_AGENT"
+                ? "Open Agent setup guide"
+                : "Open Prometheus setup guide"
+            }
+          >
+            {integration.type === "RESOLVE_AGENT"
+              ? "Agent Setup"
+              : "Prometheus Setup"}
+          </button>
+
           <button
             type="button"
             onClick={(event) => {

@@ -10,6 +10,9 @@ import { createSocketAuthMiddleware } from "./middleware/socketAuthMiddleware";
 import { CollaborationRoomManager } from "./CollaborationRoomManager";
 import { ISendWarRoomMessageUseCase } from "@/modules/war-room/domain/interface/usecase/ISendWarRoomMessageUseCase";
 
+import { IOrganizationRepository } from "@/modules/organization/domain/repositories/IOrganizationRepository";
+import { OrganizationAccessStatus } from "@/modules/organization/domain/enums/organizationAccessStatus.enum";
+
 export class CollaborationSocketHandler {
 
     constructor(
@@ -21,36 +24,46 @@ export class CollaborationSocketHandler {
         private readonly getWarRoomParticipantsUseCase: IGetWarRoomParticipantsUseCase,
         private readonly sendWarRoomMessageUseCase: ISendWarRoomMessageUseCase,
         private readonly getUserByIdUseCase: IGetUserByIdUseCase,
+        private readonly organizationRepository: IOrganizationRepository,
     ) { }
 
     initialize() {
 
-        this.io.use(
-            createSocketAuthMiddleware(
-                this.tokenService,
-            ),
-        );
+        this.io.use(createSocketAuthMiddleware(this.tokenService));
 
         this.io.on("connection", async (socket: Socket) => {
 
-            console.log(
-                `Socket connected: ${socket.id}`,
+            const organizationId = socket.data.user.organizationId;
+
+            if (!organizationId) {
+                socket.disconnect(true);
+                return;
+            }
+
+            const organization = await this.organizationRepository.findById(
+                organizationId,
             );
+
+            if (
+                !organization ||
+                organization.accessStatus === OrganizationAccessStatus.FROZEN
+            ) {
+                socket.disconnect(true);
+                return;
+            }
+
+
+            console.log(`Socket connected: ${socket.id}`,);
 
             const userId = socket.data.user.userId;
 
             await socket.join(`user:${userId}`);
 
-            console.log(
-                `Socket ${socket.id} joined user room user:${userId}`,
-            );
+            console.log(`Socket ${socket.id} joined user room user:${userId}`,);
 
             socket.on("join_room", async (data) => {
 
-                console.log(
-                    "join_room received:",
-                    data,
-                );
+                console.log("join_room received:", data,);
 
                 try {
 
@@ -67,11 +80,10 @@ export class CollaborationSocketHandler {
                         socket.data.user.organizationId,
                     );
 
-                    const isReconnecting =
-                        this.roomManager.cancelPendingLeave(
-                            userId,
-                            warRoomId,
-                        );
+                    const isReconnecting = this.roomManager.cancelPendingLeave(
+                        userId,
+                        warRoomId,
+                    );
 
                     await this.joinWarRoomUseCase.execute(
                         warRoomId,
@@ -97,10 +109,9 @@ export class CollaborationSocketHandler {
 
                     }
 
-                    const participants =
-                        await this.getWarRoomParticipantsUseCase.execute(
-                            warRoomId,
-                        );
+                    const participants = await this.getWarRoomParticipantsUseCase.execute(
+                        warRoomId,
+                    );
 
                     this.io.to(warRoomId).emit(
                         "room:participants",
@@ -110,16 +121,11 @@ export class CollaborationSocketHandler {
                         },
                     );
 
-                    console.log(
-                        `Socket ${socket.id} joined room ${warRoomId}`,
-                    );
+                    console.log(`Socket ${socket.id} joined room ${warRoomId}`,);
 
                 } catch (error) {
 
-                    console.error(
-                        "Failed to join war room:",
-                        error,
-                    );
+                    console.error("Failed to join war room:", error,);
 
                 }
 
@@ -127,10 +133,7 @@ export class CollaborationSocketHandler {
 
             socket.on("leave_room", async (data) => {
 
-                console.log(
-                    "leave_room received:",
-                    data,
-                );
+                console.log("leave_room received:", data,);
 
                 try {
 
@@ -173,10 +176,9 @@ export class CollaborationSocketHandler {
                         warRoomId,
                     );
 
-                    const participants =
-                        await this.getWarRoomParticipantsUseCase.execute(
-                            warRoomId,
-                        );
+                    const participants = await this.getWarRoomParticipantsUseCase.execute(
+                        warRoomId,
+                    );
 
                     this.io.to(warRoomId).emit(
                         "room:participants",
@@ -186,16 +188,11 @@ export class CollaborationSocketHandler {
                         },
                     );
 
-                    console.log(
-                        `Socket ${socket.id} left room ${warRoomId}`,
-                    );
+                    console.log(`Socket ${socket.id} left room ${warRoomId}`,);
 
                 } catch (error) {
 
-                    console.error(
-                        "Failed to leave war room:",
-                        error,
-                    );
+                    console.error("Failed to leave war room:", error,);
 
                 }
 
@@ -203,10 +200,7 @@ export class CollaborationSocketHandler {
 
             socket.on("get_participants", async (data) => {
 
-                console.log(
-                    "get_participants received:",
-                    data,
-                );
+                console.log("get_participants received:", data,);
 
                 try {
 
@@ -216,10 +210,9 @@ export class CollaborationSocketHandler {
                         return;
                     }
 
-                    const participants =
-                        await this.getWarRoomParticipantsUseCase.execute(
-                            warRoomId,
-                        );
+                    const participants = await this.getWarRoomParticipantsUseCase.execute(
+                        warRoomId,
+                    );
 
                     socket.emit(
                         "room:participants",
@@ -231,10 +224,7 @@ export class CollaborationSocketHandler {
 
                 } catch (error) {
 
-                    console.error(
-                        "Failed to get war room participants:",
-                        error,
-                    );
+                    console.error("Failed to get war room participants:", error);
 
                 }
 
@@ -263,16 +253,10 @@ export class CollaborationSocketHandler {
                         message,
                     );
 
-                    console.log(
-                        `Message sent in war room ${warRoomId} by user ${userId}`,
-                    );
+                    console.log(`Message sent in war room ${warRoomId} by user ${userId}`,);
 
                 } catch (error) {
-
-                    console.error(
-                        "Failed to send war room message:",
-                        error,
-                    );
+                    console.error("Failed to send war room message:", error,);
 
                 }
 
@@ -315,10 +299,9 @@ export class CollaborationSocketHandler {
                                     },
                                 );
 
-                                const participants =
-                                    await this.getWarRoomParticipantsUseCase.execute(
-                                        warRoomId,
-                                    );
+                                const participants = await this.getWarRoomParticipantsUseCase.execute(
+                                    warRoomId,
+                                );
 
                                 this.io.to(warRoomId).emit(
                                     "room:participants",
@@ -333,17 +316,11 @@ export class CollaborationSocketHandler {
 
                     }
 
-                    console.log(
-                        `Socket disconnecting: ${socket.id}`,
-                        reason,
-                    );
+                    console.log(`Socket disconnecting: ${socket.id}`, reason,);
 
                 } catch (error) {
 
-                    console.error(
-                        "Failed to handle socket disconnect:",
-                        error,
-                    );
+                    console.error("Failed to handle socket disconnect:", error,);
 
                 }
 

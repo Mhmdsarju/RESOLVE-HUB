@@ -249,7 +249,7 @@ export default function SettingsPage() {
             )}
           </section>
 
-          <section className="rounded-2xl border border-[#E7DDD3] bg-white p-6 shadow-sm">
+          {/* <section className="rounded-2xl border border-[#E7DDD3] bg-white p-6 shadow-sm">
             <div>
               <h2 className="text-lg font-bold text-[#4B3932]">Email</h2>
 
@@ -263,7 +263,7 @@ export default function SettingsPage() {
 
               <p className="mt-1 text-sm text-stone-500">Manage your account password.</p>
             </div>
-          </section>
+          </section> */}
         </div>
       </div>
     </main>

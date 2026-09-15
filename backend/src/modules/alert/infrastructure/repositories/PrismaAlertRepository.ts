@@ -29,6 +29,44 @@ export class PrismaAlertRepository implements IAlertRepository {
         return AlertMapper.fromDb(alert);
     }
 
+    async findActiveAlertByIncidentAndAlertRule(incidentId: string, alertRuleId: string,): Promise<Alert | null> {
+        const alert = await prisma.alert.findFirst({
+            where: {
+                incidentId,
+                alertRuleId,
+                status: "FIRING",
+            },
+            orderBy: {
+                createdAt: "desc",
+            },
+        });
+
+        if (!alert) {
+            return null;
+        }
+
+        return AlertMapper.fromDb(alert);
+    }
+
+    async findActiveAlertByIncidentAndTitle(incidentId: string, title: string,): Promise<Alert | null> {
+        const alert = await prisma.alert.findFirst({
+            where: {
+                incidentId,
+                title,
+                status: "FIRING",
+            },
+            orderBy: {
+                createdAt: "desc",
+            },
+        });
+
+        if (!alert) {
+            return null;
+        }
+
+        return AlertMapper.fromDb(alert);
+    }
+
     async findAll(): Promise<Alert[]> {
         const alerts = await prisma.alert.findMany({
             orderBy: {

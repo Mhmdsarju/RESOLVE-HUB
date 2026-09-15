@@ -9,8 +9,10 @@ import { ITeamMemberRepository } from "@/modules/team-management/domain/interfac
 import { TaskType } from "../../domain/enums/taskType.enum";
 import { ICreateTimelineEventUseCase } from "@/modules/timeline/domain/interfaces/usecases/ICreateTimelineEventUseCase";
 import { TimelineEventType } from "@/modules/timeline/domain/enums/timelineEventType.enum";
+import { Status } from "@/modules/incident/domain/enums/status.enum";
+import { TaskStatus } from "../../domain/enums/taskStatus.enum";
 
-export class CreateTaskUseCase  implements ICreateTaskUseCase {
+export class CreateTaskUseCase implements ICreateTaskUseCase {
   constructor(
     private readonly taskRepository: ITaskRepository,
     private readonly incidentRepository: IIncidentRepository,
@@ -51,6 +53,10 @@ export class CreateTaskUseCase  implements ICreateTaskUseCase {
       throw new AppError("Incident not found", HttpStatusCode.NOT_FOUND,);
     }
 
+    if (incident.status === Status.CLOSED) {
+      throw new AppError("Cannot create a task for a closed incident", HttpStatusCode.BAD_REQUEST,);
+    }
+
     if (!incident.assignedTeamId) {
       throw new AppError("Incident is not assigned to a team", HttpStatusCode.BAD_REQUEST,);
     }
@@ -69,8 +75,11 @@ export class CreateTaskUseCase  implements ICreateTaskUseCase {
 
     const existingTask = await this.taskRepository.findByTitleAndIncident(title, dto.incidentId,);
 
-    if (existingTask) {
-      throw new AppError("A task with this title already exists for this incident", HttpStatusCode.CONFLICT,);
+    if (existingTask && existingTask.status !== TaskStatus.DONE) {
+      throw new AppError(
+        "An active task  already exists for this incident",
+        HttpStatusCode.CONFLICT,
+      );
     }
 
     if (dto.assignedTo !== undefined) {

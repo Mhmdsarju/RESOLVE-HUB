@@ -9,8 +9,5 @@ export interface IPaymentRepository extends IBaseRepository<Payment> {
 
     findBySubscriptionId(subscriptionId: string): Promise<Payment[]>;
 
-    findByOrganizationIdAndStatus(
-        organizationId: string,
-        status: PaymentStatus,
-    ): Promise<Payment[]>;
+    findByOrganizationIdAndStatus(organizationId: string, status: PaymentStatus,): Promise<Payment[]>;
 }

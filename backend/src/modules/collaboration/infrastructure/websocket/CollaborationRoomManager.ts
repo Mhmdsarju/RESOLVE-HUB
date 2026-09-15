@@ -126,13 +126,9 @@ export class CollaborationRoomManager {
         return;
     }
 
-
-
-
     getSocketRooms(socket: Socket,): string[] {
-
         return Array.from(socket.rooms).filter(
-            (roomId) => roomId !== socket.id,
+            (roomId) => roomId !== socket.id && !roomId.startsWith("user:"),
         );
     }
 

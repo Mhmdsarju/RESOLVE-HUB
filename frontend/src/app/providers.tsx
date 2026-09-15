@@ -11,21 +11,26 @@ interface AppProvidersProps {
 }
 
 export default function AppProviders({ children }: AppProvidersProps) {
+
   const accessToken = useAuthStore((state) => state.accessToken);
 
   useEffect(() => {
+
+    console.log("AppProviders socket effect:", accessToken ? "CONNECT" : "DISCONNECT");
+
     if (!accessToken) {
-      disconnectSocket();
-      return;
+        disconnectSocket();
+        return;
     }
 
     connectSocket();
 
     return () => {
-      disconnectSocket();
+        console.log("AppProviders socket cleanup");
+        disconnectSocket();
     };
-  }, [accessToken]);
 
+}, [accessToken]);
   return (
     <QueryProvider>
       <ToastProvider />

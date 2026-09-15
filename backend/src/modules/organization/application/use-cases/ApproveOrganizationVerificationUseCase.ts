@@ -13,8 +13,9 @@ import { IApproveOrganizationVerificationUseCase } from "../../domain/interfaces
 
 import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
 
-import { KafkaProducer } from "@/infrastructure/kafka/kafka.producer";
-import { KafkaTopics } from "@/infrastructure/kafka/kafka.topics";
+import { IEventPublisher } from "../../domain/interfaces/IEventPublisher";
+import { KafkaTopics } from "@/shared/constant/kafka.topics";
+import { ICreateFreeSubscriptionUseCase } from "@/modules/subscription/domain/interface/use-cases/ICreateFreeSubscriptionUseCase";
 
 
 
@@ -23,7 +24,8 @@ export class ApproveOrganizationVerificationUseCase implements IApproveOrganizat
     private readonly organizationRepository: IOrganizationRepository,
     private readonly verificationRepository: IOrganizationVerificationRepository,
     private readonly userRepository: IUserRepository,
-    private readonly kafkaProducer: KafkaProducer,
+    private readonly eventPublisher: IEventPublisher,
+    private readonly createFreeSubscriptionUseCase: ICreateFreeSubscriptionUseCase,
   ) { }
 
   async execute(organizationId: string, reviewerId: string,): Promise<OrganizationVerification> {
@@ -69,7 +71,9 @@ export class ApproveOrganizationVerificationUseCase implements IApproveOrganizat
       },
     );
 
-    await this.kafkaProducer.publish(
+    await this.createFreeSubscriptionUseCase.execute(organizationId);
+
+    await this.eventPublisher.publish(
       KafkaTopics.EMAIL_EVENTS,
       {
         event: "ORGANIZATION_APPROVED",

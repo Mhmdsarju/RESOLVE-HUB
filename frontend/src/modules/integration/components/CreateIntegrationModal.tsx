@@ -1,23 +1,31 @@
 import { useState } from "react";
-import {  X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { X } from "lucide-react";
 
 import { useCreateIntegration } from "../hooks/useCreateIntegration";
 
-import type { CreateIntegrationDto, IntegrationType ,CreateIntegrationModalProps} from "../types/integration.types";
+import type {
+  CreateIntegrationDto,
+  IntegrationType,
+  CreateIntegrationModalProps,
+} from "../types/integration.types";
 import { INTEGRATION_TYPES } from "../constants/integration.constant";
 
-const integrationTypes=INTEGRATION_TYPES;
+const integrationTypes = INTEGRATION_TYPES;
 
-export default function CreateIntegrationModal({  projectId,  isOpen,  onClose,}: CreateIntegrationModalProps) {
+export default function CreateIntegrationModal({
+  projectId,
+  isOpen,
+  onClose,
+}: CreateIntegrationModalProps) {
   const createMutation = useCreateIntegration();
+  const navigate = useNavigate();
 
   const [name, setName] = useState("");
   const [type, setType] = useState<IntegrationType>("PROMETHEUS");
 
   const [config, setConfig] = useState({
     url: "",
-    apiKey: "",
-    secret: "",
   });
 
   const resetForm = () => {
@@ -26,8 +34,6 @@ export default function CreateIntegrationModal({  projectId,  isOpen,  onClose,}
 
     setConfig({
       url: "",
-      apiKey: "",
-      secret: "",
     });
   };
 
@@ -50,27 +56,28 @@ export default function CreateIntegrationModal({  projectId,  isOpen,  onClose,}
     event.preventDefault();
 
     const trimmedName = name.trim();
-    const trimmedUrl = config.url.trim();
 
-    if (!trimmedName || !trimmedUrl) {
+    if (!trimmedName) {
       return;
     }
 
-    let integrationConfig: Record<string, unknown> = {
-      url: trimmedUrl,
-    };
+    let integrationConfig: Record<string, unknown> = {};
 
-    if (type === "GRAFANA") {
+    if (type === "PROMETHEUS") {
+      const trimmedUrl = config.url.trim();
+
+      if (!trimmedUrl) {
+        return;
+      }
+
       integrationConfig = {
         url: trimmedUrl,
-        apiKey: config.apiKey.trim(),
       };
     }
 
-    if (type === "WEBHOOK") {
+    if (type === "RESOLVE_AGENT") {
       integrationConfig = {
-        url: trimmedUrl,
-        secret: config.secret.trim(),
+        url: `https://resolve-agent.local/${crypto.randomUUID()}`,
       };
     }
 
@@ -86,9 +93,15 @@ export default function CreateIntegrationModal({  projectId,  isOpen,  onClose,}
         data,
       },
       {
-        onSuccess: () => {
+        onSuccess: (integration) => {
           resetForm();
           onClose();
+
+          if (type === "RESOLVE_AGENT") {
+            navigate(
+              `/monitoring/${projectId}/agent-setup?integrationId=${integration.id}`
+            );
+          }
         },
       },
     );
@@ -155,7 +168,9 @@ export default function CreateIntegrationModal({  projectId,  isOpen,  onClose,}
               </div>
 
               <div>
-                <h2 className="text-xl font-bold text-[#4B3932]">Add Integration</h2>
+                <h2 className="text-xl font-bold text-[#4B3932]">
+                  Add Integration
+                </h2>
 
                 <p className="mt-1 text-xs text-stone-400">
                   Connect an external monitoring service.
@@ -205,7 +220,11 @@ export default function CreateIntegrationModal({  projectId,  isOpen,  onClose,}
                 type="text"
                 value={name}
                 onChange={(event) => setName(event.target.value)}
-                placeholder="Production Prometheus"
+                placeholder={
+                  type === "RESOLVE_AGENT"
+                    ? "Production Agent"
+                    : "Production Prometheus"
+                }
                 disabled={isSubmitting}
                 className="
                   w-full
@@ -233,9 +252,11 @@ export default function CreateIntegrationModal({  projectId,  isOpen,  onClose,}
             </div>
 
             <div>
-              <p className="mb-3 text-sm font-semibold text-[#4B3932]">Integration Type</p>
+              <p className="mb-3 text-sm font-semibold text-[#4B3932]">
+                Integration Type
+              </p>
 
-              <div className="grid gap-3 md:grid-cols-3">
+              <div className="grid gap-3 md:grid-cols-2">
                 {integrationTypes.map((integrationType) => {
                   const Icon = integrationType.icon;
 
@@ -248,33 +269,35 @@ export default function CreateIntegrationModal({  projectId,  isOpen,  onClose,}
                       onClick={() => setType(integrationType.value)}
                       disabled={isSubmitting}
                       className={`
-                          rounded-2xl
-                          border
-                          p-4
-                          text-left
-                          transition-all
-                          duration-300
-                          ${
-                            isSelected
-                              ? "border-[#4B3932] bg-[#FAF6F0] shadow-md"
-                              : "border-[#E7DDD3] bg-white hover:-translate-y-0.5 hover:border-[#D8C9BD] hover:shadow-sm"
-                          }
-                          disabled:cursor-not-allowed
-                          disabled:opacity-60
-                        `}
+                        rounded-2xl
+                        border
+                        p-4
+                        text-left
+                        transition-all
+                        duration-300
+                        ${
+                          isSelected
+                            ? "border-[#4B3932] bg-[#FAF6F0] shadow-md"
+                            : "border-[#E7DDD3] bg-white hover:-translate-y-0.5 hover:border-[#D8C9BD] hover:shadow-sm"
+                        }
+                        disabled:cursor-not-allowed
+                        disabled:opacity-60
+                      `}
                     >
                       <div
                         className={`
-                            flex
-                            h-10
-                            w-10
-                            items-center
-                            justify-center
-                            rounded-xl
-                            ${
-                              isSelected ? "bg-[#4B3932] text-white" : "bg-[#F0E7D5] text-[#4B3932]"
-                            }
-                          `}
+                          flex
+                          h-10
+                          w-10
+                          items-center
+                          justify-center
+                          rounded-xl
+                          ${
+                            isSelected
+                              ? "bg-[#4B3932] text-white"
+                              : "bg-[#F0E7D5] text-[#4B3932]"
+                          }
+                        `}
                       >
                         <Icon size={18} />
                       </div>
@@ -292,79 +315,28 @@ export default function CreateIntegrationModal({  projectId,  isOpen,  onClose,}
               </div>
             </div>
 
-            <div
-              className="
-                rounded-2xl
-                bg-[#FAF6F0]
-                p-5
-              "
-            >
-              <div className="mb-4">
-                <h3 className="text-sm font-bold text-[#4B3932]">Configuration</h3>
+            {type === "PROMETHEUS" && (
+              <div
+                className="
+                  rounded-2xl
+                  bg-[#FAF6F0]
+                  p-5
+                "
+              >
+                <div className="mb-4">
+                  <h3 className="text-sm font-bold text-[#4B3932]">
+                    Configuration
+                  </h3>
 
-                <p className="mt-1 text-xs text-stone-400">Configure the selected integration.</p>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <label
-                    htmlFor="integration-url"
-                    className="
-                      mb-2
-                      block
-                      text-xs
-                      font-semibold
-                      text-[#4B3932]
-                    "
-                  >
-                    {type === "WEBHOOK" ? "Webhook URL" : `${selectedType?.label ?? "Service"} URL`}
-                  </label>
-
-                  <input
-                    id="integration-url"
-                    type="url"
-                    value={config.url}
-                    onChange={(event) =>
-                      setConfig((current) => ({
-                        ...current,
-                        url: event.target.value,
-                      }))
-                    }
-                    placeholder={
-                      type === "PROMETHEUS"
-                        ? "http://localhost:9090"
-                        : type === "GRAFANA"
-                          ? "http://localhost:3000"
-                          : "https://example.com/webhook"
-                    }
-                    disabled={isSubmitting}
-                    className="
-                      w-full
-                      rounded-xl
-                      border
-                      border-[#E7DDD3]
-                      bg-white
-                      px-4
-                      py-3
-                      text-sm
-                      text-[#4B3932]
-                      outline-none
-                      transition-all
-                      duration-200
-                      placeholder:text-stone-400
-                      focus:border-[#4B3932]
-                      focus:ring-2
-                      focus:ring-[#4B3932]/10
-                      disabled:cursor-not-allowed
-                      disabled:opacity-60
-                    "
-                  />
+                  <p className="mt-1 text-xs text-stone-400">
+                    Configure the selected integration.
+                  </p>
                 </div>
 
-                {type === "GRAFANA" && (
+                <div className="space-y-4">
                   <div>
                     <label
-                      htmlFor="grafana-api-key"
+                      htmlFor="integration-url"
                       className="
                         mb-2
                         block
@@ -373,20 +345,20 @@ export default function CreateIntegrationModal({  projectId,  isOpen,  onClose,}
                         text-[#4B3932]
                       "
                     >
-                      API Key
+                      Prometheus URL
                     </label>
 
                     <input
-                      id="grafana-api-key"
-                      type="password"
-                      value={config.apiKey}
+                      id="integration-url"
+                      type="url"
+                      value={config.url}
                       onChange={(event) =>
                         setConfig((current) => ({
                           ...current,
-                          apiKey: event.target.value,
+                          url: event.target.value,
                         }))
                       }
-                      placeholder="Enter Grafana API key"
+                      placeholder="http://localhost:9090"
                       disabled={isSubmitting}
                       className="
                         w-full
@@ -410,60 +382,31 @@ export default function CreateIntegrationModal({  projectId,  isOpen,  onClose,}
                       "
                     />
                   </div>
-                )}
-
-                {type === "WEBHOOK" && (
-                  <div>
-                    <label
-                      htmlFor="webhook-secret"
-                      className="
-                        mb-2
-                        block
-                        text-xs
-                        font-semibold
-                        text-[#4B3932]
-                      "
-                    >
-                      Webhook Secret
-                    </label>
-
-                    <input
-                      id="webhook-secret"
-                      type="password"
-                      value={config.secret}
-                      onChange={(event) =>
-                        setConfig((current) => ({
-                          ...current,
-                          secret: event.target.value,
-                        }))
-                      }
-                      placeholder="Enter webhook secret"
-                      disabled={isSubmitting}
-                      className="
-                        w-full
-                        rounded-xl
-                        border
-                        border-[#E7DDD3]
-                        bg-white
-                        px-4
-                        py-3
-                        text-sm
-                        text-[#4B3932]
-                        outline-none
-                        transition-all
-                        duration-200
-                        placeholder:text-stone-400
-                        focus:border-[#4B3932]
-                        focus:ring-2
-                        focus:ring-[#4B3932]/10
-                        disabled:cursor-not-allowed
-                        disabled:opacity-60
-                      "
-                    />
-                  </div>
-                )}
+                </div>
               </div>
-            </div>
+            )}
+
+            {type === "RESOLVE_AGENT" && (
+              <div
+                className="
+                  rounded-2xl
+                  bg-[#FAF6F0]
+                  p-5
+                "
+              >
+                <div>
+                  <h3 className="text-sm font-bold text-[#4B3932]">
+                    Resolve Agent Setup
+                  </h3>
+
+                  <p className="mt-1 text-xs leading-5 text-stone-400">
+                    No additional configuration is required. After creating the
+                    integration, you will be taken to the Resolve Agent setup
+                    guide with the generated integration connection command.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
 
           <div
@@ -505,7 +448,11 @@ export default function CreateIntegrationModal({  projectId,  isOpen,  onClose,}
 
             <button
               type="submit"
-              disabled={isSubmitting || !name.trim() || !config.url.trim()}
+              disabled={
+                isSubmitting ||
+                !name.trim() ||
+                (type === "PROMETHEUS" && !config.url.trim())
+              }
               className="
                 rounded-xl
                 bg-[#4B3932]

@@ -19,20 +19,13 @@ export class CreateFreeSubscriptionUseCase implements ICreateFreeSubscriptionUse
     async execute(organizationId: string): Promise<Subscription> {
 
         if (!organizationId?.trim()) {
-            throw new AppError(
-                "Organization ID is required",
-                HttpStatusCode.BAD_REQUEST,
-            );
+            throw new AppError("Organization ID is required", HttpStatusCode.BAD_REQUEST,);
         }
 
-        const existingSubscription =
-            await this.subscriptionRepository.findByOrganizationId(organizationId);
+        const existingSubscription = await this.subscriptionRepository.findByOrganizationId(organizationId);
 
         if (existingSubscription) {
-            throw new AppError(
-                "Organization already has a subscription",
-                HttpStatusCode.CONFLICT,
-            );
+            throw new AppError("Organization already has a subscription", HttpStatusCode.CONFLICT,);
         }
 
         const freePlan = await this.planRepository.findByName(PlanName.FREE);
@@ -45,12 +38,17 @@ export class CreateFreeSubscriptionUseCase implements ICreateFreeSubscriptionUse
             throw new AppError("Free plan is not active", HttpStatusCode.BAD_REQUEST,);
         }
 
+        const startDate = new Date();
+
+        const endDate = new Date(startDate);
+        endDate.setDate(endDate.getDate() + (freePlan.durationDays ?? 30));
+
         const subscription = new Subscription({
             organizationId,
             planId: freePlan.id!,
             status: SubscriptionStatus.ACTIVE,
-            startDate: new Date(),
-            endDate: null,
+            startDate,
+            endDate,
             reminder10DaysSentAt: null,
             reminder2DaysSentAt: null,
         });

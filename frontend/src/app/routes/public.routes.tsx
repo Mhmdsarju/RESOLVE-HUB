@@ -1,18 +1,29 @@
+import { Suspense } from "react";
 import type { RouteObject } from "react-router-dom";
 
 import PublicLayout from "@/shared/layouts/PublicLayout";
 import GuestGuard from "@/shared/guards/GuestGuard";
 
-import LandingPage from "@/modules/landing/pages/LandingPage";
-import OrganizationRegisterPage from "@/modules/auth/pages/OrganizationRegisterPage";
-import VerifySignupOtpPage from "@/modules/auth/pages/VerifySignupOtpPage";
-import OrganizationLoginPage from "@/modules/auth/pages/OrganizationLoginPage";
-import UserLoginPage from "@/modules/auth/pages/UserLoginPage";
-import ForgotPasswordPage from "@/modules/auth/pages/ForgotPasswordPage";
-import VerifyOtpPage from "@/modules/auth/pages/VerifyOtpPage";
-import ResetPasswordPage from "@/modules/auth/pages/ResetPasswordPage";
-import NotFoundPage from "@/pages/NotFound";
-import AcceptInvitationPage from "@/modules/team-invitation/pages/AcceptInvitationPage";
+import {
+  LandingPage,
+  OrganizationRegisterPage,
+  VerifySignupOtpPage,
+  OrganizationLoginPage,
+  UserLoginPage,
+  ForgotPasswordPage,
+  VerifyOtpPage,
+  ResetPasswordPage,
+  NotFoundPage,
+  AcceptInvitationPage,
+  TermsAndConditionsPage,
+  PrivacyPolicyPage,
+} from "./lazyPages";
+
+const withSuspense = (element: React.ReactNode) => (
+  <Suspense fallback={null}>
+    {element}
+  </Suspense>
+);
 
 export const publicRoutes: RouteObject[] = [
   {
@@ -20,7 +31,7 @@ export const publicRoutes: RouteObject[] = [
     children: [
       {
         path: "/",
-        element: <LandingPage />,
+        element: withSuspense(<LandingPage />),
       },
 
       {
@@ -28,38 +39,46 @@ export const publicRoutes: RouteObject[] = [
         children: [
           {
             path: "/organization/register",
-            element: <OrganizationRegisterPage />,
+            element: withSuspense(<OrganizationRegisterPage />),
           },
           {
             path: "/organization/login",
-            element: <OrganizationLoginPage />,
+            element: withSuspense(<OrganizationLoginPage />),
           },
           {
             path: "/user/login",
-            element: <UserLoginPage />,
+            element: withSuspense(<UserLoginPage />),
           },
           {
             path: "/forgot-password",
-            element: <ForgotPasswordPage />,
+            element: withSuspense(<ForgotPasswordPage />),
           },
           {
             path: "/forgot-password/verify-otp",
-            element: <VerifyOtpPage />,
+            element: withSuspense(<VerifyOtpPage />),
           },
           {
             path: "/forgot-password/reset-password",
-            element: <ResetPasswordPage />,
+            element: withSuspense(<ResetPasswordPage />),
           },
           {
             path: "/accept-invitation/:token",
-            element: <AcceptInvitationPage />,
+            element: withSuspense(<AcceptInvitationPage />),
+          },
+          {
+            path: "/terms",
+            element: withSuspense(<TermsAndConditionsPage />),
+          },
+          {
+            path: "/privacy",
+            element: withSuspense(<PrivacyPolicyPage />),
           },
         ],
       },
 
       {
         path: "*",
-        element: <NotFoundPage />,
+        element: withSuspense(<NotFoundPage />),
       },
     ],
   },
@@ -69,7 +88,7 @@ export const publicRoutes: RouteObject[] = [
     children: [
       {
         path: "/organization/verify-signup-otp",
-        element: <VerifySignupOtpPage />,
+        element: withSuspense(<VerifySignupOtpPage />),
       },
     ],
   },

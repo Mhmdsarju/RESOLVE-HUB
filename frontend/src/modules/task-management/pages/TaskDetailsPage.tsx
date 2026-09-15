@@ -1,4 +1,4 @@
-import { Activity, CalendarDays, CheckCircle2, Clock3, FileText, UserRound } from "lucide-react";
+import {CalendarDays, CheckCircle2, Clock3, FileText, UserRound } from "lucide-react";
 
 import FileUpload from "@/modules/file-management/components/FileUpload";
 import FileList from "@/modules/file-management/components/FileList";
@@ -571,71 +571,6 @@ export default function TaskDetailsPage() {
 
         <div className="mt-5">
           <FileList taskId={task.id} />
-        </div>
-      </div>
-
-      <div
-        className="
-          overflow-hidden
-          rounded-2xl
-          border
-          border-[#E7DDD3]
-          bg-white
-          shadow-sm
-        "
-      >
-        <div className="border-b border-[#E7DDD3] p-6">
-          <div className="flex items-center gap-3">
-            <div
-              className="
-                flex
-                h-10
-                w-10
-                items-center
-                justify-center
-                rounded-xl
-                bg-[#F0E7D5]
-                text-[#4B3932]
-              "
-            >
-              <Activity size={19} />
-            </div>
-
-            <div>
-              <h2 className="text-xl font-bold text-[#4B3932]">Activity & Audit</h2>
-
-              <p className="mt-1 text-sm text-stone-500">
-                Track changes and activities related to this task.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="p-6">
-          <div className="rounded-xl border border-dashed border-[#DCCFC3] bg-[#FAF6F0] p-8 text-center">
-            <div
-              className="
-                mx-auto
-                flex
-                h-12
-                w-12
-                items-center
-                justify-center
-                rounded-xl
-                bg-white
-                text-[#8B6F61]
-                shadow-sm
-              "
-            >
-              <Activity size={21} />
-            </div>
-
-            <h3 className="mt-4 text-sm font-semibold text-[#4B3932]">Activity history</h3>
-
-            <p className="mt-1 text-xs leading-5 text-stone-500">
-              Audit activity will appear here once the task audit API is connected.
-            </p>
-          </div>
         </div>
       </div>
 

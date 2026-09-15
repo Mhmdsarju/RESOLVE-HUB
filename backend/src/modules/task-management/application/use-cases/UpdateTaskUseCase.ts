@@ -19,10 +19,7 @@ export class UpdateTaskUseCase implements IUpdateTaskUseCase {
 
     async execute(dto: UpdateTaskDto): Promise<Task> {
         if (!dto.taskId?.trim()) {
-            throw new AppError(
-                "Task ID is required",
-                HttpStatusCode.BAD_REQUEST,
-            );
+            throw new AppError("Task ID is required", HttpStatusCode.BAD_REQUEST,);
         }
 
         if (!dto.userId?.trim()) {

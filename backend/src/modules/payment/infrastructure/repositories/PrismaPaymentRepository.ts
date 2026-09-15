@@ -97,10 +97,7 @@ export class PrismaPaymentRepository implements IPaymentRepository {
         return payments.map(PaymentMapper.fromDb);
     }
 
-    async findByOrganizationIdAndStatus(
-        organizationId: string,
-        status: PaymentStatus,
-    ): Promise<Payment[]> {
+    async findByOrganizationIdAndStatus(organizationId: string, status: PaymentStatus,): Promise<Payment[]> {
         const payments = await prisma.payment.findMany({
             where: {
                 organizationId,

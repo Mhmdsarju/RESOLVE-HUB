@@ -1,7 +1,7 @@
 import { KafkaConsumer } from "./kafka.consumer";
 import { KafkaProducer } from "./kafka.producer";
 import { TaskEventHandler } from "./handlers/taskEvent.handler";
-import { KafkaTopics } from "./kafka.topics";
+import { KafkaTopics } from "../../shared/constant/kafka.topics";
 import { IUserRepository } from "@/modules/auth/domain/repositories/IUserRepository";
 import { ICreateNotificationUseCase } from "@/modules/notification/domain/interface/use-case/ICreateNotificationUseCase";
 import { EmailEventHandler } from "./handlers/emailEvent.handler";

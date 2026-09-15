@@ -15,10 +15,7 @@ import logo from "@/assets/resolvehub-logo.png";
 import { logout } from "@/modules/auth/api/authApi";
 import { useAuthStore } from "@/modules/auth/store/authStore";
 
-const sidebarMenus: Record<
-  "ORG_ADMIN" | "ENGINEER" | "SUPER_ADMIN",
-  SidebarSectionType[]
-> = {
+const sidebarMenus: Record<  "ORG_ADMIN" | "ENGINEER" | "SUPER_ADMIN",  SidebarSectionType[]> = {
   ORG_ADMIN: orgAdminSidebar,
   ENGINEER: engineerSidebar,
   SUPER_ADMIN: superAdminSidebar,
@@ -29,10 +26,7 @@ interface SidebarProps {
   onClose?: () => void;
 }
 
-export default function Sidebar({
-  isOpen = false,
-  onClose,
-}: SidebarProps) {
+export default function Sidebar({  isOpen = false,  onClose,}: SidebarProps) {
   const navigate = useNavigate();
 
   const user = useAuthStore((state) => state.user);

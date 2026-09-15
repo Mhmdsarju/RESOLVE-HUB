@@ -1,0 +1,19 @@
+import { GetPaymentHistoryDTO } from "../dto/GetPaymentHistoryDTO";
+import { PaymentHistoryDTO } from "../dto/PaymentHistoryDTO";
+import { IGetPaymentHistoryUseCase } from "../../domain/interfaces/IGetPaymentHistoryUseCase";
+import { IOrganizationRepository } from "../../domain/repositories/IOrganizationRepository"; 
+
+export class GetPaymentHistoryUseCase implements IGetPaymentHistoryUseCase {
+    constructor(
+        private readonly organizationRepository: IOrganizationRepository,
+    ) { }
+
+    async execute(dto: GetPaymentHistoryDTO): Promise<PaymentHistoryDTO> {
+        return await this.organizationRepository.getPaymentHistory(
+            dto.page,
+            dto.limit,
+            dto.search,
+            dto.status,
+        );
+    }
+}

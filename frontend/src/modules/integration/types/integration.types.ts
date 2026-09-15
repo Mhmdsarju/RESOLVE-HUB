@@ -1,7 +1,6 @@
 export type IntegrationType =
   | "PROMETHEUS"
-  | "GRAFANA"
-  | "WEBHOOK";
+  | "RESOLVE_AGENT";
 
 
 export interface Integration {

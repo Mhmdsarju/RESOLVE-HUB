@@ -15,17 +15,11 @@ export class GetPaymentUseCase implements IGetPaymentUseCase {
         const payment = await this.paymentRepository.findById(paymentId);
 
         if (!payment) {
-            throw new AppError(
-                "Payment not found",
-                HttpStatusCode.NOT_FOUND,
-            );
+            throw new AppError("Payment not found", HttpStatusCode.NOT_FOUND,);
         }
 
         if (payment.organizationId !== organizationId) {
-            throw new AppError(
-                "Payment does not belong to this organization",
-                HttpStatusCode.FORBIDDEN,
-            );
+            throw new AppError("Payment does not belong to this organization", HttpStatusCode.FORBIDDEN,);
         }
 
         return payment;

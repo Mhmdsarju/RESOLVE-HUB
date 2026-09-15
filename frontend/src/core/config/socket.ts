@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 
-import { useAuthStore } from "@/modules/auth/store/authStore"; 
+import { useAuthStore } from "@/modules/auth/store/authStore";
 
 export const socket = io(
     import.meta.env.VITE_SOCKET_URL,

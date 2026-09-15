@@ -6,6 +6,11 @@ import type {
   UpdateOrganizationDto,
   PendingOrganizationVerification,
   OrganizationVerificationDetails,
+  OrganizationDashboardStats,
+  RevenueAnalyticsDTO,
+  SuperAdminOrganizationsDTO,
+  PaymentHistoryDTO,
+  SuperAdminDashboardDTO,
 } from "../types/organization.types";
 
 import type { ApiResponse } from "@/core/types/api.types";
@@ -70,6 +75,85 @@ export async function rejectOrganizationVerification(organizationId: string, rea
   const response = await api.post<ApiResponse<Organization>>(
     `/admin/organizations/${organizationId}/reject`,
     { reason },
+  );
+
+  return response.data.data;
+}
+
+export async function getOrganizationDashboardStats() {
+  const response = await api.get<ApiResponse<OrganizationDashboardStats>>(
+    "/organizations/dashboard",
+  );
+
+  return response.data.data;
+}
+
+export async function getOrganizationAnalytics() {
+  const response = await api.get<
+    ApiResponse<{
+      totalOrganizations: number;
+      activeOrganizations: number;
+      frozenOrganizations: number;
+    }>
+  >("/admin/organizations/analytics");
+
+  return response.data.data;
+}
+
+export async function getSuperAdminOrganizations(params: {
+  page: number;
+  limit: number;
+  search?: string;
+  status?: string;
+}) {
+  const response = await api.get<ApiResponse<SuperAdminOrganizationsDTO>>(
+    "/admin/organizations",
+    {
+      params,
+    }
+  );
+
+  return response.data.data;
+}
+
+export async function getRevenueAnalytics() {
+  const response = await api.get<ApiResponse<RevenueAnalyticsDTO>>(
+    "/admin/organizations/revenue-analytics"
+  );
+
+  return response.data.data;
+}
+
+export async function getPaymentHistory(params: {
+  page: number;
+  limit: number;
+  search?: string;
+  status?: string;
+}) {
+  const response = await api.get<ApiResponse<PaymentHistoryDTO>>(
+    "/admin/organizations/payment-history",
+    {
+      params,
+    }
+  );
+
+  return response.data.data;
+}
+
+export async function exportPaymentReport() {
+  const response = await api.get(
+    "/admin/organizations/payment-history/export",
+    {
+      responseType: "blob",
+    }
+  );
+
+  return response.data;
+}
+
+export async function getSuperAdminDashboard() {
+  const response = await api.get<ApiResponse<SuperAdminDashboardDTO>>(
+    "/admin/organizations/dashboard"
   );
 
   return response.data.data;

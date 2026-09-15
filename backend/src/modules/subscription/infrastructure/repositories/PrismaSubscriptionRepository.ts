@@ -71,10 +71,7 @@ export class PrismaSubscriptionRepository implements ISubscriptionRepository {
         return SubscriptionMapper.fromDb(subscription);
     }
 
-    async findByOrganizationIdAndStatus(
-        organizationId: string,
-        status: SubscriptionStatus,
-    ): Promise<Subscription | null> {
+    async findByOrganizationIdAndStatus(organizationId: string, status: SubscriptionStatus,): Promise<Subscription | null> {
         const subscription = await prisma.subscription.findFirst({
             where: {
                 organizationId,
@@ -89,10 +86,7 @@ export class PrismaSubscriptionRepository implements ISubscriptionRepository {
         return SubscriptionMapper.fromDb(subscription);
     }
 
-    async findExpiringSubscriptions(
-        startDate: Date,
-        endDate: Date,
-    ): Promise<Subscription[]> {
+    async findExpiringSubscriptions(startDate: Date, endDate: Date,): Promise<Subscription[]> {
         const subscriptions = await prisma.subscription.findMany({
             where: {
                 status: SubscriptionStatus.ACTIVE,
@@ -106,10 +100,7 @@ export class PrismaSubscriptionRepository implements ISubscriptionRepository {
         return subscriptions.map(SubscriptionMapper.fromDb);
     }
 
-    async updateReminder10DaysSentAt(
-        id: string,
-        sentAt: Date,
-    ): Promise<Subscription> {
+    async updateReminder10DaysSentAt(id: string, sentAt: Date,): Promise<Subscription> {
         const updated = await prisma.subscription.update({
             where: { id },
             data: {
@@ -120,10 +111,7 @@ export class PrismaSubscriptionRepository implements ISubscriptionRepository {
         return SubscriptionMapper.fromDb(updated);
     }
 
-    async updateReminder2DaysSentAt(
-        id: string,
-        sentAt: Date,
-    ): Promise<Subscription> {
+    async updateReminder2DaysSentAt(id: string, sentAt: Date,): Promise<Subscription> {
         const updated = await prisma.subscription.update({
             where: { id },
             data: {
@@ -135,16 +123,16 @@ export class PrismaSubscriptionRepository implements ISubscriptionRepository {
     }
 
     async findExpiredSubscriptions(date: Date): Promise<Subscription[]> {
-    const subscriptions = await prisma.subscription.findMany({
-        where: {
-            status: SubscriptionStatus.ACTIVE,
-            endDate: {
-                lte: date,
+        const subscriptions = await prisma.subscription.findMany({
+            where: {
+                status: SubscriptionStatus.ACTIVE,
+                endDate: {
+                    lte: date,
+                },
             },
-        },
-    });
+        });
 
-    return subscriptions.map(SubscriptionMapper.fromDb);
-}
+        return subscriptions.map(SubscriptionMapper.fromDb);
+    }
 
 }

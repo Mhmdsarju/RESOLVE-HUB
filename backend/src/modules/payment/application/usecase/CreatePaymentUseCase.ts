@@ -7,6 +7,7 @@ import { IPaymentRepository } from "../../domain/interface/IPaymentRepository";
 import { ISubscriptionRepository } from "@/modules/subscription/domain/interface/ISubscriptionRepository";
 import { IPlanRepository } from "@/modules/plan/domain/interface/IPlanRepository";
 import { ICreatePaymentUseCase } from "../../domain/interface/use-cases/ICreatePaymentUseCase";
+import { IRazorpayService } from "../../domain/interface/IRazorpayService";
 
 export class CreatePaymentUseCase implements ICreatePaymentUseCase {
 
@@ -14,71 +15,57 @@ export class CreatePaymentUseCase implements ICreatePaymentUseCase {
         private readonly paymentRepository: IPaymentRepository,
         private readonly subscriptionRepository: ISubscriptionRepository,
         private readonly planRepository: IPlanRepository,
+        private readonly razorpayService: IRazorpayService,
     ) { }
 
-    async execute(organizationId: string, subscriptionId: string, amount: number,): Promise<Payment> {
+    async execute(organizationId: string, subscriptionId: string, planId: string, amount: number,): Promise<Payment> {
         const subscription = await this.subscriptionRepository.findById(subscriptionId);
 
         if (!subscription) {
-            throw new AppError(
-                "Subscription not found",
-                HttpStatusCode.NOT_FOUND,
-            );
+            throw new AppError("Subscription not found", HttpStatusCode.NOT_FOUND,);
         }
 
         if (subscription.organizationId !== organizationId) {
-            throw new AppError(
-                "Subscription does not belong to this organization",
-                HttpStatusCode.FORBIDDEN,
-            );
+            throw new AppError("Subscription does not belong to this organization", HttpStatusCode.FORBIDDEN,);
         }
 
-        const plan = await this.planRepository.findById(subscription.planId);
+        const plan = await this.planRepository.findById(planId);
 
         if (!plan) {
-            throw new AppError(
-                "Plan not found",
-                HttpStatusCode.NOT_FOUND,
-            );
+            throw new AppError("Plan not found", HttpStatusCode.NOT_FOUND,);
         }
 
         if (!plan.isActive) {
-            throw new AppError(
-                "Plan is not active",
-                HttpStatusCode.BAD_REQUEST,
-            );
+            throw new AppError("Plan is not active", HttpStatusCode.BAD_REQUEST,);
         }
 
         if (plan.name === "FREE") {
-            throw new AppError(
-                "Payment is not required for free plan",
-                HttpStatusCode.BAD_REQUEST,
-            );
+            throw new AppError("Payment is not required for free plan", HttpStatusCode.BAD_REQUEST,);
         }
 
         if (amount <= 0) {
-            throw new AppError(
-                "Payment amount must be greater than zero",
-                HttpStatusCode.BAD_REQUEST,
-            );
+            throw new AppError("Payment amount must be greater than zero", HttpStatusCode.BAD_REQUEST,);
         }
 
         if (amount !== plan.price) {
-            throw new AppError(
-                "Payment amount does not match the plan price",
-                HttpStatusCode.BAD_REQUEST,
-            );
+            throw new AppError("Payment amount does not match the plan price", HttpStatusCode.BAD_REQUEST,);
         }
 
-        const transactionId = `TXN_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
+        const razorpayOrder = await this.razorpayService.createOrder(
+            Math.round(amount * 100),
+            "INR",
+            `PAY_${organizationId}_${Date.now()}`,
+        );
 
         const payment = new Payment({
             organizationId,
             subscriptionId,
+            planId,
             amount,
             currency: "INR",
             status: PaymentStatus.PENDING,
-            transactionId,
+            transactionId: null,
+            razorpayOrderId: razorpayOrder.id,
         });
 
         return await this.paymentRepository.create(payment);

@@ -8,8 +8,8 @@ import { IIncidentRepository } from "@/modules/incident/domain/interfaces/IIncid
 import { ITeamMemberRepository } from "@/modules/team-management/domain/interfaces/ITeamMemberRepository";
 import { ICreateTimelineEventUseCase } from "@/modules/timeline/domain/interfaces/usecases/ICreateTimelineEventUseCase";
 import { TimelineEventType } from "@/modules/timeline/domain/enums/timelineEventType.enum";
-import { KafkaProducer } from "@/infrastructure/kafka/kafka.producer";
-import { KafkaTopics } from "@/infrastructure/kafka/kafka.topics";
+import { KafkaTopics } from "@/shared/constant/kafka.topics";
+import { IEventPublisher } from "@/modules/organization/domain/interfaces/IEventPublisher";
 
 export class UpdateTaskStatusUseCase implements IUpdateTaskStatusUseCase {
     constructor(
@@ -17,7 +17,7 @@ export class UpdateTaskStatusUseCase implements IUpdateTaskStatusUseCase {
         private readonly incidentRepository: IIncidentRepository,
         private readonly teamMemberRepository: ITeamMemberRepository,
         private readonly createTimelineEventUseCase: ICreateTimelineEventUseCase,
-        private readonly kafkaProducer: KafkaProducer
+        private readonly eventPublisher: IEventPublisher,
     ) { }
 
     async execute(taskId: string, status: TaskStatus, userId: string, role: string,): Promise<Task> {
@@ -38,10 +38,25 @@ export class UpdateTaskStatusUseCase implements IUpdateTaskStatusUseCase {
             throw new AppError("User role is required", HttpStatusCode.BAD_REQUEST,);
         }
 
+
+
         const existingTask = await this.taskRepository.findById(taskId);
 
         if (!existingTask) {
             throw new AppError("Task not found", HttpStatusCode.NOT_FOUND,);
+        }
+
+        if (
+            (existingTask.status === TaskStatus.TODO &&
+                status !== TaskStatus.IN_PROGRESS) ||
+            (existingTask.status === TaskStatus.IN_PROGRESS &&
+                status !== TaskStatus.DONE) ||
+            existingTask.status === TaskStatus.DONE
+        ) {
+            throw new AppError(
+                `Task status cannot be changed from ${existingTask.status} to ${status}`,
+                HttpStatusCode.BAD_REQUEST,
+            );
         }
 
         if (role === "ORG_ADMIN") {
@@ -133,7 +148,7 @@ export class UpdateTaskStatusUseCase implements IUpdateTaskStatusUseCase {
             );
 
 
-            await this.kafkaProducer.publish(
+            await this.eventPublisher.publish(
                 KafkaTopics.TASK_EVENTS,
                 {
                     event: "TASK_STATUS_UPDATED",
