@@ -8,17 +8,14 @@ import { subscriptionScheduler } from "./config/inversify.config";
 
 async function bootstrap() {
   try {
-    // Connect Redis
     await connectRedis();
 
-    // Connect Database
     await connectDatabase();
 
     await kafkaManager.connect();
 
     subscriptionScheduler.start();
 
-    // Start HTTP Server
     const server = startServer();
 
     const gracefulShutdown = (signal: string) => {
