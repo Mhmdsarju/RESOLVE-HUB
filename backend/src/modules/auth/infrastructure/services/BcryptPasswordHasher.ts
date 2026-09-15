@@ -1,6 +1,8 @@
 import bcrypt from "bcrypt";
 import { IPasswordHasher } from "../../domain/interfaces/IPasswordHasher";
+import { injectable } from "inversify";
 
+@injectable()
 export class BcryptPasswordHasher implements IPasswordHasher {
   async hash(password: string): Promise<string> {
     return bcrypt.hash(password, 10);

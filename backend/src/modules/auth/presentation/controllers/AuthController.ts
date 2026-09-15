@@ -1,38 +1,36 @@
 import { Request, Response, NextFunction } from "express";
-import { RegisterUseCase } from "../../application/use-cases/RegisterUseCase";
-import { LoginUseCase } from "../../application/use-cases/LoginUseCase";
-import { RefreshUseCase } from "../../application/use-cases/RefreshUseCase";
-import { LogoutUseCase } from "../../application/use-cases/LogoutUseCase";
+import { IRegisterUseCase } from "../../domain/interfaces/use-cases/IRegisterUseCase";
+import { ILoginUseCase } from "../../domain/interfaces/use-cases/ILoginUseCase";
+import { ILogoutUsecase } from "../../domain/interfaces/use-cases/ILogoutUseCase";
+import { IRefreshUseCase } from "../../domain/interfaces/use-cases/IRefreshUseCase";
+import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
+import { AppError } from "../../../../shared/errors/AppError";
+import { ErrorMessages } from "../../../../shared/constant/ErrorMessages";
+import { SuccessMessages } from "../../../../shared/constant/SuccessMessages";
+import { ResponseHandler } from "../../../../shared/response/response-handler";
+import {
+  setRefereshTokenCookie,
+  clearRefreshTokenCookie,
+} from "@/shared/utils/cookie.util";
 
 export class AuthController {
   constructor(
-    private readonly registerUseCase: RegisterUseCase,
-    private readonly loginUseCase: LoginUseCase,
-    private readonly refreshUseCase: RefreshUseCase,
-    private readonly logoutUseCase: LogoutUseCase
+    private readonly registerUseCase: IRegisterUseCase,
+    private readonly loginUseCase: ILoginUseCase,
+    private readonly refreshUseCase: IRefreshUseCase,
+    private readonly logoutUseCase: ILogoutUsecase,
   ) { }
 
   async register(req: Request, res: Response, next: NextFunction) {
     try {
-
       const result = await this.registerUseCase.execute(req.body);
 
-      res.cookie("refreshToken", result.refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-      });
-
-      return res.status(201).json({
-        success: true,
-        message: "User registered successfully",
-        data: {
-          user: result.user,
-          accessToken: result.accessToken,
-        },
-      });
-
+      return ResponseHandler.success(
+        res,
+        result.message,
+        null,
+        HttpStatusCode.OK
+      );
     } catch (error) {
       next(error);
     }
@@ -42,22 +40,17 @@ export class AuthController {
     try {
       const result = await this.loginUseCase.execute(req.body);
 
-      res.cookie("refreshToken", result.refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-      });
+      setRefereshTokenCookie(res, result.refreshToken);
 
-      return res.status(200).json({
-        success: true,
-        message: "Login successful",
-        data: {
+      return ResponseHandler.success(
+        res,
+        SuccessMessages.LOGIN_SUCCESSFUL,
+        {
           user: result.user,
           accessToken: result.accessToken,
         },
-      });
-
+        HttpStatusCode.OK
+      );
     } catch (error) {
       next(error);
     }
@@ -68,26 +61,25 @@ export class AuthController {
       const refreshToken = req.cookies.refreshToken;
 
       if (!refreshToken) {
-        throw new Error("Refresh token not found");
+        throw new AppError(
+          ErrorMessages.REFRESH_TOKEN_NOT_FOUND,
+          HttpStatusCode.NOT_FOUND
+        );
       }
 
-      const result = await this.refreshUseCase.execute(refreshToken);
-
-      res.cookie("refreshToken", result.refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+      const result = await this.refreshUseCase.execute({
+        refreshToken,
       });
 
-      return res.status(200).json({
-        success: true,
-        message: "Token refreshed successfully",
-        data: {
+      setRefereshTokenCookie(res, result.refreshToken);
+
+      return ResponseHandler.success(
+        res,
+        "Token refreshed successfully",
+        {
           accessToken: result.accessToken,
-        },
-      });
-
+        }
+      );
     } catch (error) {
       next(error);
     }
@@ -98,21 +90,24 @@ export class AuthController {
       const refreshToken = req.cookies.refreshToken;
 
       if (!refreshToken) {
-        throw new Error("Refresh token not found");
+        throw new AppError(
+          ErrorMessages.REFRESH_TOKEN_NOT_FOUND,
+          HttpStatusCode.NOT_FOUND
+        );
       }
 
-      await this.logoutUseCase.execute(refreshToken);
-
-      res.clearCookie("refreshToken");
-
-      return res.status(200).json({
-        success: true,
-        message: "Logout successful",
+      await this.logoutUseCase.execute({
+        refreshToken,
       });
+
+      clearRefreshTokenCookie(res);
+
+      return ResponseHandler.success(
+        res,
+        SuccessMessages.LOGOUT_SUCCESSFUL
+      );
     } catch (error) {
       next(error);
     }
   }
-
-
 }

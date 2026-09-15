@@ -4,7 +4,8 @@ import { UserRole } from "../../domain/enums/UserRole";
 import { UserRole as PrismaUserRole } from "@prisma/client";
 
 export class UserMapper {
-  static toDomain(user: PrismaUser): User {
+  //Converts a database object into a domain entity
+  static fromDb(user: PrismaUser): User {
     return new User({
       id: user.id,
       name: user.fullName,
@@ -22,7 +23,8 @@ export class UserMapper {
     });
   }
 
-  static toPersistence(user: User) {
+  //Converts a domain entity into a database object
+  static toDb(user: User) {
     return {
       fullName: user.name,
       email: user.email,
@@ -34,6 +36,39 @@ export class UserMapper {
           : user.role === UserRole.ORG_ADMIN
             ? PrismaUserRole.ORG_ADMIN
             : PrismaUserRole.ENGINEER,
+    };
+  }
+
+  static toUpdateDb(data: Partial<User>) {
+    return {
+      ...(data.name !== undefined && {
+        fullName: data.name,
+      }),
+
+      ...(data.email !== undefined && {
+        email: data.email,
+      }),
+
+      ...(data.password !== undefined && {
+        passwordHash: data.password,
+      }),
+
+      ...(data.organizationId !== undefined && {
+        organizationId: data.organizationId,
+      }),
+
+      ...(data.role !== undefined && {
+        role:
+          data.role === UserRole.SUPER_ADMIN
+            ? PrismaUserRole.SUPER_ADMIN
+            : data.role === UserRole.ORG_ADMIN
+              ? PrismaUserRole.ORG_ADMIN
+              : PrismaUserRole.ENGINEER,
+      }),
+
+      ...(data.updatedAt !== undefined && {
+        updatedAt: data.updatedAt,
+      }),
     };
   }
 }

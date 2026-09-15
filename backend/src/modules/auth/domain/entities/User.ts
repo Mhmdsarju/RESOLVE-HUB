@@ -5,7 +5,7 @@ interface UserProps {
   name: string;
   email: string;
   password: string;
-  organizationId: string;
+  organizationId: string|null;
   role: UserRole;
   createdAt?: Date;
   updatedAt?: Date;
@@ -16,7 +16,7 @@ export class User {
   public name: string;
   public email: string;
   public password: string;
-  public organizationId: string;
+  public organizationId: string|null;
   public role: UserRole;
   public readonly createdAt?: Date;
   public updatedAt?: Date;

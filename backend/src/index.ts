@@ -1,25 +1,31 @@
 import "dotenv/config";
+import "reflect-metadata";
 import { connectRedis } from "./config/redis";
 import { connectDatabase } from "./config/database";
 import { startServer } from "./app/server";
+import { kafkaManager } from "./config/inversify.config";
+import { subscriptionScheduler } from "./config/inversify.config";
 
 async function bootstrap() {
   try {
-    // Connect Redis
     await connectRedis();
 
-    // Connect Database
     await connectDatabase();
 
-    // Start HTTP Server
+    await kafkaManager.connect();
+
+    subscriptionScheduler.start();
+
     const server = startServer();
 
     const gracefulShutdown = (signal: string) => {
       console.log(`\n${signal} received.`);
       console.log("Gracefully shutting down server...");
 
-      server.close(() => {
+      server.close(async () => {
         console.log("HTTP Server closed");
+        await kafkaManager.disconnect();
+        console.log("Kafka connections closed");
         console.log("Application stopped successfully.");
         process.exit(0);
       });
