@@ -1,17 +1,25 @@
+import { Suspense } from "react";
 import type { RouteObject } from "react-router-dom";
 
 import ProtectedGuard from "@/shared/guards/ProtectedRoute";
 import SubscriptionAccessGuard from "@/shared/guards/SubscriptionAccessGuard";
 
 import DashboardLayout from "@/modules/dashboard/layout/DashboardLayout";
-import DashboardPage from "@/modules/dashboard/pages/DashboardPage";
 
-import EngineerTasksPage from "@/modules/task-management/pages/EngineerTasksPage";
-import SettingsPage from "@/modules/user/pages/SettingsPage";
-import TaskDetailsPage from "@/modules/task-management/pages/TaskDetailsPage";
+import {
+  DashboardPage,
+  EngineerTasksPage,
+  SettingsPage,
+  TaskDetailsPage,
+  EngineerWarRoomListPage,
+  EngineerWarRoomDetailsPage,
+} from "./lazyPages";
 
-import EngineerWarRoomListPage from "@/modules/war-room/pages/EngineerWarRoomListPage";
-import EngineerWarRoomDetailsPage from "@/modules/war-room/pages/EngineerWarRoomDetailsPage";
+const withSuspense = (element: React.ReactNode) => (
+  <Suspense fallback={null}>
+    {element}
+  </Suspense>
+);
 
 export const engineerRoutes: RouteObject[] = [
   {
@@ -25,31 +33,32 @@ export const engineerRoutes: RouteObject[] = [
             children: [
               {
                 path: "/dashboard",
-                element: <DashboardPage />,
+                element: withSuspense(<DashboardPage />),
               },
 
               {
                 path: "/my-tasks",
-                element: <EngineerTasksPage />,
+                element: withSuspense(<EngineerTasksPage />),
               },
 
               {
                 path: "/tasks/:id",
-                element: <TaskDetailsPage />,
+                element: withSuspense(<TaskDetailsPage />),
               },
 
               {
                 path: "/profile",
-                element: <SettingsPage />,
+                element: withSuspense(<SettingsPage />),
               },
+
               {
                 path: "/engineer/war-rooms",
-                element: <EngineerWarRoomListPage />,
+                element: withSuspense(<EngineerWarRoomListPage />),
               },
 
               {
                 path: "/engineer/war-rooms/:id",
-                element: <EngineerWarRoomDetailsPage />,
+                element: withSuspense(<EngineerWarRoomDetailsPage />),
               },
             ],
           },

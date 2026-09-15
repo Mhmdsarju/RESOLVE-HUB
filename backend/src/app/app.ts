@@ -1,11 +1,12 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import helmet from "helmet";
 import {
   authModule, organizationModule, teamModule,
   incidentModule, taskModule, integrationModule, monitoringModule,
   alertModule, alertRoutingRule, alertRuleModule, fileModule, warRoomModule, timelineEventModulde,
-  auditLogModule, notificationModule, planModule, subscriptionModule,paymentModule,aiModule
+  auditLogModule, notificationModule, planModule, subscriptionModule, paymentModule, aiModule
 } from "../config/inversify.config";
 import { errorHandler } from "./middlewares/errorHandler";
 import { createRateLimiter } from "./middlewares/rateLimiter";
@@ -22,8 +23,11 @@ const createApp = () => {
     }),
   );
 
+  app.use(helmet());
+  
   app.use(express.json());
   app.use(cookieParser());
+
   app.use(rateLimiterMiddleware);
 
   app.use("/api/auth", authModule.authRouter);
