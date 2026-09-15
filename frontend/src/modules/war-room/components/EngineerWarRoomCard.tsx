@@ -15,6 +15,8 @@ export default function EngineerWarRoomCard({ warRoom, onClick, onJoin }: WarRoo
   const { data: team } = useTeam(teamId);
 
   const isActive = warRoom.status === "ACTIVE";
+  const hasAssignedTeam = Boolean(incident?.assignedTeamId);
+  const canJoin = isActive && hasAssignedTeam;
 
   return (
     <div
@@ -22,18 +24,18 @@ export default function EngineerWarRoomCard({ warRoom, onClick, onJoin }: WarRoo
         group relative overflow-hidden rounded-2xl border border-stone-200/80 
         bg-linear-to-b from-white to-stone-50/50 p-6 shadow-sm 
         transition-all duration-300
-        ${isActive ? "hover:-translate-y-1 hover:border-stone-300 hover:shadow-xl" : ""}
+        ${canJoin ? "hover:-translate-y-1 hover:border-stone-300 hover:shadow-xl" : ""}
       `}
     >
-      {isActive && (
+      {canJoin && (
         <div className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-[#4B3932] via-[#8C6D58] to-[#4B3932] opacity-0 transition-opacity group-hover:opacity-100" />
       )}
 
       <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-center">
         <button
           type="button"
-          onClick={isActive ? onClick : undefined}
-          disabled={!isActive}
+          onClick={canJoin ? onClick : undefined}
+          disabled={!canJoin}
           className="
             min-w-0
             flex-1
@@ -75,7 +77,7 @@ export default function EngineerWarRoomCard({ warRoom, onClick, onJoin }: WarRoo
               className={`
                 truncate text-lg font-bold text-[#4B3932] tracking-tight
                 transition-colors
-                ${isActive ? "group-hover:text-[#6E5347]" : ""}
+                ${canJoin ? "group-hover:text-[#6E5347]" : ""}
               `}
             >
               {incident?.title ?? "Incident"}
@@ -105,7 +107,7 @@ export default function EngineerWarRoomCard({ warRoom, onClick, onJoin }: WarRoo
           </div>
         </button>
 
-        {isActive ? (
+        {canJoin ? (
           <div className="flex shrink-0 items-center">
             <button
               type="button"
@@ -125,7 +127,7 @@ export default function EngineerWarRoomCard({ warRoom, onClick, onJoin }: WarRoo
               />
             </button>
           </div>
-        ) : (
+        ) : !isActive ? (
           <div
             className="
               flex
@@ -146,6 +148,33 @@ export default function EngineerWarRoomCard({ warRoom, onClick, onJoin }: WarRoo
             <LockKeyhole size={15} />
 
             <span>Closed · Not accessible</span>
+          </div>
+        ) : (
+          <div
+            className="
+              flex
+              max-w-xs
+              shrink-0
+              items-center
+              gap-2
+              rounded-xl
+              border
+              border-amber-200
+              bg-amber-50
+              px-4
+              py-3
+              text-xs
+              font-semibold
+              leading-relaxed
+              text-amber-800
+            "
+          >
+            <LockKeyhole size={15} />
+
+            <span>
+              You cannot join this War Room due to a technical team assignment
+              error. Once it is corrected, you can join.
+            </span>
           </div>
         )}
       </div>

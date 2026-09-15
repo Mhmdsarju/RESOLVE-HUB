@@ -5,6 +5,7 @@ import ProtectedGuard from "@/shared/guards/ProtectedRoute";
 import SubscriptionAccessGuard from "@/shared/guards/SubscriptionAccessGuard";
 
 import DashboardLayout from "@/modules/dashboard/layout/DashboardLayout";
+import RouteLoader from "@/shared/components/RouteLoader";
 
 import {
   DashboardPage,
@@ -16,7 +17,7 @@ import {
 } from "./lazyPages";
 
 const withSuspense = (element: React.ReactNode) => (
-  <Suspense fallback={null}>
+  <Suspense fallback={<RouteLoader />}>
     {element}
   </Suspense>
 );

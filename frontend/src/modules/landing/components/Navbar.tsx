@@ -39,12 +39,12 @@ export default function Navbar() {
             Architecture
           </a>
 
-          <a
+          {/* <a
             href="#pricing"
             className="text-sm font-medium text-stone-700 transition hover:text-[#4B3932]"
           >
             Pricing
-          </a>
+          </a> */}
         </nav>
 
         {/* Right Side */}

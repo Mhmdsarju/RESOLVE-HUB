@@ -12,11 +12,11 @@ export function createFileRoutes(fileController: FileController) {
     
 
     router.route("/tasks/:taskId/files")
-        .post(
+        .post(authMiddleware,
             upload.single("file"),
             fileController.upload.bind(fileController),
         )
-        .get(
+        .get(authMiddleware,
             fileController.getByTask.bind(fileController),
         );
 

@@ -17,10 +17,10 @@ import {
   AcceptInvitationPage,
   TermsAndConditionsPage,
   PrivacyPolicyPage,
-} from "./lazyPages";
+} from "./lazyPages";import RouteLoader from "@/shared/components/RouteLoader";
 
 const withSuspense = (element: React.ReactNode) => (
-  <Suspense fallback={null}>
+   <Suspense fallback={<RouteLoader />}>
     {element}
   </Suspense>
 );
