@@ -18,6 +18,7 @@ export interface Organization {
   city: string | null;
   address: string | null;
   status: OrganizationStatus;
+  accessStatus: OrganizationAccessStatus;
   createdAt: string;
   updatedAt: string;
 }
@@ -79,4 +80,119 @@ export interface OrganizationVerificationDetails {
     address: string | null;
     status: string;
   };
+}
+
+export type OrganizationAccessStatus =
+  | "ACTIVE"
+  | "FROZEN";
+
+export interface OrganizationDashboardStats {
+  teams: number;
+  members: number;
+  incidents: number;
+  warRooms: number;
+  plan: string;
+  incidentTrends: {
+    month: string;
+    incidents: number;
+  }[];
+  incidentStatus: {
+    status: string;
+    count: number;
+  }[];
+  teamIncidents: {
+    team: string;
+    incidents: number;
+  }[];
+}
+
+export interface RevenueAnalyticsDTO {
+  totalRevenue: number;
+  monthlyRevenue: number;
+  yearlyRevenue: number;
+  freeSubscriptions: number;
+  paidSubscriptions: number;
+  planWiseSubscriptions: {
+    plan: string;
+    count: number;
+  }[];
+  revenueByPlan: {
+    plan: string;
+    revenue: number;
+  }[];
+}
+
+export interface SuperAdminOrganizationsDTO {
+  organizations: {
+    id: string;
+    name: string;
+    industry: string | null;
+    companySize: string | null;
+    country: string | null;
+    state: string | null;
+    city: string | null;
+    status: string;
+    accessStatus: string;
+    createdAt: string;
+  }[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export interface PaymentHistoryDTO {
+  payments: {
+    id: string;
+    organizationName: string;
+    plan: string;
+    amount: number;
+    currency: string;
+    status: string;
+    transactionId: string | null;
+    razorpayOrderId: string;
+    paidAt: string | null;
+    createdAt: string;
+  }[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export interface SuperAdminDashboardDTO {
+    totalOrganizations: number;
+    activeOrganizations: number;
+    frozenOrganizations: number;
+
+    totalRevenue: number;
+    monthlyRevenue: number;
+    yearlyRevenue: number;
+
+    freeSubscriptions: number;
+    paidSubscriptions: number;
+
+    revenueTrend: {
+        month: string;
+        revenue: number;
+    }[];
+
+    subscriptionDistribution: {
+        plan: string;
+        count: number;
+    }[];
+
+    revenueByPlan: {
+        plan: string;
+        revenue: number;
+    }[];
+
+    recentPayments: {
+        organizationName: string;
+        plan: string;
+        amount: number;
+        currency: string;
+        status: string;
+        paidAt: string | null;
+    }[];
 }

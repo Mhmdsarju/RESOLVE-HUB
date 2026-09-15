@@ -8,6 +8,7 @@ import { IGetOrganizationProfileUseCase } from "../../domain/interfaces/IGetOrga
 import { IUpdateOrganizationUseCase } from "../../domain/interfaces/IUpdateOrganizationUseCase";
 import { ISubmitOrganizationVerificationUseCase } from "../../domain/interfaces/ISubmitOrganizationVerificationUseCase";
 import { IGetOrganizationVerificationUseCase } from "../../domain/interfaces/IGetOrganizationVerificationUseCase";
+import { IGetOrganizationDashboardStatsUseCase } from "../../domain/interfaces/IGetOrganizationDashboardStatsUseCase";
 
 export class OrganizationController {
   constructor(
@@ -15,6 +16,8 @@ export class OrganizationController {
     private readonly updateOrganizationUseCase: IUpdateOrganizationUseCase,
     private readonly submitOrganizationVerificationUseCase: ISubmitOrganizationVerificationUseCase,
     private readonly getOrganizationVerificationUseCase: IGetOrganizationVerificationUseCase,
+    private readonly getOrganizationDashboardStatsUseCase: IGetOrganizationDashboardStatsUseCase,
+
   ) { }
 
   async getProfile(req: Request, res: Response, next: NextFunction,) {
@@ -26,7 +29,11 @@ export class OrganizationController {
       }
 
       if (!user.organizationId) {
-        throw new AppError("Organization ID not found for this user", HttpStatusCode.BAD_REQUEST,);
+        return ResponseHandler.success(
+          res,
+          "Organization fetched successfully",
+          null,
+        );
       }
 
       const organization = await this.getOrganizationProfileUseCase.execute(user.organizationId,);
@@ -53,7 +60,7 @@ export class OrganizationController {
         throw new AppError("Organization ID not found for this user", HttpStatusCode.BAD_REQUEST,);
       }
 
-      const result = await this.updateOrganizationUseCase.execute(user.organizationId, req.body,user.userId);
+      const result = await this.updateOrganizationUseCase.execute(user.organizationId, req.body, user.userId);
 
       return ResponseHandler.success(
         res,
@@ -112,4 +119,31 @@ export class OrganizationController {
       next(error);
     }
   }
+
+  async getDashboardStats(req: Request, res: Response, next: NextFunction,) {
+    try {
+      const user = req.user;
+
+      if (!user) {
+        throw new AppError(ErrorMessages.UNAUTHORIZED, HttpStatusCode.UNAUTHORIZED,);
+      }
+
+      if (!user.organizationId) {
+        throw new AppError("Organization ID not found for this user", HttpStatusCode.BAD_REQUEST,);
+      }
+
+      const stats = await this.getOrganizationDashboardStatsUseCase.execute(
+        user.organizationId,
+      );
+
+      return ResponseHandler.success(
+        res,
+        "Organization dashboard stats fetched successfully",
+        stats,
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+
 }

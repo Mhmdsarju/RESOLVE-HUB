@@ -1,11 +1,11 @@
 import type { IntegrationType } from "../types/integration.types";
-import { Globe, Radio, Webhook, } from "lucide-react";
+import { Radio, Bot } from "lucide-react";
 
 export const INTEGRATION_TYPES: {
   value: IntegrationType;
   label: string;
   description: string;
-  icon: typeof Globe;
+  icon: typeof Radio;
 }[] = [
   {
     value: "PROMETHEUS",
@@ -14,16 +14,10 @@ export const INTEGRATION_TYPES: {
     icon: Radio,
   },
   {
-    value: "GRAFANA",
-    label: "Grafana",
-    description: "Connect Grafana for metrics visualization.",
-    icon: Globe,
-  },
-  {
-    value: "WEBHOOK",
-    label: "Webhook",
-    description: "Receive monitoring events through a webhook.",
-    icon: Webhook,
+    value: "RESOLVE_AGENT",
+    label: "Resolve Agent",
+    description: "Monitor Docker services automatically with Resolve Agent.",
+    icon: Bot,
   },
 ];
 
@@ -31,7 +25,7 @@ export const SHORT_INTEGRATION_TYPES: Record<
   IntegrationType,
   {
     label: string;
-    icon: typeof Globe;
+    icon: typeof Radio;
     description: string;
   }
 > = {
@@ -41,15 +35,9 @@ export const SHORT_INTEGRATION_TYPES: Record<
     description: "Metrics monitoring",
   },
 
-  GRAFANA: {
-    label: "Grafana",
-    icon: Globe,
-    description: "Metrics visualization",
-  },
-
-  WEBHOOK: {
-    label: "Webhook",
-    icon: Webhook,
-    description: "Event notifications",
+  RESOLVE_AGENT: {
+    label: "Resolve Agent",
+    icon: Bot,
+    description: "Docker log monitoring",
   },
 };

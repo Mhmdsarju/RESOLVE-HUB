@@ -46,6 +46,20 @@ import { IAuditLogRepository } from "@/modules/audit-log/domain/interface/IAudit
 import { PrismaAuditLogRepository } from "@/modules/audit-log/infrastructure/repositories/PrismaAuditLogRepository";
 import { INotificationRepository } from "@/modules/notification/domain/interface/INotificationRepository";
 import { PrismaNotificationRepository } from "@/modules/notification/infrastructure/repositories/PrismaNotificationRepository";
+import { IPlanRepository } from "@/modules/plan/domain/interface/IPlanRepository";
+import { PrismaPlanRepository } from "@/modules/plan/infrastructure/repositories/PrismaPlanRepository";
+import { ISubscriptionRepository } from "@/modules/subscription/domain/interface/ISubscriptionRepository";
+import { PrismaSubscriptionRepository } from "@/modules/subscription/infrastructure/repositories/PrismaSubscriptionRepository";
+import { IPaymentRepository } from "@/modules/payment/domain/interface/IPaymentRepository";
+import { PrismaPaymentRepository } from "@/modules/payment/infrastructure/repositories/PrismaPaymentRepository";
+import { PrismaAIIncidentAnalysisRepository } from "@/modules/ai-copilot/infrastructure/repositories/PrismaAIIncidentAnalysisRepository";
+import { IAIIncidentAnalysisRepository } from "@/modules/ai-copilot/domain/interface/IAIIncidentAnalysisRepository";
+import { IKnowledgeChunkRepository } from "@/modules/ai-copilot/domain/interface/IKnowledgeChunkRepository";
+import { PrismaKnowledgeChunkRepository } from "@/modules/ai-copilot/infrastructure/repositories/PrismaKnowledgeChunkRepository";
+import { IKnowledgeDocumentRepository } from "@/modules/ai-copilot/domain/interface/IKnowledgeDocumentRepository";
+import { PrismaKnowledgeDocumentRepository } from "@/modules/ai-copilot/infrastructure/repositories/PrismaKnowledgeDocumentRepository";
+import { IPdfService } from "@/shared/services/interface/IPdfService";
+import { PdfService } from "@/shared/services/PdfService";
 
 export function bindCore(container: Container) {
 
@@ -64,11 +78,18 @@ export function bindCore(container: Container) {
     container.bind<IAlertRuleRepository>(TYPES.AlertRuleRepository).to(PrismaAlertRuleRepository).inSingletonScope();
     container.bind<IAlertRoutingRuleRepository>(TYPES.AlertRoutingRuleRepository).to(PrismaAlertRoutingRuleRepository).inSingletonScope();
     container.bind<IFileRepository>(TYPES.fileRepository).to(PrismaFileRepository).inSingletonScope();
-    container.bind<IFileStorage>(TYPES.fileStorage  ).to(CloudinaryFileStorage).inSingletonScope();
+    container.bind<IFileStorage>(TYPES.fileStorage).to(CloudinaryFileStorage).inSingletonScope();
     container.bind<IWarRoomRepository>(TYPES.warroomRepository).to(PrismaWarRoomRepository).inSingletonScope();
     container.bind<IWarRoomParticipantRepository>(TYPES.warroomParticipantsRepository).to(PrismaWarRoomParticipantRepository).inSingletonScope();
     container.bind<IWarRoomMessageRepository>(TYPES.warRoomMessageRepository).to(PrismaWarRoomMessageRepository).inSingletonScope();
     container.bind<ITimelineEventRepository>(TYPES.TimeLineRepository).to(PrismaTimelineEventRepository).inSingletonScope();
     container.bind<IAuditLogRepository>(TYPES.AuditlogRepository).to(PrismaAuditLogRepository).inSingletonScope();
     container.bind<INotificationRepository>(TYPES.notificationRepository).to(PrismaNotificationRepository).inSingletonScope();
+    container.bind<IPlanRepository>(TYPES.planRepository).to(PrismaPlanRepository).inSingletonScope();
+    container.bind<ISubscriptionRepository>(TYPES.subscriptionRepository).to(PrismaSubscriptionRepository).inSingletonScope();
+    container.bind<IPaymentRepository>(TYPES.paymentRepository).to(PrismaPaymentRepository).inSingletonScope();
+    container.bind<IAIIncidentAnalysisRepository>(TYPES.AIIncidentAnalysisRepository).to(PrismaAIIncidentAnalysisRepository).inSingletonScope();
+    container.bind<IKnowledgeChunkRepository>(TYPES.KnowledgeChunkRepository).to(PrismaKnowledgeChunkRepository).inSingletonScope();
+    container.bind<IKnowledgeDocumentRepository>(TYPES.KnowledgeDocumentRepository).to(PrismaKnowledgeDocumentRepository).inSingletonScope();
+    container.bind<IPdfService>(TYPES.PdfService).to(PdfService).inSingletonScope();
 }

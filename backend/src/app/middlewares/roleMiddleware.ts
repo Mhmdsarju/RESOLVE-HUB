@@ -1,19 +1,23 @@
 import { Request, Response, NextFunction } from "express";
-import { UserRole } from "../../modules/auth/domain/enums/UserRole";
 
-export function roleMiddleware(...roles: UserRole[]) {
+import { HttpStatusCode } from "@/shared/constant/HttpStatusCode";
+import { ErrorMessages } from "@/shared/constant/ErrorMessages";
+
+export function roleMiddleware(...allowedRoles: string[]) {
     return (req: Request, res: Response, next: NextFunction) => {
-        if (!req.user) {
-            return res.status(401).json({
+        const user = req.user;
+
+        if (!user) {
+            return res.status(HttpStatusCode.UNAUTHORIZED).json({
                 success: false,
-                message: "Unauthorized",
+                message: ErrorMessages.UNAUTHORIZED,
             });
         }
 
-        if (!roles.includes(req.user.role)) {
-            return res.status(403).json({
+        if (!allowedRoles.includes(user.role)) {
+            return res.status(HttpStatusCode.FORBIDDEN).json({
                 success: false,
-                message: "Forbidden",
+                message: ErrorMessages.FORBIDDEN,
             });
         }
 

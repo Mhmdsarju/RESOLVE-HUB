@@ -3,12 +3,21 @@ import { X } from "lucide-react";
 
 import { useUpdateIntegration } from "../hooks/useUpdateIntegration";
 
-import type {  IntegrationType,  UpdateIntegrationDto,EditIntegrationModalProps,EditIntegrationFormProps} from "../types/integration.types";
+import type {
+  IntegrationType,
+  UpdateIntegrationDto,
+  EditIntegrationModalProps,
+  EditIntegrationFormProps,
+} from "../types/integration.types";
 import { INTEGRATION_TYPES } from "../constants/integration.constant";
 
-const integrationTypes=INTEGRATION_TYPES;
+const integrationTypes = INTEGRATION_TYPES;
 
-export default function EditIntegrationModal({  integration,  isOpen,  onClose,}: EditIntegrationModalProps) {
+export default function EditIntegrationModal({
+  integration,
+  isOpen,
+  onClose,
+}: EditIntegrationModalProps) {
   const updateMutation = useUpdateIntegration();
 
   if (!isOpen || !integration) {
@@ -36,7 +45,6 @@ export default function EditIntegrationModal({  integration,  isOpen,  onClose,}
   );
 }
 
-
 function EditIntegrationForm({
   integration,
   onClose,
@@ -49,14 +57,6 @@ function EditIntegrationForm({
 
   const [url, setUrl] = useState(
     typeof integration.config?.url === "string" ? integration.config.url : "",
-  );
-
-  const [apiKey, setApiKey] = useState(
-    typeof integration.config?.apiKey === "string" ? integration.config.apiKey : "",
-  );
-
-  const [secret, setSecret] = useState(
-    typeof integration.config?.secret === "string" ? integration.config.secret : "",
   );
 
   const [isActive, setIsActive] = useState(integration.isActive);
@@ -73,23 +73,9 @@ function EditIntegrationForm({
       return;
     }
 
-    let config: Record<string, unknown> = {
+    const config: Record<string, unknown> = {
       url: trimmedUrl,
     };
-
-    if (type === "GRAFANA") {
-      config = {
-        url: trimmedUrl,
-        apiKey: apiKey.trim(),
-      };
-    }
-
-    if (type === "WEBHOOK") {
-      config = {
-        url: trimmedUrl,
-        secret: secret.trim(),
-      };
-    }
 
     const data: UpdateIntegrationDto = {
       name: trimmedName,
@@ -161,7 +147,9 @@ function EditIntegrationForm({
             <div>
               <h2 className="text-xl font-bold text-[#4B3932]">Edit Integration</h2>
 
-              <p className="mt-1 text-xs text-stone-400">Update your integration configuration.</p>
+              <p className="mt-1 text-xs text-stone-400">
+                Update your integration configuration.
+              </p>
             </div>
           </div>
 
@@ -233,7 +221,7 @@ function EditIntegrationForm({
             <div>
               <p className="mb-3 text-sm font-semibold text-[#4B3932]">Integration Type</p>
 
-              <div className="grid gap-3 md:grid-cols-3">
+              <div className="grid gap-3 md:grid-cols-2">
                 {integrationTypes.map((integrationType) => {
                   const Icon = integrationType.icon;
 
@@ -270,7 +258,9 @@ function EditIntegrationForm({
                             justify-center
                             rounded-xl
                             ${
-                              isSelected ? "bg-[#4B3932] text-white" : "bg-[#F0E7D5] text-[#4B3932]"
+                              isSelected
+                                ? "bg-[#4B3932] text-white"
+                                : "bg-[#F0E7D5] text-[#4B3932]"
                             }
                           `}
                       >
@@ -293,7 +283,9 @@ function EditIntegrationForm({
             <div className="rounded-2xl bg-[#FAF6F0] p-5">
               <h3 className="text-sm font-bold text-[#4B3932]">Configuration</h3>
 
-              <p className="mt-1 text-xs text-stone-400">Update the selected integration.</p>
+              <p className="mt-1 text-xs text-stone-400">
+                Update the selected integration.
+              </p>
 
               <div className="mt-4 space-y-4">
                 <div>
@@ -307,7 +299,7 @@ function EditIntegrationForm({
                       text-[#4B3932]
                     "
                   >
-                    {type === "WEBHOOK" ? "Webhook URL" : `${selectedType?.label ?? "Service"} URL`}
+                    {`${selectedType?.label ?? "Service"} URL`}
                   </label>
 
                   <input
@@ -338,96 +330,6 @@ function EditIntegrationForm({
                   />
                 </div>
 
-                {type === "GRAFANA" && (
-                  <div>
-                    <label
-                      htmlFor="edit-grafana-api-key"
-                      className="
-                        mb-2
-                        block
-                        text-xs
-                        font-semibold
-                        text-[#4B3932]
-                      "
-                    >
-                      API Key
-                    </label>
-
-                    <input
-                      id="edit-grafana-api-key"
-                      type="password"
-                      value={apiKey}
-                      onChange={(event) => setApiKey(event.target.value)}
-                      placeholder="Enter Grafana API key"
-                      disabled={isSubmitting}
-                      className="
-                        w-full
-                        rounded-xl
-                        border
-                        border-[#E7DDD3]
-                        bg-white
-                        px-4
-                        py-3
-                        text-sm
-                        text-[#4B3932]
-                        outline-none
-                        transition-all
-                        duration-200
-                        focus:border-[#4B3932]
-                        focus:ring-2
-                        focus:ring-[#4B3932]/10
-                        disabled:cursor-not-allowed
-                        disabled:opacity-60
-                      "
-                    />
-                  </div>
-                )}
-
-                {type === "WEBHOOK" && (
-                  <div>
-                    <label
-                      htmlFor="edit-webhook-secret"
-                      className="
-                        mb-2
-                        block
-                        text-xs
-                        font-semibold
-                        text-[#4B3932]
-                      "
-                    >
-                      Webhook Secret
-                    </label>
-
-                    <input
-                      id="edit-webhook-secret"
-                      type="password"
-                      value={secret}
-                      onChange={(event) => setSecret(event.target.value)}
-                      placeholder="Enter webhook secret"
-                      disabled={isSubmitting}
-                      className="
-                        w-full
-                        rounded-xl
-                        border
-                        border-[#E7DDD3]
-                        bg-white
-                        px-4
-                        py-3
-                        text-sm
-                        text-[#4B3932]
-                        outline-none
-                        transition-all
-                        duration-200
-                        focus:border-[#4B3932]
-                        focus:ring-2
-                        focus:ring-[#4B3932]/10
-                        disabled:cursor-not-allowed
-                        disabled:opacity-60
-                      "
-                    />
-                  </div>
-                )}
-
                 <div
                   className="
                     flex
@@ -442,7 +344,9 @@ function EditIntegrationForm({
                   "
                 >
                   <div>
-                    <p className="text-sm font-semibold text-[#4B3932]">Integration Status</p>
+                    <p className="text-sm font-semibold text-[#4B3932]">
+                      Integration Status
+                    </p>
 
                     <p className="mt-1 text-xs text-stone-400">
                       Enable or disable this integration.

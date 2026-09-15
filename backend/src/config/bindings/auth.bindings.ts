@@ -39,7 +39,7 @@ import { createUserRoutes } from "@/modules/auth/presentation/routes/user.routes
 import { setTokenService } from "@/app/middlewares/authMiddleware";
 import { GetUserByIdUseCase } from "@/modules/auth/application/use-cases/GetUserByIdUseCase";
 import { ICreateAuditLogUseCase } from "@/modules/audit-log/domain/interface/usecase/ICreateAuditLogUseCase";
-
+import { setOrganizationRepository } from "@/app/middlewares/organization-access.middleware";
 
 export function bindAuth(container: Container, createAuditLogUseCase: ICreateAuditLogUseCase) {
 
@@ -59,6 +59,7 @@ export function bindAuth(container: Container, createAuditLogUseCase: ICreateAud
     const emailService = container.get<IEmailService>(TYPES.EmailService);
     const tokenService = container.get<ITokenService>(TYPES.TokenService);
     setTokenService(tokenService);
+    setOrganizationRepository(organizationRepository);
     const tokenStore = container.get<ITokenStore>(TYPES.TokenStore);
     const resetTokenStore = container.get<IResetTokenStore>(TYPES.ResetTokenStore);
 

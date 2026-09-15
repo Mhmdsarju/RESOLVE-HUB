@@ -15,6 +15,7 @@ import { IVerifySignupOtpUseCase } from "../../domain/interfaces/use-cases/IVeri
 import { HttpStatusCode } from "../../../../shared/constant/HttpStatusCode";
 import { ErrorMessages } from "../../../../shared/constant/ErrorMessages";
 import { OrganizationStatus } from "@/modules/organization/domain/enums/organizationStatus.enum";
+import { OrganizationAccessStatus } from "@/modules/organization/domain/enums/organizationAccessStatus.enum";
 // import { OrganizationVerificationStatus } from "@/modules/organization/domain/enums/organizationVerificationStatus.enum";
 
 export class VerifySignupOtpUseCase implements IVerifySignupOtpUseCase {
@@ -28,22 +29,22 @@ export class VerifySignupOtpUseCase implements IVerifySignupOtpUseCase {
   ) { }
 
   async execute(dto: VerifySignupOtpDto) {
-   
+
     const storedOtp = await this.otpStore.getOtp(dto.email);
 
     if (!storedOtp) {
-      throw new AppError(ErrorMessages.OTP_EXPIRED,HttpStatusCode.BAD_REQUEST);
+      throw new AppError(ErrorMessages.OTP_EXPIRED, HttpStatusCode.BAD_REQUEST);
     }
 
-  
+
     if (storedOtp !== dto.otp) {
-      throw new AppError(ErrorMessages.INVALID_OTP,HttpStatusCode.BAD_REQUEST);
+      throw new AppError(ErrorMessages.INVALID_OTP, HttpStatusCode.BAD_REQUEST);
     }
 
     const signupData = await this.signupStore.get(dto.email);
 
     if (!signupData) {
-      throw new AppError(ErrorMessages.SIGNUP_SESSION_EXPIRED,HttpStatusCode.BAD_REQUEST);
+      throw new AppError(ErrorMessages.SIGNUP_SESSION_EXPIRED, HttpStatusCode.BAD_REQUEST);
     }
 
     const organization = new Organization({
@@ -51,6 +52,7 @@ export class VerifySignupOtpUseCase implements IVerifySignupOtpUseCase {
       industry: signupData.industry,
       companySize: signupData.companySize,
       status: OrganizationStatus.PENDING_PROFILE,
+      accessStatus: OrganizationAccessStatus.ACTIVE,
     });
 
     const savedOrganization = await this.organizationRepository.create(organization);

@@ -1,35 +1,41 @@
+import { Suspense } from "react";
 import type { RouteObject } from "react-router-dom";
 
 import ProtectedGuard from "@/shared/guards/ProtectedRoute";
+import SubscriptionAccessGuard from "@/shared/guards/SubscriptionAccessGuard";
 
 import DashboardLayout from "@/modules/dashboard/layout/DashboardLayout";
-import DashboardPage from "@/modules/dashboard/pages/DashboardPage";
-import OrganizationSettingsPage from "@/modules/organization/pages/OrganizationSettingsPage";
-import CompleteOrganizationProfile from "@/modules/organization/pages/CompleteOrganizationProfile";
 
-import TeamListPage from "@/modules/team/pages/TeamListPage";
-import TeamDetailsPage from "@/modules/team/pages/TeamDetailsPage";
-import TeamInvitationPage from "@/modules/team-invitation/pages/TeamInvitationPage";
+import {
+  DashboardPage,
+  OrganizationSettingsPage,
+  CompleteOrganizationProfile,
+  TeamListPage,
+  TeamDetailsPage,
+  TeamInvitationPage,
+  IncidentListPage,
+  IncidentDetailsPage,
+  MonitoringProjectsPage,
+  MonitoringProjectDetailsPage,
+  IntegrationDetailsPage,
+  AlertDetailsPage,
+  AlertRuleListPage,
+  AlertRuleDetailsPage,
+  AlertRoutingRuleListPage,
+  AlertRoutingRuleDetailsPage,
+  WarRoomListPage,
+  WarRoomDetailsPage,
+  AuditLogPage,
+  SubscriptionPage,
+  PrometheusSetupGuidePage,
+  ResolveAgentSetupGuidePage,
+} from "./lazyPages";
 
-import IncidentListPage from "@/modules/incident/pages/IncidentListPage";
-import IncidentDetailsPage from "@/modules/incident/pages/IncidentDetailsPage";
-
-import MonitoringProjectsPage from "@/modules/monitoring/pages/MonitoringProjectsPage";
-import MonitoringProjectDetailsPage from "@/modules/monitoring/pages/MonitoringProjectDetailsPage";
-
-import IntegrationDetailsPage from "@/modules/integration/pages/IntegrationDetailsPage";
-
-import AlertDetailsPage from "@/modules/alert/pages/AlertDetailsPage";
-
-import AlertRuleListPage from "@/modules/alertRule/pages/AlertRuleListPage";
-import AlertRuleDetailsPage from "@/modules/alertRule/pages/AlertRuleDetailsPage";
-
-import AlertRoutingRuleListPage from "@/modules/alertRouting/pages/AlertRoutingRuleListPage";
-import AlertRoutingRuleDetailsPage from "@/modules/alertRouting/pages/AlertRoutingRuleDetailsPage";
-
-import WarRoomListPage from "@/modules/war-room/pages/WarRoomListPage";
-import WarRoomDetailsPage from "@/modules/war-room/pages/WarRoomDetailsPage";
-import AuditLogPage from "@/modules/audit/pages/AuditLogPage";
+const withSuspense = (element: React.ReactNode) => (
+  <Suspense fallback={null}>
+    {element}
+  </Suspense>
+);
 
 export const orgAdminRoutes: RouteObject[] = [
   {
@@ -37,98 +43,120 @@ export const orgAdminRoutes: RouteObject[] = [
     children: [
       {
         path: "/organization/verification",
-        element: <CompleteOrganizationProfile />,
+        element: withSuspense(<CompleteOrganizationProfile />),
       },
 
       {
         element: <DashboardLayout />,
         children: [
           {
-            path: "/dashboard",
-            element: <DashboardPage />,
+            element: <SubscriptionAccessGuard />,
+            children: [
+              {
+                path: "/dashboard",
+                element: withSuspense(<DashboardPage />),
+              },
+
+              {
+                path: "/organization/settings",
+                element: withSuspense(<OrganizationSettingsPage />),
+              },
+
+              {
+                path: "/teams",
+                element: withSuspense(<TeamListPage />),
+              },
+
+              {
+                path: "/team-invitations",
+                element: withSuspense(<TeamInvitationPage />),
+              },
+
+              {
+                path: "/teams/:id",
+                element: withSuspense(<TeamDetailsPage />),
+              },
+
+              {
+                path: "/incidents",
+                element: withSuspense(<IncidentListPage />),
+              },
+
+              {
+                path: "/incidents/:id",
+                element: withSuspense(<IncidentDetailsPage />),
+              },
+
+              {
+                path: "/monitoring",
+                element: withSuspense(<MonitoringProjectsPage />),
+              },
+
+              {
+                path: "/monitoring/:id",
+                element: withSuspense(<MonitoringProjectDetailsPage />),
+              },
+
+              {
+                path: "/monitoring/:projectId/setup-guide",
+                element: withSuspense(<PrometheusSetupGuidePage />)
+              },
+
+              {
+                path: "/monitoring/:projectId/agent-setup",
+                element: withSuspense(<ResolveAgentSetupGuidePage />)
+              },
+
+              {
+                path: "/monitoring/:projectId/integrations/:integrationId",
+                element: withSuspense(<IntegrationDetailsPage />),
+              },
+
+              {
+                path: "/monitoring/:projectId/alerts/:alertId",
+                element: withSuspense(<AlertDetailsPage />),
+              },
+
+              {
+                path: "/monitoring/:projectId/alert-rules",
+                element: withSuspense(<AlertRuleListPage />),
+              },
+
+              {
+                path: "/monitoring/:projectId/alert-rules/:alertRuleId",
+                element: withSuspense(<AlertRuleDetailsPage />),
+              },
+
+              {
+                path: "/monitoring/:projectId/alert-routing-rules",
+                element: withSuspense(<AlertRoutingRuleListPage />),
+              },
+
+              {
+                path: "/monitoring/:projectId/alert-routing-rules/:id",
+                element: withSuspense(<AlertRoutingRuleDetailsPage />),
+              },
+
+              {
+                path: "/war-rooms",
+                element: withSuspense(<WarRoomListPage />),
+              },
+
+              {
+                path: "/war-rooms/:id",
+                element: withSuspense(<WarRoomDetailsPage canClose />),
+              },
+
+              {
+                path: "/audit-logs",
+                element: withSuspense(<AuditLogPage />),
+              },
+            ],
           },
 
           {
-            path: "/organization/settings",
-            element: <OrganizationSettingsPage />,
-          },
-
-          {
-            path: "/teams",
-            element: <TeamListPage />,
-          },
-
-          {
-            path: "/team-invitations",
-            element: <TeamInvitationPage />,
-          },
-
-          {
-            path: "/teams/:id",
-            element: <TeamDetailsPage />,
-          },
-
-          {
-            path: "/incidents",
-            element: <IncidentListPage />,
-          },
-
-          {
-            path: "/incidents/:id",
-            element: <IncidentDetailsPage />,
-          },
-
-          {
-            path: "/monitoring",
-            element: <MonitoringProjectsPage />,
-          },
-
-          {
-            path: "/monitoring/:id",
-            element: <MonitoringProjectDetailsPage />,
-          },
-
-          {
-            path: "/monitoring/:projectId/integrations/:integrationId",
-            element: <IntegrationDetailsPage />,
-          },
-
-          {
-            path: "/monitoring/:projectId/alerts/:alertId",
-            element: <AlertDetailsPage />,
-          },
-
-          {
-            path: "/monitoring/:projectId/alert-rules",
-            element: <AlertRuleListPage />,
-          },
-
-          {
-            path: "/monitoring/:projectId/alert-rules/:alertRuleId",
-            element: <AlertRuleDetailsPage />,
-          },
-
-          {
-            path: "/monitoring/:projectId/alert-routing-rules",
-            element: <AlertRoutingRuleListPage />,
-          },
-
-          {
-            path: "/monitoring/:projectId/alert-routing-rules/:id",
-            element: <AlertRoutingRuleDetailsPage />,
-          },
-          {
-            path: "/war-rooms",
-            element: <WarRoomListPage />,
-          },
-
-          {
-            path: "/war-rooms/:id",
-            element: <WarRoomDetailsPage canClose />,
-          },
-          {
-            path: "/audit-logs",
-            element: <AuditLogPage />,
+            path: "/subscription",
+            element: withSuspense(<SubscriptionPage />),
           },
         ],
       },

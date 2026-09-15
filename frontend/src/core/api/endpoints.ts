@@ -37,10 +37,8 @@ export const ENDPOINTS = {
   },
 
   TEAM_INVITATION: {
-    ACCEPT: (token: string) =>
-      `/team-invitations/accept/${token}`,
-    CANCEL: (id: string) =>
-      `/team-invitations/${id}`,
+    ACCEPT: (token: string) => `/team-invitations/accept/${token}`,
+    CANCEL: (id: string) => `/team-invitations/${id}`,
   },
 
   MONITORING_PROJECT: {
@@ -125,5 +123,27 @@ export const ENDPOINTS = {
     MARK_ALL_AS_READ: "/notifications/read-all",
   },
 
+  PLAN: {
+    BASE: "/plans",
+    BY_ID: (id: string) => `/plans/${id}`,
+  },
+
+  SUBSCRIPTION: {
+    BASE: "/subscriptions",
+    FREE: "/subscriptions/free",
+    UPGRADE: "/subscriptions/upgrade",
+    ACCESS: "/subscriptions/access",
+  },
+
+  PAYMENT: {
+    BASE: "/payments",
+    BY_ID: (id: string) => `/payments/${id}`,
+    PROCESS: (id: string) => `/payments/${id}/process`,
+  },
+
+  AI: {
+    INCIDENT_RAG_ANALYSIS: (incidentId: string) => `/ai/incidents/${incidentId}/rag-analysis`,
+    ANALYSIS: (incidentId: string) => `/ai/analysis/${incidentId}`,
+  },
 
 } as const;

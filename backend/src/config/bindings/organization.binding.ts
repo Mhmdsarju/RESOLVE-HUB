@@ -19,24 +19,36 @@ import { createSuperAdminOrganizationRoutes } from "@/modules/organization/prese
 import { GetPendingOrganizationVerificationsUseCase } from "@/modules/organization/application/use-cases/GetPendingOrganizationVerificationsUseCase";
 import { ICreateAuditLogUseCase } from "@/modules/audit-log/domain/interface/usecase/ICreateAuditLogUseCase";
 import { KafkaManager } from "@/infrastructure/kafka/kafka.manager";
+import { ICreateFreeSubscriptionUseCase } from "@/modules/subscription/domain/interface/use-cases/ICreateFreeSubscriptionUseCase";
+import { GetOrganizationDashboardStatsUseCase } from "@/modules/organization/application/use-cases/GetOrganizationDashboardStatsUseCase";
+import { GetOrganizationAnalyticsUseCase } from "@/modules/organization/application/use-cases/GetOrganizationAnalyticsUseCase";
+import { GetSuperAdminOrganizationsUseCase } from "@/modules/organization/application/use-cases/GetSuperAdminOrganizationsUseCase";
+import { GetRevenueAnalyticsUseCase } from "@/modules/organization/application/use-cases/GetRevenueAnalyticsUseCase";
+import { GetPaymentHistoryUseCase } from "@/modules/organization/application/use-cases/GetPaymentHistoryUseCase";
+import { ExportPaymentReportUseCase } from "@/modules/organization/application/use-cases/ExportPaymentReportUseCase";
+import { IPdfService } from "@/shared/services/interface/IPdfService";
+import { GetSuperAdminDashboardUseCase } from "@/modules/organization/application/use-cases/GetSuperAdminDashboardUseCase";
 
 
 export function bindOrganization(
     container: Container,
     createAuditLogUseCase: ICreateAuditLogUseCase,
     kafkaManager: KafkaManager,
+    createFreeSubscriptionUseCase: ICreateFreeSubscriptionUseCase,
 ) {
 
 
     const organizationRepository = container.get<IOrganizationRepository>(TYPES.OrganizationRepository,);
     const organizationVerificationRepository = container.get<IOrganizationVerificationRepository>(TYPES.OrganizationVerificationRepository,);
     const userRepository = container.get<IUserRepository>(TYPES.UserRepository);
+    const Pdfservice = container.get<IPdfService>(TYPES.PdfService);
 
     const approveOrganizationVerificationUseCase = new ApproveOrganizationVerificationUseCase(
         organizationRepository,
         organizationVerificationRepository,
         userRepository,
-        kafkaManager.producer
+        kafkaManager.producer,
+        createFreeSubscriptionUseCase
     );
 
 
@@ -75,18 +87,54 @@ export function bindOrganization(
         createAuditLogUseCase
     );
 
+    const getOrganizationDashboardStatsUseCase = new GetOrganizationDashboardStatsUseCase(
+        organizationRepository
+    )
+
     const organizationController = new OrganizationController(
         getOrganizationProfileUseCase,
         updateOrganizationUseCase,
         submitOrganizationVerificationUseCase,
         getOrganizationVerificationUseCase,
+        getOrganizationDashboardStatsUseCase
     );
+
+    const getOrganizationAnalyticsUseCase = new GetOrganizationAnalyticsUseCase(
+        organizationRepository
+    );
+
+    const getSuperAdminOrganizationsUseCase = new GetSuperAdminOrganizationsUseCase(
+        organizationRepository
+    )
+
+    const getRevenueAnalyticsUseCase = new GetRevenueAnalyticsUseCase(
+        organizationRepository
+    )
+
+    const getPaymentHistoryUseCase = new GetPaymentHistoryUseCase(
+        organizationRepository
+    );
+
+    const exportPaymentReportUseCase = new ExportPaymentReportUseCase(
+        organizationRepository,
+        Pdfservice
+    );
+
+    const getSuperAdminDashboardUseCase=new GetSuperAdminDashboardUseCase(
+        organizationRepository
+    )
 
     const superAdminOrganizationController = new SuperAdminOrganizationController(
         approveOrganizationVerificationUseCase,
         rejectOrganizationVerificationUseCase,
         getPendingOrganizationVerificationsUseCase,
         getOrganizationVerificationDetailsUseCase,
+        getOrganizationAnalyticsUseCase,
+        getSuperAdminOrganizationsUseCase,
+        getRevenueAnalyticsUseCase,
+        getPaymentHistoryUseCase,
+        exportPaymentReportUseCase,
+        getSuperAdminDashboardUseCase
     );
 
     const organizationRouter = createOrganizationRoutes(organizationController);

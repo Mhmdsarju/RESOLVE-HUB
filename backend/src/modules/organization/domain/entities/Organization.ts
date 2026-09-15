@@ -1,4 +1,5 @@
 import { OrganizationStatus } from "../enums/organizationStatus.enum";
+import { OrganizationAccessStatus } from "../enums/organizationAccessStatus.enum";
 
 interface OrganizationProps {
   id?: string;
@@ -13,8 +14,10 @@ interface OrganizationProps {
   city?: string | null;
   address?: string | null;
   status: OrganizationStatus;
+  accessStatus: OrganizationAccessStatus;
   createdAt?: Date;
   updatedAt?: Date;
+
 }
 
 export class Organization {
@@ -23,6 +26,7 @@ export class Organization {
   public industry?: string | null;
   public companySize?: string | null;
   public status: OrganizationStatus;
+  public accessStatus: OrganizationAccessStatus;
   public readonly createdAt?: Date;
   public updatedAt?: Date;
   public website?: string | null;
@@ -46,7 +50,10 @@ export class Organization {
     this.city = props.city;
     this.address = props.address;
     this.status = props.status;
+    this.accessStatus = props.accessStatus;
     this.createdAt = props.createdAt;
     this.updatedAt = props.updatedAt;
+
   }
+
 }

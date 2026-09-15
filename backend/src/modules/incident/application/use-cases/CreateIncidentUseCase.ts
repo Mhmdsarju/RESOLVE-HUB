@@ -7,12 +7,20 @@ import { Priority } from "../../domain/enums/priority.enum";
 import { ICreateWarRoomUseCase } from "@/modules/war-room/domain/interface/usecase/ICreateWarRoomUseCase";
 import { ICreateTimelineEventUseCase } from "@/modules/timeline/domain/interfaces/usecases/ICreateTimelineEventUseCase";
 import { TimelineEventType } from "@/modules/timeline/domain/enums/timelineEventType.enum";
+import { IEventPublisher } from "@/modules/organization/domain/interfaces/IEventPublisher";
+import { KafkaTopics } from "@/shared/constant/kafka.topics";
+import { IOrganizationRepository } from "@/modules/organization/domain/repositories/IOrganizationRepository";
+import { IUserRepository } from "@/modules/auth/domain/repositories/IUserRepository";
+import { Severity } from "../../domain/enums/severity.enum";
 
 export class CreateIncidentUseCase implements ICreateIncidentUseCase {
   constructor(
     private readonly incidentRepository: IIncidentRepository,
     private readonly createWarRoomUseCase: ICreateWarRoomUseCase,
-    private readonly createTimelineEventUseCase:ICreateTimelineEventUseCase,
+    private readonly createTimelineEventUseCase: ICreateTimelineEventUseCase,
+    private readonly userRepository: IUserRepository,
+    private readonly organizationRepository: IOrganizationRepository,
+    private readonly eventPublisher: IEventPublisher,
   ) { }
 
   async execute(dto: CreateIncidentDto, userId: string | undefined, organizationId: string): Promise<Incident> {
@@ -38,6 +46,29 @@ export class CreateIncidentUseCase implements ICreateIncidentUseCase {
     });
 
     const createdIncident = await this.incidentRepository.create(incident);
+
+    const admin = await this.userRepository.findOrganizationAdminByOrganizationId(
+      organizationId,
+    );
+
+    const organization = await this.organizationRepository.findById(
+      organizationId,
+    );
+
+    if (admin && organization &&
+      (createdIncident.severity === Severity.CRITICAL || createdIncident.severity === Severity.HIGH)
+    ) {
+      await this.eventPublisher.publish(
+        KafkaTopics.EMAIL_EVENTS,
+        {
+          event: "INCIDENT_CREATED",
+          email: admin.email,
+          organizationName: organization.name,
+          incidentTitle: createdIncident.title,
+          incidentDescription: createdIncident.description,
+        },
+      );
+    }
 
     await this.createTimelineEventUseCase.execute(
       createdIncident.id!,

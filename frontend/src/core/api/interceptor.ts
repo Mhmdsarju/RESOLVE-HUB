@@ -11,6 +11,9 @@ interface RetryRequestConfig extends InternalAxiosRequestConfig {
 }
 
 
+let refreshPromise: Promise<string> | null = null;
+
+
 api.interceptors.request.use((config) => {
   const token = useAuthStore.getState().accessToken;
 
@@ -38,7 +41,6 @@ api.interceptors.response.use(
     const requestUrl = originalRequest.url ?? "";
 
 
-    // Do not try to refresh for authentication endpoints.
     const isAuthRequest =
       requestUrl.includes("/auth/login") ||
       requestUrl.includes("/auth/register") ||
@@ -66,12 +68,22 @@ api.interceptors.response.use(
 
 
       try {
-        const { accessToken } = await refresh();
+        if (!refreshPromise) {
+          refreshPromise = refresh()
+            .then(({ accessToken }) => {
+              useAuthStore
+                .getState()
+                .setAccessToken(accessToken);
+
+              return accessToken;
+            })
+            .finally(() => {
+              refreshPromise = null;
+            });
+        }
 
 
-        useAuthStore
-          .getState()
-          .setAccessToken(accessToken);
+        const accessToken = await refreshPromise;
 
 
         originalRequest.headers.Authorization =
