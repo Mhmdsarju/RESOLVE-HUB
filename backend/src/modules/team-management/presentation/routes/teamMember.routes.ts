@@ -6,14 +6,11 @@ import { organizationAccessMiddleware } from "@/app/middlewares/organization-acc
 export function createTeamMemberRoutes(teamMemberController: TeamMemberController) {
     const router = Router();
 
-    router.use(authMiddleware);
-    router.use(organizationAccessMiddleware);
-
-    router.post("/:teamId/members",  teamMemberController.addMember.bind(teamMemberController));
-    router.get("/:teamId/members",  teamMemberController.getMembers.bind(teamMemberController));
-    router.patch("/:teamId/members/:memberId",  teamMemberController.updateRole.bind(teamMemberController));
-    router.delete("/:teamId/members/:memberId",  teamMemberController.removeMember.bind(teamMemberController));
-    router.get("/me/teams",  teamMemberController.getMyTeams.bind(teamMemberController));
+    router.post("/:teamId/members", authMiddleware,organizationAccessMiddleware, teamMemberController.addMember.bind(teamMemberController));
+    router.get("/:teamId/members", authMiddleware,organizationAccessMiddleware, teamMemberController.getMembers.bind(teamMemberController));
+    router.patch("/:teamId/members/:memberId", authMiddleware,organizationAccessMiddleware, teamMemberController.updateRole.bind(teamMemberController));
+    router.delete("/:teamId/members/:memberId", authMiddleware,organizationAccessMiddleware, teamMemberController.removeMember.bind(teamMemberController));
+    router.get("/me/teams", authMiddleware,organizationAccessMiddleware, teamMemberController.getMyTeams.bind(teamMemberController));
 
     return router;
 }

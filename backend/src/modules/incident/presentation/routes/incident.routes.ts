@@ -7,15 +7,12 @@ import { organizationAccessMiddleware } from "@/app/middlewares/organization-acc
 export function createIncidentRoutes(incidentController: IncidentController) {
     const router = Router();
 
-    router.use(authMiddleware);
-    router.use(organizationAccessMiddleware);
-
-    router.post("/", incidentController.createIncident.bind(incidentController));
-    router.get("/stats", incidentController.getStats.bind(incidentController));
-    router.get("/", incidentController.getAll.bind(incidentController));
-    router.patch("/:id/status", incidentController.updateStatus.bind(incidentController));
-    router.patch("/:id/assign", incidentController.assignTeam.bind(incidentController));
-    router.get("/:id", incidentController.getById.bind(incidentController));
+    router.post("/",authMiddleware,organizationAccessMiddleware, incidentController.createIncident.bind(incidentController));
+    router.get("/stats",authMiddleware,organizationAccessMiddleware, incidentController.getStats.bind(incidentController));
+    router.get("/",authMiddleware,organizationAccessMiddleware, incidentController.getAll.bind(incidentController));
+    router.patch("/:id/status",authMiddleware,organizationAccessMiddleware, incidentController.updateStatus.bind(incidentController));
+    router.patch("/:id/assign", authMiddleware,organizationAccessMiddleware,incidentController.assignTeam.bind(incidentController));
+    router.get("/:id",authMiddleware,organizationAccessMiddleware, incidentController.getById.bind(incidentController));
 
     return router;
 }

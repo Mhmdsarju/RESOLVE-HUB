@@ -1,16 +1,25 @@
+import { Suspense } from "react";
 import type { RouteObject } from "react-router-dom";
 
 import ProtectedGuard from "@/shared/guards/ProtectedRoute";
 
 import DashboardLayout from "@/modules/dashboard/layout/DashboardLayout";
-import DashboardPage from "@/modules/dashboard/pages/DashboardPage";
 
-import OrganizationVerificationListPage from "@/modules/organization/pages/admin/OrganizationVerificationListPage";
-import OrganizationVerificationReviewPage from "@/modules/organization/pages/admin/OrganizationVerificationReviewPage";
-import PlanPage from "@/modules/plan/pages/PlansPage";
-import SuperAdminOrganizationManagement from "@/modules/organization/components/SuperAdminOrganizationManagement";
-import SuperAdminRevenueAnalyticsPage from "@/modules/organization/pages/SuperAdminRevenueAnalyticsPage";
-import SuperAdminPaymentHistoryPage from "@/modules/organization/pages/SuperAdminPaymentHistoryPage";
+import {
+  DashboardPage,
+  OrganizationVerificationListPage,
+  OrganizationVerificationReviewPage,
+  PlanPage,
+  SuperAdminOrganizationManagement,
+  SuperAdminRevenueAnalyticsPage,
+  SuperAdminPaymentHistoryPage,
+} from "./lazyPages";
+
+const withSuspense = (element: React.ReactNode) => (
+  <Suspense fallback={null}>
+    {element}
+  </Suspense>
+);
 
 export const superAdminRoutes: RouteObject[] = [
   {
@@ -21,33 +30,37 @@ export const superAdminRoutes: RouteObject[] = [
         children: [
           {
             path: "/dashboard",
-            element: <DashboardPage />,
+            element: withSuspense(<DashboardPage />),
           },
 
           {
             path: "/organizations",
-            element: <OrganizationVerificationListPage />,
+            element: withSuspense(<OrganizationVerificationListPage />),
           },
 
           {
             path: "/organizations/:organizationId/verification",
-            element: <OrganizationVerificationReviewPage />,
+            element: withSuspense(<OrganizationVerificationReviewPage />),
           },
+
           {
             path: "/plans",
-            element: <PlanPage />,
+            element: withSuspense(<PlanPage />),
           },
+
           {
-            path:"/users",
-            element:<SuperAdminOrganizationManagement/>
+            path: "/users",
+            element: withSuspense(<SuperAdminOrganizationManagement />),
           },
+
           {
-            path:"/analytics",
-            element:<SuperAdminRevenueAnalyticsPage/>
+            path: "/analytics",
+            element: withSuspense(<SuperAdminRevenueAnalyticsPage />),
           },
+
           {
-            path:"/history",
-            element:<SuperAdminPaymentHistoryPage/>
+            path: "/history",
+            element: withSuspense(<SuperAdminPaymentHistoryPage />),
           }
         ],
       },

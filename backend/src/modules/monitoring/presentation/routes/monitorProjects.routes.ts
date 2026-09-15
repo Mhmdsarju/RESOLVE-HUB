@@ -5,17 +5,15 @@ import { organizationAccessMiddleware } from "@/app/middlewares/organization-acc
 
 export function createMonitoringProjectRoutes(controller: MonitoringProjectController) {
     const router = Router();
-    router.use(authMiddleware);
-    router.use(organizationAccessMiddleware);
 
     router.route("/")
-        .post(authMiddleware, controller.create.bind(controller))
-        .get(authMiddleware, controller.getAll.bind(controller));
+        .post(authMiddleware, organizationAccessMiddleware,controller.create.bind(controller))
+        .get(authMiddleware, organizationAccessMiddleware,controller.getAll.bind(controller));
 
     router.route("/:id")
-        .get(authMiddleware, controller.getById.bind(controller))
-        .put(authMiddleware, controller.update.bind(controller))
-        .delete(authMiddleware, controller.delete.bind(controller));
+        .get(authMiddleware, organizationAccessMiddleware,controller.getById.bind(controller))
+        .put(authMiddleware, organizationAccessMiddleware,controller.update.bind(controller))
+        .delete(authMiddleware, organizationAccessMiddleware,controller.delete.bind(controller));
 
     return router;
 }

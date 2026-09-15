@@ -790,34 +790,6 @@ export default function MonitoringProjectDetailsPage() {
                 <div className="flex flex-col gap-3 sm:flex-row">
                   <button
                     type="button"
-                    onClick={() => navigate(`/monitoring/${id}/setup-guide`)}
-                    className="
-        inline-flex
-        items-center
-        justify-center
-        gap-2
-        rounded-xl
-        border
-        border-[#E7DDD3]
-        bg-white
-        px-5
-        py-3
-        text-sm
-        font-semibold
-        text-[#4B3932]
-        transition-all
-        duration-300
-        hover:-translate-y-0.5
-        hover:bg-[#FAF6F0]
-        hover:shadow-md
-      "
-                  >
-                    <FileText size={17} />
-                    Setup Guide
-                  </button>
-
-                  <button
-                    type="button"
                     onClick={() => setIsCreateIntegrationOpen(true)}
                     className="
         inline-flex

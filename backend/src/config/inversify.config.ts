@@ -54,7 +54,7 @@ export const teamModule = bindTeam(container, auditLogModule.createAuditLogUseCa
 export const warRoomModule = bindWarRoom(container, timelineEventModulde.createTimelineEventUseCase);
 export const incidentModule = bindIncident(
     container, timelineEventModulde.
-    createTimelineEventUseCase, warRoomModule.createWarRoomUseCase, notificationModule.createNotificationUseCase);
+    createTimelineEventUseCase, warRoomModule.createWarRoomUseCase, notificationModule.createNotificationUseCase,kafkaManager);
 
 export const taskModule = bindTask(
     container,
