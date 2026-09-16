@@ -12,7 +12,7 @@ export const startServer = () => {
     const io = initializeSocket(server);
 
     bindCollaboration(
-        container, 
+        container,
         io,
         warRoomModule.joinWarRoomUseCase,
         warRoomModule.leaveWarRoomUseCase,
@@ -21,7 +21,7 @@ export const startServer = () => {
         authModule.getUserByIdUseCase
     )
 
-    server.listen(PORT, () => {
+    server.listen(PORT, "0.0.0.0", () => {
         console.log(`Server running on port ${PORT}`);
     })
     return server;
