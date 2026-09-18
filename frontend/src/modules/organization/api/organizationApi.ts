@@ -129,23 +129,35 @@ export async function getPaymentHistory(params: {
   limit: number;
   search?: string;
   status?: string;
+  period?: "MONTHLY" | "YEARLY" | "CUSTOM";
+  year?: number;
+  month?: number;
+  startDate?: string;
+  endDate?: string;
 }) {
   const response = await api.get<ApiResponse<PaymentHistoryDTO>>(
     "/admin/organizations/payment-history",
     {
       params,
-    }
+    },
   );
 
   return response.data.data;
 }
 
-export async function exportPaymentReport() {
+export async function exportPaymentReport(params?: {
+  period?: "MONTHLY" | "YEARLY" | "CUSTOM";
+  year?: number;
+  month?: number;
+  startDate?: string;
+  endDate?: string;
+}) {
   const response = await api.get(
     "/admin/organizations/payment-history/export",
     {
+      params,
       responseType: "blob",
-    }
+    },
   );
 
   return response.data;

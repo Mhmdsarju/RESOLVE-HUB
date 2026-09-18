@@ -177,13 +177,13 @@ export default function SettingsPage() {
                   </div>
                 </div>
 
-                <div>
+                {/* <div>
                   <label className="text-sm font-semibold text-[#4B3932]">Role</label>
 
                   <div className="mt-2 rounded-xl bg-[#FAF6F0] px-4 py-3">
                     <p className="text-sm font-medium text-[#4B3932]">{user.role}</p>
                   </div>
-                </div>
+                </div> */}
 
                 {isEditing && (
                   <div className="flex justify-end gap-3 border-t border-[#F0E7D5] pt-5">

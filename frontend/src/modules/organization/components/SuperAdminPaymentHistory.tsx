@@ -10,6 +10,15 @@ export default function SuperAdminPaymentHistory() {
   const [page, setPage] = useState(1);
   const [showExportConfirmation, setShowExportConfirmation] = useState(false);
 
+  // Payment period filters
+  const [period, setPeriod] = useState<"MONTHLY" | "YEARLY" | "CUSTOM" | "">("");
+
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [month, setMonth] = useState(new Date().getMonth() + 1);
+
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
   const limit = 10;
 
   const { mutate: exportPaymentReport, isPending: isExporting } = useExportPaymentReport();
@@ -28,6 +37,12 @@ export default function SuperAdminPaymentHistory() {
     limit,
     search: debouncedSearch || undefined,
     status: status || undefined,
+
+    period: period || undefined,
+    year: period === "MONTHLY" || period === "YEARLY" ? year : undefined,
+    month: period === "MONTHLY" ? month : undefined,
+    startDate: period === "CUSTOM" ? startDate || undefined : undefined,
+    endDate: period === "CUSTOM" ? endDate || undefined : undefined,
   });
 
   const handleClearSearch = () => {
@@ -36,27 +51,67 @@ export default function SuperAdminPaymentHistory() {
     setPage(1);
   };
 
+  const handlePeriodChange = (value: "MONTHLY" | "YEARLY" | "CUSTOM" | "") => {
+    setPeriod(value);
+    setPage(1);
+
+    // Clear custom dates when switching away from custom
+    if (value !== "CUSTOM") {
+      setStartDate("");
+      setEndDate("");
+    }
+  };
+
+  const handleYearChange = (value: number) => {
+    setYear(value);
+    setPage(1);
+  };
+
+  const handleMonthChange = (value: number) => {
+    setMonth(value);
+    setPage(1);
+  };
+
+  const handleStartDateChange = (value: string) => {
+    setStartDate(value);
+    setPage(1);
+  };
+
+  const handleEndDateChange = (value: string) => {
+    setEndDate(value);
+    setPage(1);
+  };
+
   const handleExportPaymentReport = () => {
     setShowExportConfirmation(true);
   };
 
   const handleConfirmExport = () => {
-    exportPaymentReport(undefined, {
-      onSuccess: (blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-
-        link.href = url;
-        link.download = "resolvehub-payment-report.pdf";
-
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-
-        window.URL.revokeObjectURL(url);
-        setShowExportConfirmation(false);
+    exportPaymentReport(
+      {
+        period: period || undefined,
+        year: period === "MONTHLY" || period === "YEARLY" ? year : undefined,
+        month: period === "MONTHLY" ? month : undefined,
+        startDate: period === "CUSTOM" ? startDate || undefined : undefined,
+        endDate: period === "CUSTOM" ? endDate || undefined : undefined,
       },
-    });
+      {
+        onSuccess: (blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement("a");
+
+          link.href = url;
+          link.download = "resolvehub-payment-report.pdf";
+
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+
+          window.URL.revokeObjectURL(url);
+          setShowExportConfirmation(false);
+        },
+      },
+    );
   };
 
   const handleCancelExport = () => {
@@ -103,42 +158,143 @@ export default function SuperAdminPaymentHistory() {
         </button>
       </div>
 
-      <div className="flex flex-col gap-4 rounded-2xl border border-stone-200/80 bg-white p-5 shadow-sm lg:flex-row">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" />
+      <div className="rounded-2xl border border-stone-200/80 bg-white p-5 shadow-sm">
+        <div className="flex flex-col gap-4 lg:flex-row">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" />
 
-          <input
-            type="text"
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search organization or transaction..."
-            className="w-full rounded-xl border border-stone-200 bg-stone-50 py-2.5 pl-10 pr-10 text-sm font-medium text-stone-700 outline-none transition focus:border-stone-400 focus:bg-white"
-          />
+            <input
+              type="text"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search organization or transaction..."
+              className="w-full rounded-xl border border-stone-200 bg-stone-50 py-2.5 pl-10 pr-10 text-sm font-medium text-stone-700 outline-none transition focus:border-stone-400 focus:bg-white"
+            />
 
-          {search && (
-            <button
-              type="button"
-              onClick={handleClearSearch}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 transition hover:text-stone-700"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          )}
+            {search && (
+              <button
+                type="button"
+                onClick={handleClearSearch}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 transition hover:text-stone-700"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+
+          <select
+            value={status}
+            onChange={(event) => {
+              setStatus(event.target.value);
+              setPage(1);
+            }}
+            className="rounded-xl border border-stone-200 bg-stone-50 px-4 py-2.5 text-sm font-medium text-stone-700 outline-none transition focus:border-stone-400 focus:bg-white"
+          >
+            <option value="">All Statuses</option>
+            <option value="SUCCESS">Success</option>
+            <option value="PENDING">Pending</option>
+            <option value="FAILED">Failed</option>
+          </select>
         </div>
 
-        <select
-          value={status}
-          onChange={(event) => {
-            setStatus(event.target.value);
-            setPage(1);
-          }}
-          className="rounded-xl border border-stone-200 bg-stone-50 px-4 py-2.5 text-sm font-medium text-stone-700 outline-none transition focus:border-stone-400 focus:bg-white"
-        >
-          <option value="">All Statuses</option>
-          <option value="SUCCESS">Success</option>
-          <option value="PENDING">Pending</option>
-          <option value="FAILED">Failed</option>
-        </select>
+        {/* Payment Period Filter */}
+        <div className="mt-4 flex flex-col gap-4 lg:flex-row lg:items-center">
+          <select
+            value={period}
+            onChange={(event) =>
+              handlePeriodChange(event.target.value as "MONTHLY" | "YEARLY" | "CUSTOM" | "")
+            }
+            className="rounded-xl border border-stone-200 bg-stone-50 px-4 py-2.5 text-sm font-medium text-stone-700 outline-none transition focus:border-stone-400 focus:bg-white"
+          >
+            <option value="">All Periods</option>
+            <option value="MONTHLY">Monthly</option>
+            <option value="YEARLY">Yearly</option>
+            <option value="CUSTOM">Custom Date</option>
+          </select>
+
+          {/* Monthly */}
+          {period === "MONTHLY" && (
+            <>
+              <select
+                value={month}
+                onChange={(event) => handleMonthChange(Number(event.target.value))}
+                className="rounded-xl border border-stone-200 bg-stone-50 px-4 py-2.5 text-sm font-medium text-stone-700 outline-none transition focus:border-stone-400 focus:bg-white"
+              >
+                <option value={1}>January</option>
+                <option value={2}>February</option>
+                <option value={3}>March</option>
+                <option value={4}>April</option>
+                <option value={5}>May</option>
+                <option value={6}>June</option>
+                <option value={7}>July</option>
+                <option value={8}>August</option>
+                <option value={9}>September</option>
+                <option value={10}>October</option>
+                <option value={11}>November</option>
+                <option value={12}>December</option>
+              </select>
+
+              <select
+                value={year}
+                onChange={(event) => handleYearChange(Number(event.target.value))}
+                className="rounded-xl border border-stone-200 bg-stone-50 px-4 py-2.5 text-sm font-medium text-stone-700 outline-none transition focus:border-stone-400 focus:bg-white"
+              >
+                {Array.from({ length: 5 }, (_, index) => new Date().getFullYear() - index).map(
+                  (yearOption) => (
+                    <option key={yearOption} value={yearOption}>
+                      {yearOption}
+                    </option>
+                  ),
+                )}
+              </select>
+            </>
+          )}
+
+          {/* Yearly */}
+          {period === "YEARLY" && (
+            <select
+              value={year}
+              onChange={(event) => handleYearChange(Number(event.target.value))}
+              className="rounded-xl border border-stone-200 bg-stone-50 px-4 py-2.5 text-sm font-medium text-stone-700 outline-none transition focus:border-stone-400 focus:bg-white"
+            >
+              {Array.from({ length: 5 }, (_, index) => new Date().getFullYear() - index).map(
+                (yearOption) => (
+                  <option key={yearOption} value={yearOption}>
+                    {yearOption}
+                  </option>
+                ),
+              )}
+            </select>
+          )}
+
+          {/* Custom Date */}
+          {period === "CUSTOM" && (
+            <>
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-bold text-stone-500">From</label>
+
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(event) => handleStartDateChange(event.target.value)}
+                  className="rounded-xl border border-stone-200 bg-stone-50 px-4 py-2.5 text-sm font-medium text-stone-700 outline-none transition focus:border-stone-400 focus:bg-white"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-bold text-stone-500">To</label>
+
+                <input
+                  type="date"
+                  value={endDate}
+                  min={startDate || undefined}
+                  onChange={(event) => handleEndDateChange(event.target.value)}
+                  className="rounded-xl border border-stone-200 bg-stone-50 px-4 py-2.5 text-sm font-medium text-stone-700 outline-none transition focus:border-stone-400 focus:bg-white"
+                />
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       <div className="overflow-hidden rounded-2xl border border-stone-200/80 bg-white shadow-sm">
@@ -198,11 +354,11 @@ export default function SuperAdminPaymentHistory() {
                     {payment.razorpayOrderId}
                   </td>
 
-                  <td className="px-6 py-4 whitespace-nowrap text-stone-600">
+                  <td className="whitespace-nowrap px-6 py-4 text-stone-600">
                     {payment.paidAt ? new Date(payment.paidAt).toLocaleDateString("en-IN") : "-"}
                   </td>
 
-                  <td className="px-6 py-4 whitespace-nowrap text-stone-600">
+                  <td className="whitespace-nowrap px-6 py-4 text-stone-600">
                     {new Date(payment.createdAt).toLocaleDateString("en-IN")}
                   </td>
                 </tr>
@@ -254,8 +410,7 @@ export default function SuperAdminPaymentHistory() {
                 <h2 className="text-xl font-bold text-[#4B3932]">Export Payment Report?</h2>
 
                 <p className="mt-2 text-sm leading-6 text-stone-500">
-                  This will generate a PDF containing the complete payment history across all
-                  organizations.
+                  This will generate a PDF containing the selected payment history.
                 </p>
               </div>
 
@@ -276,10 +431,10 @@ export default function SuperAdminPaymentHistory() {
                 </div>
 
                 <div>
-                  <p className="text-sm font-bold text-[#4B3932]">Full Payment Report</p>
+                  <p className="text-sm font-bold text-[#4B3932]">Payment Report</p>
 
                   <p className="text-xs font-medium text-stone-500">
-                    Includes all available transaction records.
+                    Includes payments matching the selected filters.
                   </p>
                 </div>
               </div>

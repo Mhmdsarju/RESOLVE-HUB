@@ -1,6 +1,7 @@
 import { IExportPaymentReportUseCase } from "../../domain/interfaces/IExportPaymentReportUseCase";
 import { IOrganizationRepository } from "../../domain/repositories/IOrganizationRepository";
 import { IPdfService } from "../../../../shared/services/interface/IPdfService";
+import { GetPaymentHistoryDTO } from "../dto/GetPaymentHistoryDTO";
 
 export class ExportPaymentReportUseCase implements IExportPaymentReportUseCase {
     constructor(
@@ -8,11 +9,21 @@ export class ExportPaymentReportUseCase implements IExportPaymentReportUseCase {
         private readonly pdfService: IPdfService,
     ) { }
 
-    async execute(): Promise<PDFKit.PDFDocument> {
-        const paymentHistory = await this.organizationRepository.getPaymentHistory(
-            1,
-            100000,
-        );
+    async execute(
+        filters?: Omit<GetPaymentHistoryDTO, "page" | "limit">,
+    ): Promise<PDFKit.PDFDocument> {
+        const paymentHistory =
+            await this.organizationRepository.getPaymentHistory(
+                1,
+                100000,
+                filters?.search,
+                filters?.status,
+                filters?.period,
+                filters?.year,
+                filters?.month,
+                filters?.startDate,
+                filters?.endDate,
+            );
 
         const totalPayments = paymentHistory.payments.length;
 
@@ -30,7 +41,10 @@ export class ExportPaymentReportUseCase implements IExportPaymentReportUseCase {
 
         const totalRevenue = paymentHistory.payments
             .filter((payment) => payment.status === "SUCCESS")
-            .reduce((total, payment) => total + payment.amount, 0);
+            .reduce(
+                (total, payment) => total + payment.amount,
+                0,
+            );
 
         return this.pdfService.generatePaymentReport({
             totalPayments,

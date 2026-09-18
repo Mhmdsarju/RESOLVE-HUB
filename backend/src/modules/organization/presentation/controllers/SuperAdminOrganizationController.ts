@@ -224,28 +224,66 @@ export class SuperAdminOrganizationController {
         }
     }
 
-    async getPaymentHistory(req: Request, res: Response, next: NextFunction,) {
+    async getPaymentHistory(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ) {
         try {
             const user = req.user;
 
             if (!user) {
-                throw new AppError(ErrorMessages.UNAUTHORIZED, HttpStatusCode.UNAUTHORIZED,);
+                throw new AppError(
+                    ErrorMessages.UNAUTHORIZED,
+                    HttpStatusCode.UNAUTHORIZED,
+                );
             }
 
             if (user.role !== "SUPER_ADMIN") {
-                throw new AppError(ErrorMessages.FORBIDDEN, HttpStatusCode.FORBIDDEN,);
+                throw new AppError(
+                    ErrorMessages.FORBIDDEN,
+                    HttpStatusCode.FORBIDDEN,
+                );
             }
 
             const page = Number(req.query.page) || 1;
             const limit = Number(req.query.limit) || 10;
+
             const search = req.query.search as string | undefined;
             const status = req.query.status as string | undefined;
+
+            const period = req.query.period as
+                | "MONTHLY"
+                | "YEARLY"
+                | "CUSTOM"
+                | undefined;
+
+            const year = req.query.year
+                ? Number(req.query.year)
+                : undefined;
+
+            const month = req.query.month
+                ? Number(req.query.month)
+                : undefined;
+
+            const startDate = req.query.startDate
+                ? new Date(req.query.startDate as string)
+                : undefined;
+
+            const endDate = req.query.endDate
+                ? new Date(req.query.endDate as string)
+                : undefined;
 
             const result = await this.getPaymentHistoryUseCase.execute({
                 page,
                 limit,
                 search,
                 status,
+                period,
+                year,
+                month,
+                startDate,
+                endDate,
             });
 
             return ResponseHandler.success(
@@ -258,19 +296,57 @@ export class SuperAdminOrganizationController {
         }
     }
 
-    async exportPaymentReport(req: Request, res: Response, next: NextFunction,) {
+    async exportPaymentReport(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ) {
         try {
             const user = req.user;
 
             if (!user) {
-                throw new AppError(ErrorMessages.UNAUTHORIZED, HttpStatusCode.UNAUTHORIZED,);
+                throw new AppError(
+                    ErrorMessages.UNAUTHORIZED,
+                    HttpStatusCode.UNAUTHORIZED,
+                );
             }
 
             if (user.role !== "SUPER_ADMIN") {
-                throw new AppError(ErrorMessages.FORBIDDEN, HttpStatusCode.FORBIDDEN,);
+                throw new AppError(
+                    ErrorMessages.FORBIDDEN,
+                    HttpStatusCode.FORBIDDEN,
+                );
             }
 
-            const document = await this.exportPaymentReportUseCase.execute();
+            const period = req.query.period as
+                | "MONTHLY"
+                | "YEARLY"
+                | "CUSTOM"
+                | undefined;
+
+            const year = req.query.year
+                ? Number(req.query.year)
+                : undefined;
+
+            const month = req.query.month
+                ? Number(req.query.month)
+                : undefined;
+
+            const startDate = req.query.startDate
+                ? new Date(req.query.startDate as string)
+                : undefined;
+
+            const endDate = req.query.endDate
+                ? new Date(req.query.endDate as string)
+                : undefined;
+
+            const document = await this.exportPaymentReportUseCase.execute({
+                period,
+                year,
+                month,
+                startDate,
+                endDate,
+            });
 
             res.setHeader("Content-Type", "application/pdf");
             res.setHeader(
@@ -286,28 +362,28 @@ export class SuperAdminOrganizationController {
     }
 
     async getSuperAdminDashboard(req: Request, res: Response, next: NextFunction,) {
-    try {
-        const user = req.user;
+        try {
+            const user = req.user;
 
-        if (!user) {
-            throw new AppError(ErrorMessages.UNAUTHORIZED, HttpStatusCode.UNAUTHORIZED,);
+            if (!user) {
+                throw new AppError(ErrorMessages.UNAUTHORIZED, HttpStatusCode.UNAUTHORIZED,);
+            }
+
+            if (user.role !== "SUPER_ADMIN") {
+                throw new AppError(ErrorMessages.FORBIDDEN, HttpStatusCode.FORBIDDEN,);
+            }
+
+            const result = await this.getSuperAdminDashboardUseCase.execute();
+
+            return ResponseHandler.success(
+                res,
+                "Super admin dashboard fetched successfully",
+                result,
+            );
+        } catch (error) {
+            next(error);
         }
-
-        if (user.role !== "SUPER_ADMIN") {
-            throw new AppError(ErrorMessages.FORBIDDEN, HttpStatusCode.FORBIDDEN,);
-        }
-
-        const result = await this.getSuperAdminDashboardUseCase.execute();
-
-        return ResponseHandler.success(
-            res,
-            "Super admin dashboard fetched successfully",
-            result,
-        );
-    } catch (error) {
-        next(error);
     }
-}
 
 
 

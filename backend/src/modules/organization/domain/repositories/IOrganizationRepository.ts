@@ -29,6 +29,11 @@ export interface IOrganizationRepository extends IBaseRepository<Organization> {
     limit: number,
     search?: string,
     status?: string,
+    period?: "MONTHLY" | "YEARLY" | "CUSTOM",
+    year?: number,
+    month?: number,
+    startDate?: Date,
+    endDate?: Date,
   ): Promise<PaymentHistoryDTO>;
 
   getSuperAdminDashboard(): Promise<SuperAdminDashboardDTO>;

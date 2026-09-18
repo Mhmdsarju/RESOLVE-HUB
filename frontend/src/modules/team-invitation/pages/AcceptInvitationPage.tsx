@@ -1,8 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff } from "lucide-react";
+import { CheckCircle2, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import { useAcceptTeamInvitation } from "../hooks/useAcceptTeamInvitation";
 import {
@@ -12,11 +12,10 @@ import {
 
 export default function AcceptInvitationPage() {
   const { token } = useParams<{ token: string }>();
-  const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
-
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const acceptInvitationMutation = useAcceptTeamInvitation();
 
@@ -48,7 +47,11 @@ export default function AcceptInvitationPage() {
         },
       });
 
-      navigate("/dashboard");
+      setShowSuccessModal(true);
+
+      setTimeout(() => {
+        window.location.assign("/user/login");
+      }, 4000);
     } catch {
       return;
     }
@@ -273,6 +276,42 @@ export default function AcceptInvitationPage() {
           </form>
         </div>
       </div>
+
+      {showSuccessModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-md animate-in fade-in zoom-in-95 rounded-3xl bg-white p-8 text-center shadow-2xl duration-200">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-emerald-50">
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100">
+                <CheckCircle2 className="h-8 w-8 text-emerald-600" />
+              </div>
+            </div>
+            <h2 className="mt-6 text-2xl font-bold text-[#4B3932]">Registration Successful!</h2>
+
+            <p className="mt-3 text-sm leading-6 text-stone-500">
+              You are successfully registered as an engineer in the ResolveHub team.
+            </p>
+
+            <div className="mt-6 rounded-2xl border border-[#D8C4A8] bg-[#FBF6EC] p-5 text-left">
+              <p className="text-sm font-bold text-[#4B3932]">Your account is ready!</p>
+
+              <p className="mt-2 text-sm leading-6 text-stone-500">
+                Please login using the{" "}
+                <span className="font-semibold text-[#4B3932]">Gmail address</span> associated with
+                your invitation and the{" "}
+                <span className="font-semibold text-[#4B3932]">password</span> you just created.
+              </p>
+            </div>
+
+            <div className="mt-6">
+              <p className="text-xs font-medium text-stone-400">Redirecting to login page...</p>
+
+              <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-stone-100">
+                <div className="h-full w-full origin-left animate-[shrink_4s_linear_forwards] rounded-full bg-[#4B3932]" />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
