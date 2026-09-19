@@ -13,43 +13,49 @@ interface IncidentDetailsProps {
 export default function IncidentDetails({ incident }: IncidentDetailsProps) {
   return (
     <div className="space-y-6">
-      <div
-        className="
-          rounded-2xl
-          bg-white
-          p-5
-          shadow-sm
-          transition-all
-          duration-300
-          hover:-translate-y-0.5
-          hover:shadow-md
-        "
-      >
+      <div className="rounded-2xl bg-white p-5 shadow-sm">
         <div className="flex items-center justify-between gap-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-stone-400">Status</p>
 
-            <p className="mt-1 text-sm text-stone-500">Update incident status</p>
+            <p className="mt-1 text-sm text-stone-500">
+              {incident.status === "CLOSED" ? "This incident was  closed" : "Update incident status"}
+            </p>
           </div>
 
           <div
             className="
-              rounded-xl
-              border
-              border-[#E7DDD3]
-              bg-[#FAF6F0]
-              p-1.5
-              transition-all
-              duration-300
-              hover:border-[#D8C9BD]
-              hover:bg-[#F0E7D5]
-            "
+      rounded-xl
+      border
+      border-[#E7DDD3]
+      bg-[#FAF6F0]
+      p-1.5
+    "
           >
-            <IncidentStatusSelect incident={incident} />
+            {incident.status === "CLOSED" ? (
+              <span
+                className="
+          inline-flex
+          items-center
+          rounded-xl
+          border
+          border-stone-200
+          bg-stone-100
+          px-4
+          py-3
+          text-sm
+          font-semibold
+          text-stone-600
+        "
+              >
+                Closed
+              </span>
+            ) : (
+              <IncidentStatusSelect incident={incident} />
+            )}
           </div>
         </div>
       </div>
-
       <div className="grid gap-6 lg:grid-cols-3">
         <div
           className="
@@ -109,7 +115,6 @@ export default function IncidentDetails({ incident }: IncidentDetailsProps) {
             </p>
           </div>
         </div>
-
         <div
           className="
             group
@@ -155,7 +160,6 @@ export default function IncidentDetails({ incident }: IncidentDetailsProps) {
       </div>
 
       <AIIncidentAnalysis incidentId={incident.id} />
-
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <div
           className="
@@ -232,7 +236,6 @@ export default function IncidentDetails({ incident }: IncidentDetailsProps) {
 
           <p className="mt-4 text-sm font-semibold text-[#4B3932]">{incident.type}</p>
         </div>
-
         <div
           className="
             group

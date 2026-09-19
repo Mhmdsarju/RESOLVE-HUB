@@ -44,9 +44,13 @@ export default function AlertRoutingRuleDetailsPage() {
 
   const selectedTeam = rule ? teams.find((team) => team.id === rule.teamId) : undefined;
 
-  const selectedProject = rule    ? projects.find((project) => project.id === rule.monitoringProjectId)    : undefined;
+  const selectedProject = rule
+    ? projects.find((project) => project.id === rule.monitoringProjectId)
+    : undefined;
 
-  const selectedAlertRule = rule    ? alertRules.find((alertRule) => alertRule.id === rule.alertRuleId)    : undefined;
+  const selectedAlertRule = rule
+    ? alertRules.find((alertRule) => alertRule.id === rule.alertRuleId)
+    : undefined;
 
   const formatDate = (date: string) => {
     return new Date(date).toLocaleString();
@@ -216,7 +220,7 @@ export default function AlertRoutingRuleDetailsPage() {
       >
         <button
           type="button"
-          onClick={() => navigate("/alert-routing-rules")}
+          onClick={() => navigate(`/monitoring/${id}/alert-routing-rules`)}
           className="
             inline-flex
             w-fit

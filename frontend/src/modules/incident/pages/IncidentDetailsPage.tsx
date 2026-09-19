@@ -1,21 +1,13 @@
-import {
-  AlertCircle,
-  ArrowLeft,
-  Clock3,
-  ExternalLink,
-  ListChecks,
-  ShieldAlert,
-} from "lucide-react";
-
-import IncidentTimeline from "@/modules/timeline/components/IncidentTimeline";
+import { AlertCircle, ArrowLeft, Clock3, ListChecks, ShieldAlert } from "lucide-react";
 
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import IncidentDetails from "../components/IncidentDetails";
+import IncidentTimeline from "@/modules/timeline/components/IncidentTimeline";
 import TaskSection from "@/modules/task-management/components/TaskSection";
 
 import { useIncident } from "../hooks/useIncident";
+import IncidentDetails from "../components/IncidentDetails";
 
 type IncidentTab = "details" | "tasks" | "timeline";
 
@@ -36,6 +28,7 @@ export default function IncidentDetailsPage() {
 
           <div className="space-y-2">
             <div className="h-5 w-40 animate-pulse rounded-lg bg-[#F0E7D5]" />
+
             <div className="h-3 w-56 animate-pulse rounded-lg bg-[#FAF6F0]" />
           </div>
         </div>
@@ -43,14 +36,18 @@ export default function IncidentDetailsPage() {
         <div className="rounded-3xl bg-white p-8 shadow-sm">
           <div className="space-y-5">
             <div className="h-4 w-24 animate-pulse rounded bg-[#F0E7D5]" />
+
             <div className="h-8 w-3/4 animate-pulse rounded bg-[#F0E7D5]" />
+
             <div className="h-4 w-full animate-pulse rounded bg-[#FAF6F0]" />
+
             <div className="h-4 w-2/3 animate-pulse rounded bg-[#FAF6F0]" />
           </div>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="h-64 animate-pulse rounded-3xl bg-white shadow-sm lg:col-span-2" />
+
           <div className="h-64 animate-pulse rounded-3xl bg-white shadow-sm" />
         </div>
       </div>
@@ -62,7 +59,6 @@ export default function IncidentDetailsPage() {
       <div className="flex min-h-[60vh] items-center justify-center px-4">
         <div
           className="
-            group
             w-full
             max-w-md
             rounded-3xl
@@ -70,10 +66,6 @@ export default function IncidentDetailsPage() {
             p-8
             text-center
             shadow-sm
-            transition-all
-            duration-300
-            hover:-translate-y-1
-            hover:shadow-xl
           "
         >
           <div
@@ -87,9 +79,6 @@ export default function IncidentDetailsPage() {
               rounded-2xl
               bg-red-50
               text-red-500
-              transition-transform
-              duration-300
-              group-hover:scale-110
             "
           >
             <AlertCircle size={26} />
@@ -176,12 +165,12 @@ export default function IncidentDetailsPage() {
 
         <div className="flex items-center gap-2 text-xs text-stone-400">
           <span>Incident</span>
+
           <span>/</span>
 
-          <span className="max-w-180px truncate text-stone-500">{incident.id}</span>
+          <span className="max-w-180 truncate text-stone-500">{incident.id}</span>
         </div>
       </div>
-
       <div
         className="
           group
@@ -292,16 +281,16 @@ export default function IncidentDetailsPage() {
             <div className="mt-3 flex items-center gap-2 text-sm text-[#E7DDD3]">
               <span>Incident ID:</span>
 
-              <span className="max-w-280px truncate font-medium text-white/80" title={incident.id}>
+              <span
+                className="max-w-280 truncate font-medium text-white/80"
+                title={incident.id}
+              >
                 {incident.id}
               </span>
-
-              <ExternalLink size={14} className="opacity-60" />
             </div>
           </div>
         </div>
       </div>
-
       <div
         className="
           rounded-2xl
@@ -396,7 +385,6 @@ export default function IncidentDetailsPage() {
       <div>
         {activeTab === "details" ? (
           <IncidentDetails incident={incident} />
-          
         ) : activeTab === "tasks" ? (
           <TaskSection incidentId={incident.id} teamId={incident.assignedTeamId ?? ""} />
         ) : (
