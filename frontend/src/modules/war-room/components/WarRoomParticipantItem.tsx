@@ -7,9 +7,9 @@ import type { WarRoomParticipantItemProps } from "../types/warRoom.types";
 
 export default function WarRoomParticipantItem({ participant }: WarRoomParticipantItemProps) {
     
-  const { data: user, isLoading, isError } = useUser(participant.userId);
+  const { data: user, isLoading } = useUser(participant.userId);
 
-  console.log("👤 USER FETCH:", participant.userId, user, isLoading, isError);
+  // console.log("👤 USER FETCH:", participant.userId, user, isLoading, isError);
 
   return (
     <div
