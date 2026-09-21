@@ -133,6 +133,8 @@ export class IncidentController extends BaseController {
                 priority: req.query.priority as Priority | undefined,
                 severity: req.query.severity as Severity | undefined,
                 assignedTeamId: req.query.assignedTeamId as string | undefined,
+                fromDate:req.query.fromDate as string|undefined,
+                toDate:req.query.toDate as string|undefined,
             };
 
             const result = await this.getIncidentsUseCase.execute(

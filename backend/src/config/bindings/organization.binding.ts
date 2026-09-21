@@ -28,6 +28,7 @@ import { GetPaymentHistoryUseCase } from "@/modules/organization/application/use
 import { ExportPaymentReportUseCase } from "@/modules/organization/application/use-cases/ExportPaymentReportUseCase";
 import { IPdfService } from "@/shared/services/interface/IPdfService";
 import { GetSuperAdminDashboardUseCase } from "@/modules/organization/application/use-cases/GetSuperAdminDashboardUseCase";
+import { GetOrgAdminPaymentHistoryUseCase } from "@/modules/organization/application/use-cases/GetOrgAdminPaymentHistoryUseCase";
 
 
 export function bindOrganization(
@@ -91,12 +92,19 @@ export function bindOrganization(
         organizationRepository
     )
 
+    const getOrgAdminPaymentHistoryUseCase = new GetOrgAdminPaymentHistoryUseCase(
+        organizationRepository
+    );
+
+
+
     const organizationController = new OrganizationController(
         getOrganizationProfileUseCase,
         updateOrganizationUseCase,
         submitOrganizationVerificationUseCase,
         getOrganizationVerificationUseCase,
-        getOrganizationDashboardStatsUseCase
+        getOrganizationDashboardStatsUseCase,
+        getOrgAdminPaymentHistoryUseCase
     );
 
     const getOrganizationAnalyticsUseCase = new GetOrganizationAnalyticsUseCase(
@@ -120,7 +128,7 @@ export function bindOrganization(
         Pdfservice
     );
 
-    const getSuperAdminDashboardUseCase=new GetSuperAdminDashboardUseCase(
+    const getSuperAdminDashboardUseCase = new GetSuperAdminDashboardUseCase(
         organizationRepository
     )
 

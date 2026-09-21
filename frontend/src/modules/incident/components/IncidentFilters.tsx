@@ -24,8 +24,9 @@ export default function IncidentFilters({ filters, onChange, onReset }: Incident
     Boolean(filters.status) ||
     Boolean(filters.priority) ||
     Boolean(filters.severity) ||
-    Boolean(filters.assignedTeamId);
-
+    Boolean(filters.assignedTeamId) ||
+    Boolean(filters.fromDate) ||
+    Boolean(filters.toDate);
   return (
     <div className="rounded-2xl bg-white p-5 shadow-sm">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end">
@@ -156,6 +157,64 @@ export default function IncidentFilters({ filters, onChange, onReset }: Incident
           >
             <option value="">All Teams</option>
           </select>
+        </div>
+
+        <div className="flex-1">
+          <label
+            htmlFor="incident-from-date"
+            className="mb-2 block text-sm font-medium text-[#4B3932]"
+          >
+            From Date
+          </label>
+
+          <input
+            id="incident-from-date"
+            type="date"
+            value={filters.fromDate ?? ""}
+            onChange={(event) => handleChange("fromDate", event.target.value)}
+            className="
+      w-full
+      rounded-xl
+      border
+      border-[#E7DDD3]
+      bg-white
+      px-4
+      py-3
+      text-sm
+      text-[#4B3932]
+      outline-none
+      focus:border-[#4B3932]
+    "
+          />
+        </div>
+
+        <div className="flex-1">
+          <label
+            htmlFor="incident-to-date"
+            className="mb-2 block text-sm font-medium text-[#4B3932]"
+          >
+            To Date
+          </label>
+
+          <input
+            id="incident-to-date"
+            type="date"
+            value={filters.toDate ?? ""}
+            onChange={(event) => handleChange("toDate", event.target.value)}
+            className="
+      w-full
+      rounded-xl
+      border
+      border-[#E7DDD3]
+      bg-white
+      px-4
+      py-3
+      text-sm
+      text-[#4B3932]
+      outline-none
+      focus:border-[#4B3932]
+    "
+          />
         </div>
 
         {hasFilters && (

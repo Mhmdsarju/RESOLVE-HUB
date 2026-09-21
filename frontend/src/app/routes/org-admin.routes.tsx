@@ -29,12 +29,12 @@ import {
   SubscriptionPage,
   PrometheusSetupGuidePage,
   ResolveAgentSetupGuidePage,
-} from "./lazyPages";import RouteLoader from "@/shared/components/RouteLoader";
+  OrgAdminPaymentHistoryPage,
+} from "./lazyPages";
+import RouteLoader from "@/shared/components/RouteLoader";
 
 const withSuspense = (element: React.ReactNode) => (
-   <Suspense fallback={<RouteLoader />}>
-    {element}
-  </Suspense>
+  <Suspense fallback={<RouteLoader />}>{element}</Suspense>
 );
 
 export const orgAdminRoutes: RouteObject[] = [
@@ -99,12 +99,12 @@ export const orgAdminRoutes: RouteObject[] = [
 
               {
                 path: "/monitoring/:projectId/setup-guide",
-                element: withSuspense(<PrometheusSetupGuidePage />)
+                element: withSuspense(<PrometheusSetupGuidePage />),
               },
 
               {
                 path: "/monitoring/:projectId/agent-setup",
-                element: withSuspense(<ResolveAgentSetupGuidePage />)
+                element: withSuspense(<ResolveAgentSetupGuidePage />),
               },
 
               {
@@ -150,6 +150,11 @@ export const orgAdminRoutes: RouteObject[] = [
               {
                 path: "/audit-logs",
                 element: withSuspense(<AuditLogPage />),
+              },
+
+              {
+                path: "/payment-history",
+                element: withSuspense(<OrgAdminPaymentHistoryPage />),
               },
             ],
           },

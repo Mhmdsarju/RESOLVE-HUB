@@ -47,6 +47,8 @@ export class PrismaIncidentRepository implements IIncidentRepository {
       priority?: Priority;
       severity?: Severity;
       assignedTeamId?: string;
+      fromDate?:string;
+      toDate?:string;
     };
   }): Promise<{ data: Incident[]; total: number }> {
 
@@ -58,6 +60,10 @@ export class PrismaIncidentRepository implements IIncidentRepository {
       priority: filters?.priority,
       severity: filters?.severity,
       assignedTeamId: filters?.assignedTeamId,
+      createdAt:{
+        gte:filters?.fromDate? new Date(`${filters.fromDate}T00:00:00.000`):undefined,
+        lte:filters?.toDate? new Date(`${filters.toDate}T00:00:00.000`):undefined,
+      }
     };
 
     const [data, total] = await Promise.all([

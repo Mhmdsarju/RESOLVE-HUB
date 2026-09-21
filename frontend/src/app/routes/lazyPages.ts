@@ -63,3 +63,6 @@ export const PlanPage = lazy(() => import("@/modules/plan/pages/PlansPage"));
 export const SuperAdminOrganizationManagement = lazy(() => import("@/modules/organization/components/SuperAdminOrganizationManagement"));
 export const SuperAdminRevenueAnalyticsPage = lazy(() => import("@/modules/organization/pages/SuperAdminRevenueAnalyticsPage"));
 export const SuperAdminPaymentHistoryPage = lazy(() => import("@/modules/organization/pages/SuperAdminPaymentHistoryPage"));
+
+export const OrgAdminPaymentHistoryPage = lazy(() => import("@/modules/organization/components/OrgAdminPaymentHistory")
+);

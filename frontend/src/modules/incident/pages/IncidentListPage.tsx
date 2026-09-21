@@ -15,6 +15,8 @@ import type { GetIncidentsParams, Incident } from "../types/incident.types";
 const DEFAULT_FILTERS: GetIncidentsParams = {
   page: 1,
   limit: 3,
+  fromDate:"",
+  toDate:"",
 };
 
 export default function IncidentListPage() {

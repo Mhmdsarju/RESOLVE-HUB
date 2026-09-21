@@ -54,6 +54,8 @@ export interface GetIncidentsParams {
     priority?: IncidentPriority;
     severity?: IncidentSeverity;
     assignedTeamId?: string;
+    fromDate?:string;
+    toDate?:string;
 }
 
 

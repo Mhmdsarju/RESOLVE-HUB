@@ -9,6 +9,8 @@ import { IUpdateOrganizationUseCase } from "../../domain/interfaces/IUpdateOrgan
 import { ISubmitOrganizationVerificationUseCase } from "../../domain/interfaces/ISubmitOrganizationVerificationUseCase";
 import { IGetOrganizationVerificationUseCase } from "../../domain/interfaces/IGetOrganizationVerificationUseCase";
 import { IGetOrganizationDashboardStatsUseCase } from "../../domain/interfaces/IGetOrganizationDashboardStatsUseCase";
+import { GetPaymentHistoryDTO } from "../../application/dto/GetPaymentHistoryDTO";
+import { IGetOrgAdminPaymentHistoryUseCase } from "../../domain/interfaces/IGetOrgAdminPaymentHistoryUseCase";
 
 export class OrganizationController {
   constructor(
@@ -17,7 +19,7 @@ export class OrganizationController {
     private readonly submitOrganizationVerificationUseCase: ISubmitOrganizationVerificationUseCase,
     private readonly getOrganizationVerificationUseCase: IGetOrganizationVerificationUseCase,
     private readonly getOrganizationDashboardStatsUseCase: IGetOrganizationDashboardStatsUseCase,
-
+    private readonly getOrgAdminPaymentHistoryUseCase: IGetOrgAdminPaymentHistoryUseCase,
   ) { }
 
   async getProfile(req: Request, res: Response, next: NextFunction,) {
@@ -140,6 +142,68 @@ export class OrganizationController {
         res,
         "Organization dashboard stats fetched successfully",
         stats,
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getPaymentHistory(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const user = req.user;
+
+      if (!user) {
+        throw new AppError(
+          ErrorMessages.UNAUTHORIZED,
+          HttpStatusCode.UNAUTHORIZED,
+        );
+      }
+
+      if (!user.organizationId) {
+        throw new AppError(
+          "Organization ID not found for this user",
+          HttpStatusCode.BAD_REQUEST,
+        );
+      }
+
+      const dto: GetPaymentHistoryDTO = {
+        page: Number(req.query.page) || 1,
+        limit: Number(req.query.limit) || 10,
+        search: req.query.search as string | undefined,
+        status: req.query.status as string | undefined,
+        period: req.query.period as
+          | "MONTHLY"
+          | "YEARLY"
+          | "CUSTOM"
+          | undefined,
+        year: req.query.year
+          ? Number(req.query.year)
+          : undefined,
+        month: req.query.month
+          ? Number(req.query.month)
+          : undefined,
+        startDate: req.query.startDate
+          ? new Date(req.query.startDate as string)
+          : undefined,
+        endDate: req.query.endDate
+          ? new Date(req.query.endDate as string)
+          : undefined,
+      };
+
+      const result =
+        await this.getOrgAdminPaymentHistoryUseCase.execute(
+          user.organizationId,
+          dto,
+        );
+
+      return ResponseHandler.success(
+        res,
+        "Payment history fetched successfully",
+        result,
       );
     } catch (error) {
       next(error);

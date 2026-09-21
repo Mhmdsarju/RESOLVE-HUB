@@ -170,3 +170,24 @@ export async function getSuperAdminDashboard() {
 
   return response.data.data;
 }
+
+export async function getOrgAdminPaymentHistory(params: {
+  page: number;
+  limit: number;
+  search?: string;
+  status?: string;
+  period?: "MONTHLY" | "YEARLY" | "CUSTOM";
+  year?: number;
+  month?: number;
+  startDate?: string;
+  endDate?: string;
+}) {
+  const response = await api.get<ApiResponse<PaymentHistoryDTO>>(
+    "/organizations/payment-history",
+    {
+      params,
+    },
+  );
+
+  return response.data.data;
+}

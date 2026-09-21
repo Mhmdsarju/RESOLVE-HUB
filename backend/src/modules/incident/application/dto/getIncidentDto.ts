@@ -11,4 +11,7 @@ export interface GetIncidentsDto {
   severity?: Severity;
 
   assignedTeamId?: string;
+
+  fromDate?: string;
+  toDate?: string;
 }

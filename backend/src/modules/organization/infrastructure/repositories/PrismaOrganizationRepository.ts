@@ -733,4 +733,144 @@ export class PrismaOrganizationRepository implements IOrganizationRepository {
     };
   }
 
+  async getOrgAdminPaymentHistory(
+    organizationId: string,
+    page: number,
+    limit: number,
+    search?: string,
+    status?: string,
+    period?: "MONTHLY" | "YEARLY" | "CUSTOM",
+    year?: number,
+    month?: number,
+    startDate?: Date,
+    endDate?: Date,
+  ): Promise<PaymentHistoryDTO> {
+    let dateFilter;
+
+    // Monthly filter
+    if (period === "MONTHLY" && year && month) {
+      const start = new Date(year, month - 1, 1);
+      const end = new Date(year, month, 1);
+
+      dateFilter = {
+        gte: start,
+        lt: end,
+      };
+    }
+
+    // Yearly filter
+    if (period === "YEARLY" && year) {
+      const start = new Date(year, 0, 1);
+      const end = new Date(year + 1, 0, 1);
+
+      dateFilter = {
+        gte: start,
+        lt: end,
+      };
+    }
+
+    // Custom date filter
+    if (period === "CUSTOM" && startDate && endDate) {
+      const end = new Date(endDate);
+
+      end.setHours(23, 59, 59, 999);
+
+      dateFilter = {
+        gte: startDate,
+        lte: end,
+      };
+    }
+
+    const where = {
+      organizationId,
+
+      ...(search && {
+        OR: [
+          {
+            transactionId: {
+              contains: search,
+              mode: "insensitive" as const,
+            },
+          },
+          {
+            razorpayOrderId: {
+              contains: search,
+              mode: "insensitive" as const,
+            },
+          },
+        ],
+      }),
+
+      ...(status && {
+        status: status as PaymentStatus,
+      }),
+
+      ...(dateFilter && {
+        createdAt: dateFilter,
+      }),
+    };
+
+    const skip = (page - 1) * limit;
+
+    const [payments, total] = await Promise.all([
+      prisma.payment.findMany({
+        where,
+
+        select: {
+          id: true,
+          amount: true,
+          currency: true,
+          status: true,
+          transactionId: true,
+          razorpayOrderId: true,
+          paidAt: true,
+          createdAt: true,
+
+          organization: {
+            select: {
+              name: true,
+            },
+          },
+
+          plan: {
+            select: {
+              name: true,
+            },
+          },
+        },
+
+        orderBy: {
+          createdAt: "desc",
+        },
+
+        skip,
+        take: limit,
+      }),
+
+      prisma.payment.count({
+        where,
+      }),
+    ]);
+
+    return {
+      payments: payments.map((payment) => ({
+        id: payment.id,
+        organizationName: payment.organization.name,
+        plan: payment.plan.name,
+        amount: payment.amount,
+        currency: payment.currency,
+        status: payment.status,
+        transactionId: payment.transactionId,
+        razorpayOrderId: payment.razorpayOrderId,
+        paidAt: payment.paidAt,
+        createdAt: payment.createdAt,
+      })),
+
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
 }

@@ -16,6 +16,8 @@ export interface IIncidentRepository extends IBaseRepository<Incident> {
       priority?: Priority;
       severity?: Severity;
       assignedTeamId?: string;
+      fromDate?:string,
+      toDate?:string
     };
   }): Promise<{
     data: Incident[];

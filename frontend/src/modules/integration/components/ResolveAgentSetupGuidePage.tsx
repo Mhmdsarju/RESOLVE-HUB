@@ -140,7 +140,7 @@ export default function ResolveAgentSetupGuidePage() {
   const agentCommand = `docker run --rm \\
   --name resolvehub-agent \\
   -v /var/run/docker.sock:/var/run/docker.sock:ro \\
-  -e RESOLVEHUB_URL="http://host.docker.internal:5555" \\
+  -e RESOLVEHUB_URL="https://api.resolvehub.in" \\
   -e INTEGRATION_ID="${integrationId ?? "YOUR_INTEGRATION_ID"}" \\
   mhmdsarju/resolvehub-agent:latest`;
 

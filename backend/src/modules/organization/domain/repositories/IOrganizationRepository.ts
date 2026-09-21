@@ -6,16 +6,21 @@ import { SuperAdminDashboardDTO } from "../../application/dto/SuperAdminDashboar
 import { SuperAdminOrganizationsDTO } from "../../application/dto/SuperAdminOrganizationDTO";
 import { Organization } from "../entities/Organization";
 
-export interface IOrganizationRepository extends IBaseRepository<Organization> {
+export interface IOrganizationRepository
+  extends IBaseRepository<Organization> {
 
   findByName(name: string): Promise<Organization | null>;
-  getDashboardStats(organizationId: string): Promise<OrganizationDashboardStatsDTO>;
+
+  getDashboardStats(
+    organizationId: string
+  ): Promise<OrganizationDashboardStatsDTO>;
 
   getOrganizationAnalytics(): Promise<{
     totalOrganizations: number;
     activeOrganizations: number;
     frozenOrganizations: number;
   }>;
+
   getSuperAdminOrganizations(
     page: number,
     limit: number,
@@ -24,7 +29,21 @@ export interface IOrganizationRepository extends IBaseRepository<Organization> {
   ): Promise<SuperAdminOrganizationsDTO>;
 
   getRevenueAnalytics(): Promise<RevenueAnalyticsDTO>;
+
   getPaymentHistory(
+    page: number,
+    limit: number,
+    search?: string,
+    status?: string,
+    period?: "MONTHLY" | "YEARLY" | "CUSTOM",
+    year?: number,
+    month?: number,
+    startDate?: Date,
+    endDate?: Date,
+  ): Promise<PaymentHistoryDTO>;
+
+  getOrgAdminPaymentHistory(
+    organizationId: string,
     page: number,
     limit: number,
     search?: string,

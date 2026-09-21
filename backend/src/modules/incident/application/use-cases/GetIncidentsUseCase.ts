@@ -22,6 +22,8 @@ export class GetIncidentsUseCase implements IGetIncidentsUseCase {
         priority: dto.priority,
         severity: dto.severity,
         assignedTeamId: dto.assignedTeamId,
+        fromDate:dto.fromDate,
+        toDate:dto.toDate,
       },
     });
 

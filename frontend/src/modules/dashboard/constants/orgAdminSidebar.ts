@@ -1,5 +1,5 @@
 import {
-  Activity, 
+  Activity,
   Building2,
   FolderKanban,
   LayoutDashboard,
@@ -79,6 +79,11 @@ export const orgAdminSidebar: SidebarSection[] = [
       {
         label: "Subscription",
         path: "/subscription",
+        icon: CreditCard,
+      },
+      {
+        label: "Payment History",
+        path: "/payment-history",
         icon: CreditCard,
       },
     ],

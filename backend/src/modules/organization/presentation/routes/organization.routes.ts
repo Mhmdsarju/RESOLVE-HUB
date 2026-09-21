@@ -6,11 +6,16 @@ export function createOrganizationRoutes(organizationController: OrganizationCon
     const router = Router();
 
 
-    router.get("/me",authMiddleware, organizationController.getProfile.bind(organizationController));
-    router.put("/me",authMiddleware, organizationController.updateProfile.bind(organizationController));
-    router.post("/me/submit-verification",authMiddleware, organizationController.submitVerification.bind(organizationController));
-    router.get("/me/verification",authMiddleware, organizationController.getVerificationStatus.bind(organizationController));
-    router.get("/dashboard",authMiddleware, organizationController.getDashboardStats.bind(organizationController));
+    router.get("/me", authMiddleware, organizationController.getProfile.bind(organizationController));
+    router.put("/me", authMiddleware, organizationController.updateProfile.bind(organizationController));
+    router.post("/me/submit-verification", authMiddleware, organizationController.submitVerification.bind(organizationController));
+    router.get("/me/verification", authMiddleware, organizationController.getVerificationStatus.bind(organizationController));
+    router.get("/dashboard", authMiddleware, organizationController.getDashboardStats.bind(organizationController));
+    router.get(
+        "/payment-history",
+        authMiddleware,
+        organizationController.getPaymentHistory.bind(organizationController),
+    );
 
     return router;
 }
